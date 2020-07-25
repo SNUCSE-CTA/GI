@@ -2,11 +2,9 @@
 
 Algorithm::Algorithm(Graph* g1, Graph* g2)
 {
-	cout << __PRETTY_FUNCTION__ << endl;
 }
 Algorithm::~Algorithm()
 {
-	cout << __PRETTY_FUNCTION__ << endl;
 }
 
 bool Algorithm::run()

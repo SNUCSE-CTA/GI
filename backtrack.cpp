@@ -2,12 +2,10 @@
 
 Backtrack::Backtrack()
 {
-	cout << __PRETTY_FUNCTION__ << endl;
 }
 
 Backtrack::~Backtrack()
 {
-	cout << __PRETTY_FUNCTION__ << endl;
 }
 
 bool Backtrack::run(Coloring*, Graph*, Graph*)
