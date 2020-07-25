@@ -6,12 +6,19 @@ Backtrack::Backtrack()
 
 Backtrack::~Backtrack()
 {
+	clear();
 }
 
-bool Backtrack::run(Coloring*, Graph*, Graph*)
+bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
-	return true;
+
+	init();
+
+	dag = buildDAG(aG1, aColoring);
+	cs = buildCS(dag, aG1, aColoring);
+	mapBinaryCell(aColoring, mapping);
+	return backtrack(cs, dag, mapping);
 }
 
 void Backtrack::init()
@@ -42,6 +49,6 @@ void Backtrack::mapBinaryCell(Coloring* coloring, Mapping* mapping)
 bool Backtrack::backtrack(CS* cs, DAG* dag, Mapping* mapping)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
-	return false;
+	return true;
 }
 

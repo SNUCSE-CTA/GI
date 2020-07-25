@@ -11,8 +11,9 @@ using namespace std;
 
 class Backtrack
 {
-	Graph* g1 = NULL;
-	Graph* g2 = NULL;
+	DAG* dag = NULL;
+	CS* cs = NULL;
+	Mapping* mapping = NULL;
 
 	void init();
 	void clear();

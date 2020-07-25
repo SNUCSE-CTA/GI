@@ -1,7 +1,7 @@
 PROG = program
 CC = g++
 CPPFLAGS = -w -std=c++11 -O3
-OBJS = main.o algorithm.o graph.o refine.o coloring.o backtrack.o cs.o mapping.o
+OBJS = main.o algorithm.o graph.o refine.o coloring.o backtrack.o cs.o mapping.o global.o
 
 program: $(OBJS)
 	$(CC) $(OBJS) -o $(PROG)
@@ -9,7 +9,7 @@ program: $(OBJS)
 main.o: algorithm.o graph.o 
 	$(CC) $(CPPFLAGS) -c main.cpp
 
-algorithm.o: graph.o refine.o coloring.o backtrack.o cs.o mapping.o
+algorithm.o: global.o graph.o refine.o coloring.o backtrack.o cs.o mapping.o
 	$(CC) $(CPPFLAGS) -c algorithm.cpp
 
 graph.o:
@@ -29,6 +29,9 @@ cs.o: graph.o coloring.o
 
 mapping.o:
 	$(CC) $(CPPFLAGS) -c mapping.cpp
+
+global.o:
+	$(CC) $(CPPFLAGS) -c global.cpp
 
 clean:
 	rm $(PROG) $(OBJS)

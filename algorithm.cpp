@@ -1,6 +1,7 @@
 #include "algorithm.h"
 
-Algorithm::Algorithm(Graph* g1, Graph* g2)
+
+Algorithm::Algorithm(Graph* aG1, Graph* aG2)
 {
 }
 Algorithm::~Algorithm()
@@ -16,8 +17,8 @@ bool Algorithm::run()
 		return false;
 	}
 
-	Refinement cr(g1, g2);
-	result = cr.run();
+	Refinement cr;
+	result = cr.run(g1, g2);
 	if(result == false) {
 		return false;
 	}
@@ -30,7 +31,7 @@ bool Algorithm::run()
 	return result;
 }
 
-bool Algorithm::checkSimpleInvariants(Graph* g1, Graph* g2)
+bool Algorithm::checkSimpleInvariants(Graph* aG1, Graph* aG2)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 	return true;
