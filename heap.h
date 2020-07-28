@@ -4,6 +4,11 @@
 #include <iostream>
 #include "memory.h"
 
+//macros for Heap
+#define PARENT(i) i >> 1;
+#define LEFT(i) i << 1;
+#define RIGHT(i) (i << 1) + 1;
+
 extern Memory global_memory;
 
 using namespace std;

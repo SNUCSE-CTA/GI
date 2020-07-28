@@ -7,6 +7,23 @@
 #include "global.h"
 #include "memory.h"
 
+//macros for sorting
+#ifndef SORT_MINPARTITION
+#define SORT_MINPARTITION 11
+#endif
+
+#ifndef SORT_MINMEDIAN9
+#define SORT_MINMEDIAN9 320
+#endif
+
+#define SORT_MEDIAN_OF_3(a,b,c) \
+ ((a) <= (b) ? ((b) <= (c) ? (b) : (c) <= (a) ? (a) : (c)) \
+             : ((a) <= (c) ? (a) : (c) <= (b) ? (b) : (c)))
+
+#define SORT_SWAP2(x,y) tmp2 = x; x = y; y = tmp2;
+#define SORT_SWAP1(x,y) tmp1 = x; x = y; y = tmp1;
+
+
 using namespace std;
 
 extern Memory global_memory;
