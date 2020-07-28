@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include "memory.h"
 
 using namespace std;
 

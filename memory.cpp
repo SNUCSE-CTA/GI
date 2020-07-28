@@ -1,7 +1,5 @@
 #include "memory.h"
 
-Memory global_memory;
-
 Memory::Memory()
 {
 }
