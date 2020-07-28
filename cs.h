@@ -8,6 +8,11 @@ using namespace std;
 class CS
 {
 public:
+	long long* candArr = NULL;
+	long long* P = NULL;
+	long long* S = NULL;
+	long long* dagColorIndex = NULL;
+
 	CS();
 	~CS();
 };

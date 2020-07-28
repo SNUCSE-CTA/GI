@@ -5,8 +5,11 @@
 #include "coloring.h"
 #include "graph.h"
 #include "global.h"
+#include "memory.h"
 
 using namespace std;
+
+extern Memory global_memory;
 
 class Refinement
 {
@@ -14,13 +17,36 @@ class Refinement
 	Graph* g2 = NULL;
 	Coloring* stableColoring = NULL;
 	long long numTreeNode = 0;
-	//About coloring and color refinement
+
+	//variables used in color refinement (Workspace)
+	long long* cellStak = NULL;
+	long long stackSize = 0;
+	long long* markCell = NULL;
+	long long* markNode = NULL;
+	long long mark = 0;
+	long long* neighborCount = NULL;
+	long long* visitCell = NULL;
+	long long* visitNode = NULL;
+	long long* numVisitNode = NULL;
+	long long* splitCell = NULL;
+	long long* splitPos = NULL;
+
+
 	void init();
-	void clear();
-	void colorByDegreeAndLabel(Coloring*, Graph*, Graph*);
-	long long prepCoreOne(Coloring*, Graph*, Graph*);
-	void refine(Coloring*, Graph*, Graph*);
+	void clearWorkspace();
 	bool checkColoring(Coloring*);
+
+	//color refinement
+	void colorByDegreeAndLabel(Coloring*, Graph*, Graph*);
+	void refine(Coloring*, Graph*, Graph*);
+	void individualize(long long, long long, Coloring*);
+	void sortArray(long long*, long long);
+	void sortTwoArrays(long long*, long long*, long long);
+	long long selectFromStack();
+	
+	//preprocessing coreness-1 nodes
+	long long prepCoreOne(Coloring*, Graph*, Graph*);
+	void deleteEdge(long long, long long, Graph*, Graph*);
 	
 public:
 	Refinement();

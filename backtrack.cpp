@@ -6,7 +6,7 @@ Backtrack::Backtrack()
 
 Backtrack::~Backtrack()
 {
-	clear();
+	clearWorkspace();
 }
 
 bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2)
@@ -25,30 +25,88 @@ void Backtrack::init()
 {
 }
 
-void Backtrack::clear()
+void Backtrack::clearWorkspace()
 {
 }
 
-DAG* Backtrack::buildDAG(Graph* g1, Coloring* coloring)
-{
-	cout << __PRETTY_FUNCTION__ << endl;
-	return NULL;
-}
 
-CS* Backtrack::buildCS(DAG* dag, Graph* g1, Coloring* coloring)
+DAG* Backtrack::buildDAG(Graph* aG1, Coloring* aColoring)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 	return NULL;
 }
 
-void Backtrack::mapBinaryCell(Coloring* coloring, Mapping* mapping)
+long long Backtrack::selectRoot(Graph* aG1, Coloring* aColoring)
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+	return 0;
+}
+
+
+CS* Backtrack::buildCS(DAG* aDag, Graph* aG1, Coloring* aColoring)
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+	return NULL;
+}
+
+long long Backtrack::binarySearch(long long* aArray, long long aSize, long long aValue)
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+	return 0;
+}
+
+
+void Backtrack::mapBinaryCell(Coloring* aColoring, long long* aMapping)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 }
 
-bool Backtrack::backtrack(CS* cs, DAG* dag, Mapping* mapping)
+
+bool Backtrack::backtrack(CS* aCS, DAG* aDag, long long* aMapping)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 	return true;
 }
 
+void Backtrack::insertExtVertex(long long aVertex, long long aWeight)
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+}
+
+long long Backtrack::computeWeight(long long aVertex)
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+	return 0;
+}
+
+void Backtrack::computeExtCand(long long aVertex)
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+}
+
+long long Backtrack::getMinExtVertex()
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+	return 0;
+}
+
+void Backtrack::deleteExtVertex(long long aVertex)
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+}
+
+long long Backtrack::binarySearch(vector<long long>& aVector, long long aValue)
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+	return 0;
+}
+
+void Backtrack::merge(vector<long long>& aTo, vector<long long>& aSource)
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+}
+
+void Backtrack::merge(vector<long long>& aTo, long long* aSource, long long aSize)
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+}
