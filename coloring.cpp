@@ -11,10 +11,12 @@ Coloring::~Coloring()
 
 void Coloring::init()
 {
+	cout << __PRETTY_FUNCTION__ << endl;
 }
 
 void Coloring::clear()
 {
+	cout << __PRETTY_FUNCTION__ << endl;
 	if(color != NULL) {
 		delete[] color;
 		color = NULL;

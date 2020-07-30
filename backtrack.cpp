@@ -6,6 +6,20 @@ Backtrack::Backtrack()
 
 Backtrack::~Backtrack()
 {
+	if( dag != NULL ) {
+		delete dag;
+		dag = NULL;
+	}
+
+	if( cs != NULL ) {
+		delete cs;
+		cs = NULL;
+	}
+
+	if( mapping != NULL ) {
+		global_memory.returnLLArray(mapping);
+		mapping = NULL;
+	}
 	clearWorkspace();
 }
 
@@ -13,20 +27,86 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 
-	init();
+	n = aG1->numNode;
+	e = aG2->numEdge;
+	n2 = n * 2;
+	e2 = e * 2;
 
+	if( mapping != NULL ) {
+		global_memory.returnLLArray(mapping);
+		mapping = NULL;
+	}
+	mapping = global_memory.getLLArray(n2);
+	initWorkspace();
+
+	if( dag != NULL ) {
+		delete dag;
+		dag = NULL;
+	}
 	dag = buildDAG(aG1, aColoring);
+
+	if( cs != NULL ) {
+		delete cs;
+		cs = NULL;
+	}
 	cs = buildCS(dag, aG1, aColoring);
+
 	mapBinaryCell(aColoring, mapping);
 	return backtrack(cs, dag, mapping);
 }
 
-void Backtrack::init()
+void Backtrack::initWorkspace()
 {
+	clearWorkspace();
+	cout << __PRETTY_FUNCTION__ << endl;
+
+	extCand = new vector<long long>[n]; //TODO it is not tight
+	heap = new Heap(n);
+	weight = global_memory.getLLArray(n);
+	numMappedParent = global_memory.getLLArray(n);
+	candPos = global_memory.getLLArray(n);
+	matchingOrder = global_memory.getLLArray(n);
+	isBinary = global_memory.getCharArray(n2);
+	failingset = new vector<long long>[n]; //TODO: it is not tight
 }
 
 void Backtrack::clearWorkspace()
 {
+	cout << __PRETTY_FUNCTION__ << endl;
+	if( extCand != NULL ) {
+		delete[] extCand;
+		extCand = NULL;
+	}
+	if( heap != NULL ) {
+		delete heap;
+		heap = NULL;
+	}
+
+	if( weight != NULL ) {
+		global_memory.returnLLArray(weight);
+		weight = NULL;
+	}
+	if( numMappedParent != NULL ) {
+		global_memory.returnLLArray(numMappedParent);
+		numMappedParent = NULL;
+	}
+	if( candPos != NULL ) {
+		global_memory.returnLLArray(candPos);
+		candPos = NULL;
+	}
+	if( matchingOrder != NULL ) {
+		global_memory.returnLLArray(matchingOrder);
+		matchingOrder = NULL;
+	}
+	if( isBinary != NULL ) {
+		global_memory.returnCharArray(isBinary);
+		isBinary = NULL;
+	}
+
+	if( failingset != NULL ) {
+		delete[] failingset;
+		failingset = NULL;
+	}
 }
 
 

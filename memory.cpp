@@ -27,10 +27,10 @@ char* Memory::getCharArray(long long aSize)
 	return NULL;
 }
 
-void returnLLArray(long long* aArray)
+void Memory::returnLLArray(long long* aArray)
 {
 }
 
-void returnCharArray(char* aArrray)
+void Memory::returnCharArray(char* aArrray)
 {
 }

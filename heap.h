@@ -20,7 +20,7 @@ public:
 	long long* locate = NULL;
 	long long size = 0;
 
-	Heap();
+	Heap(long long);
 	~Heap();
 	void minHeapify(long long*, long long);
 	void buildMinHeap(long long*);

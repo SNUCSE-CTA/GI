@@ -1,7 +1,8 @@
 #include "heap.h"
 
-Heap::Heap()
+Heap::Heap(long long aSize)
 {
+	cout << __PRETTY_FUNCTION__ << endl;
 }
 
 Heap::~Heap()

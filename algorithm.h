@@ -17,12 +17,10 @@ extern long long* global_temp_array3;
 class Algorithm
 {
 private:
-	Graph* g1 = NULL;
-	Graph* g2 = NULL;
 	bool checkSimpleInvariants(Graph*, Graph*); //check degree sequence, label
 public:
-	Algorithm(Graph*, Graph*);
+	Algorithm();
 	~Algorithm();
-	bool run();
+	bool run(Graph*, Graph*);
 };
 #endif

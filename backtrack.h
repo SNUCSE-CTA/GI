@@ -12,6 +12,10 @@ using namespace std;
 
 class Backtrack
 {
+	long long n = 0;
+	long long e = 0;
+	long long n2 = 0;
+	long long e2 = 0;
 	DAG* dag = NULL;
 	CS* cs = NULL;
 	long long* mapping = NULL;
@@ -19,17 +23,17 @@ class Backtrack
 	//variables used in backtracking (Workspace)
 	// - for adaptive matching order
 	vector<long long>* extCand = NULL;
+	Heap* heap = NULL;
 	long long* weight = NULL;
 	long long* numMappedParent = NULL;
 	long long* candPos = NULL;
 	long long* matchingOrder = NULL;
 	char* isBinary = NULL;
-	Heap* heap = NULL;
 	// - for the partial failing set
 	vector<long long>* failingset = NULL;
 	
 
-	void init();
+	void initWorkspace();
 	void clearWorkspace();
 
 	DAG* buildDAG(Graph*, Coloring*);

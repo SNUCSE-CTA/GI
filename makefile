@@ -3,6 +3,8 @@ CC = g++
 CPPFLAGS = -w -std=c++11 -O3
 OBJS = main.o algorithm.o graph.o refine.o coloring.o backtrack.o cs.o global.o memory.o heap.o
 
+all: $(PROG)
+
 program: $(OBJS)
 	$(CC) $(OBJS) -o $(PROG)
 

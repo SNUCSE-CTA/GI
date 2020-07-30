@@ -1,24 +1,26 @@
 #include "algorithm.h"
 
 
-Algorithm::Algorithm(Graph* aG1, Graph* aG2)
+Algorithm::Algorithm()
 {
 }
 Algorithm::~Algorithm()
 {
 }
 
-bool Algorithm::run()
+bool Algorithm::run(Graph* aG1, Graph* aG2)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 
-	bool result = checkSimpleInvariants(g1, g2);
+	initGlobal(aG2->numNode, aG2->numEdge);
+
+	bool result = checkSimpleInvariants(aG2, aG2);
 	if(result == false) {
 		return false;
 	}
 
 	Refinement cr;
-	result = cr.run(g1, g2);
+	result = cr.run(aG2, aG2);
 	if(result == false) {
 		return false;
 	}
@@ -26,8 +28,10 @@ bool Algorithm::run()
 	Coloring* coloring = cr.getStableColoring();
 	
 	Backtrack bt;
-	result = bt.run(coloring, g1, g2);
+	result = bt.run(coloring, aG2, aG2);
 	
+	clearGlobal();
+
 	return result;
 }
 

@@ -20,16 +20,18 @@ int main(int argc, char* argv[])
 	Graph* g2 = new Graph(file2);
 
 	//2. GI algorithm
-	Algorithm alg(g1, g2);
-	bool isomorphic = alg.run();
-
-	//TODO: functions to set left-hand-side and right-hand-side
+	Algorithm alg;
+	bool isomorphic = alg.run(g1, g2);
 
 	//3. print results
 	if( isomorphic )
 		cout << "true: " << file1 << " and " << file2 << " are isomorphic" << endl;
 	else
 		cout << "false: " << file1 << " and " << file2 << " are not isomorphic" << endl;
+
+	//4. deallocate input graphs from memory
+	delete g1;
+	delete g2;
 
 	return 0;
 }

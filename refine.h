@@ -30,26 +30,29 @@ extern Memory global_memory;
 
 class Refinement
 {
-	Graph* g1 = NULL;
-	Graph* g2 = NULL;
 	Coloring* stableColoring = NULL;
 	long long numTreeNode = 0;
+	long long n = 0;
+	long long n2 = 0;
+	long long e = 0;
+	long long e2 = 0;
 
 	//variables used in color refinement (Workspace)
-	long long* cellStak = NULL;
+	long long* cellStack = NULL;
 	long long stackSize = 0;
 	long long* markCell = NULL;
 	long long* markNode = NULL;
 	long long mark = 0;
-	long long* neighborCount = NULL;
+	long long* neighCount = NULL;
 	long long* visitCell = NULL;
 	long long* visitNode = NULL;
 	long long* numVisitNode = NULL;
 	long long* splitCell = NULL;
+	long long* splitCount = NULL;
 	long long* splitPos = NULL;
 
 
-	void init();
+	void initWorkspace();
 	void clearWorkspace();
 	bool checkColoring(Coloring*);
 

@@ -6,6 +6,10 @@ Refinement::Refinement()
 
 Refinement::~Refinement()
 {
+	if( stableColoring != NULL ) {
+		delete stableColoring;
+		stableColoring = NULL;
+	}
 	clearWorkspace();
 }
 
@@ -13,20 +17,24 @@ bool Refinement::run(Graph* aG1, Graph* aG2)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 
-	g1 = aG1;
-	g2 = aG2;
-	init();
+	n = aG1->numNode;
+	e = aG1->numEdge;
+	n2 = n * 2;
+	e2 = e * 2;
 
-	colorByDegreeAndLabel(stableColoring, g1, g2);
-	if(checkColoring(stableColoring) == false) {
-		clearWorkspace();
-		return false;
+	if( stableColoring != NULL ) {
+		delete stableColoring;
 	}
+	stableColoring = new Coloring;
+	initWorkspace(); //allocate workspace variables
+
+	//initial coloring
+	colorByDegreeAndLabel(stableColoring, aG1, aG2);
 
 	//process coreness-1 vertices
-	numTreeNode = prepCoreOne(stableColoring, g1, g2);
+	numTreeNode = prepCoreOne(stableColoring, aG1, aG2);
 
-	refine(stableColoring, g1, g2);
+	refine(stableColoring, aG1, aG2);
 	if(checkColoring(stableColoring) == false) {
 		clearWorkspace();
 		return false;
@@ -48,12 +56,68 @@ long long Refinement::getNumTreeNode()
 	return numTreeNode;
 }
 
-void Refinement::init()
+void Refinement::initWorkspace()
 {
+	clearWorkspace(); //avoid double allocation
+	cout << __PRETTY_FUNCTION__ << endl;
+
+	cellStack = global_memory.getLLArray(n2);
+	stackSize = 0;
+	markCell = global_memory.getLLArray(n2);
+	markNode = global_memory.getLLArray(n2);
+	mark = 0;
+	neighCount = global_memory.getLLArray(n2);
+	visitCell = global_memory.getLLArray(n2);
+	visitNode = global_memory.getLLArray(n2);
+	numVisitNode = global_memory.getLLArray(n2);
+	splitCell = global_memory.getLLArray(n2);
+	splitCount = global_memory.getLLArray(n2);
+	splitPos = global_memory.getLLArray(n2);
 }
 
 void Refinement::clearWorkspace()
 {
+	cout << __PRETTY_FUNCTION__ << endl;
+	if( cellStack != NULL ) {
+		global_memory.returnLLArray(cellStack);
+		cellStack = NULL;
+	}
+	if( markCell != NULL ) {
+		global_memory.returnLLArray(markCell);
+		markCell = NULL;
+	}
+	if( markNode != NULL ) {
+		global_memory.returnLLArray(markNode);
+		markNode = NULL;
+	}
+	if( neighCount != NULL ) {
+		global_memory.returnLLArray(neighCount);
+		neighCount = NULL;
+	}
+	if( visitCell != NULL ) {
+		global_memory.returnLLArray(visitCell);
+		visitCell = NULL;
+	}
+	if( visitNode != NULL ) {
+		global_memory.returnLLArray(visitNode);
+		visitNode = NULL;
+	}
+	if( numVisitNode != NULL ) {
+		global_memory.returnLLArray(numVisitNode);
+		numVisitNode = NULL;
+	}
+	if( splitCell != NULL ) {
+		global_memory.returnLLArray(splitCell);
+		splitCell = NULL;
+	}
+	if( splitCount != NULL ) {
+		global_memory.returnLLArray(splitCount);
+		splitCount = NULL;
+	}
+	if( splitPos != NULL ) {
+		global_memory.returnLLArray(splitPos);
+		splitPos = NULL;
+	}
 }
 
 bool Refinement::checkColoring(Coloring* coloring)
@@ -62,12 +126,12 @@ bool Refinement::checkColoring(Coloring* coloring)
 	return true;
 }
 
-void Refinement::colorByDegreeAndLabel(Coloring*coloring, Graph* g1, Graph* g2)
+void Refinement::colorByDegreeAndLabel(Coloring*coloring, Graph* aG1, Graph* aG2)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 }
 
-void Refinement::refine(Coloring* coloring, Graph* g1, Graph* g2)
+void Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 }
@@ -95,7 +159,7 @@ long long Refinement::selectFromStack()
 }
 
 
-long long Refinement::prepCoreOne(Coloring* coloring, Graph* g1, Graph* g2)
+long long Refinement::prepCoreOne(Coloring* coloring, Graph* aG1, Graph* aG2)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 	return 0;
