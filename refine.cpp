@@ -79,43 +79,43 @@ void Refinement::clearWorkspace()
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 	if( cellStack != NULL ) {
-		global_memory.returnLLArray(cellStack);
+		global_memory.returnLLArray(cellStack, n2);
 		cellStack = NULL;
 	}
 	if( markCell != NULL ) {
-		global_memory.returnLLArray(markCell);
+		global_memory.returnLLArray(markCell, n2);
 		markCell = NULL;
 	}
 	if( markNode != NULL ) {
-		global_memory.returnLLArray(markNode);
+		global_memory.returnLLArray(markNode, n2);
 		markNode = NULL;
 	}
 	if( neighCount != NULL ) {
-		global_memory.returnLLArray(neighCount);
+		global_memory.returnLLArray(neighCount, n2);
 		neighCount = NULL;
 	}
 	if( visitCell != NULL ) {
-		global_memory.returnLLArray(visitCell);
+		global_memory.returnLLArray(visitCell, n2);
 		visitCell = NULL;
 	}
 	if( visitNode != NULL ) {
-		global_memory.returnLLArray(visitNode);
+		global_memory.returnLLArray(visitNode, n2);
 		visitNode = NULL;
 	}
 	if( numVisitNode != NULL ) {
-		global_memory.returnLLArray(numVisitNode);
+		global_memory.returnLLArray(numVisitNode, n2);
 		numVisitNode = NULL;
 	}
 	if( splitCell != NULL ) {
-		global_memory.returnLLArray(splitCell);
+		global_memory.returnLLArray(splitCell, n2);
 		splitCell = NULL;
 	}
 	if( splitCount != NULL ) {
-		global_memory.returnLLArray(splitCount);
+		global_memory.returnLLArray(splitCount, n2);
 		splitCount = NULL;
 	}
 	if( splitPos != NULL ) {
-		global_memory.returnLLArray(splitPos);
+		global_memory.returnLLArray(splitPos, n2);
 		splitPos = NULL;
 	}
 }

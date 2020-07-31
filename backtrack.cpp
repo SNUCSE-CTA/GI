@@ -17,7 +17,7 @@ Backtrack::~Backtrack()
 	}
 
 	if( mapping != NULL ) {
-		global_memory.returnLLArray(mapping);
+		global_memory.returnLLArray(mapping, n2);
 		mapping = NULL;
 	}
 	clearWorkspace();
@@ -33,7 +33,7 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2)
 	e2 = e * 2;
 
 	if( mapping != NULL ) {
-		global_memory.returnLLArray(mapping);
+		global_memory.returnLLArray(mapping, n2);
 		mapping = NULL;
 	}
 	mapping = global_memory.getLLArray(n2);
@@ -66,7 +66,7 @@ void Backtrack::initWorkspace()
 	numMappedParent = global_memory.getLLArray(n);
 	candPos = global_memory.getLLArray(n);
 	matchingOrder = global_memory.getLLArray(n);
-	isBinary = global_memory.getCharArray(n2);
+	isBinary = new char[n];
 	failingset = new vector<long long>[n]; //TODO: it is not tight
 }
 
@@ -83,26 +83,26 @@ void Backtrack::clearWorkspace()
 	}
 
 	if( weight != NULL ) {
-		global_memory.returnLLArray(weight);
+		global_memory.returnLLArray(weight, n);
 		weight = NULL;
 	}
 	if( numMappedParent != NULL ) {
-		global_memory.returnLLArray(numMappedParent);
+		global_memory.returnLLArray(numMappedParent, n);
 		numMappedParent = NULL;
 	}
 	if( candPos != NULL ) {
-		global_memory.returnLLArray(candPos);
+		global_memory.returnLLArray(candPos, n);
 		candPos = NULL;
 	}
 	if( matchingOrder != NULL ) {
-		global_memory.returnLLArray(matchingOrder);
+		global_memory.returnLLArray(matchingOrder, n);
 		matchingOrder = NULL;
 	}
+
 	if( isBinary != NULL ) {
-		global_memory.returnCharArray(isBinary);
+		delete[] isBinary;
 		isBinary = NULL;
 	}
-
 	if( failingset != NULL ) {
 		delete[] failingset;
 		failingset = NULL;
