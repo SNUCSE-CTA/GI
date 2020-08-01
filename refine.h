@@ -59,7 +59,6 @@ class Refinement
 	//color refinement
 	void colorByDegreeAndLabel(Coloring*, Graph*, Graph*);
 	void refine(Coloring*, Graph*, Graph*);
-	void individualize(long long, long long, Coloring*);
 	void sortArray(long long*, long long);
 	void sortTwoArrays(long long*, long long*, long long);
 	long long selectFromStack();

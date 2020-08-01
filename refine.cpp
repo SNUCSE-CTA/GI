@@ -136,11 +136,6 @@ void Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 	cout << __PRETTY_FUNCTION__ << endl;
 }
 
-void Refinement::individualize(long long aV1, long long aV2, Coloring* aColoring)
-{
-	cout << __PRETTY_FUNCTION__ << endl;
-}
-
 void Refinement::sortArray(long long* aArray, long long aSize)
 {
 	cout << __PRETTY_FUNCTION__ << endl;

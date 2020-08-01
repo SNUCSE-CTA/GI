@@ -12,15 +12,15 @@ bool Algorithm::run(Graph* aG1, Graph* aG2)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 
-	initGlobal(aG2->numNode, aG2->numEdge);
+	initGlobal(aG1->numNode, aG1->numEdge);
 
-	bool result = checkSimpleInvariants(aG2, aG2);
+	bool result = checkSimpleInvariants(aG1, aG2);
 	if(result == false) {
 		return false;
 	}
 
 	Refinement cr;
-	result = cr.run(aG2, aG2);
+	result = cr.run(aG1, aG2);
 	if(result == false) {
 		return false;
 	}
@@ -28,7 +28,7 @@ bool Algorithm::run(Graph* aG1, Graph* aG2)
 	Coloring* coloring = cr.getStableColoring();
 	
 	Backtrack bt;
-	result = bt.run(coloring, aG2, aG2);
+	result = bt.run(coloring, aG1, aG2);
 	
 	clearGlobal();
 
