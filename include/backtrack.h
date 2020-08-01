@@ -2,6 +2,8 @@
 #define __BACKTRACK_H__
 
 #include <iostream>
+#include <algorithm>
+#include <cstring> //memset
 #include "graph.h"
 #include "refine.h"
 #include "cs.h"
