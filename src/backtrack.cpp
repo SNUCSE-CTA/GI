@@ -20,7 +20,17 @@ Backtrack::~Backtrack()
 		global_memory.returnLLArray(mapping, n2);
 		mapping = NULL;
 	}
+
 	clearWorkspace();
+
+	if( extCand != NULL ) {
+		delete[] extCand;
+		extCand = NULL;
+	}
+	if( failingset != NULL ) {
+		delete[] failingset;
+		failingset = NULL;
+	}
 }
 
 //TODO: get numTreeNode as a parameter
@@ -30,6 +40,7 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2)
 	g1 = aG1;
 	g2 = aG2;
 	coloring = aColoring;
+	//TODO: numTreeNode = aNumTreeNode; 
 
 	n = g1->numNode;
 	e = g2->numEdge;
@@ -56,7 +67,21 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2)
 	cs = buildCS();
 
 	long long numMatching = mapBinaryCell();
-	return backtrack(numMatching);
+
+	if( extCand != NULL ) {
+		delete[] extCand;
+		extCand = NULL;
+	}
+	extCand = new vector<long long>[n - numMatching - numTreeNode];
+
+	if( failingset != NULL ) {
+		delete[] failingset;
+		failingset = NULL;
+	}
+	failingset = new vector<long long>[n - numMatching - numTreeNode];
+	
+
+	return backtrack(numMatching + numTreeNode);
 }
 
 void Backtrack::initWorkspace()
@@ -64,23 +89,17 @@ void Backtrack::initWorkspace()
 	clearWorkspace();
 	cout << __PRETTY_FUNCTION__ << endl;
 
-	extCand = new vector<long long>[n]; //TODO it is not tight
 	heap = new Heap(n);
 	weight = global_memory.getLLArray(n);
 	numMappedParent = global_memory.getLLArray(n);
 	candPos = global_memory.getLLArray(n);
 	matchingOrder = global_memory.getLLArray(n);
 	isBinary = new char[n];
-	failingset = new vector<long long>[n]; //TODO: it is not tight
 }
 
 void Backtrack::clearWorkspace()
 {
 	cout << __PRETTY_FUNCTION__ << endl;
-	if( extCand != NULL ) {
-		delete[] extCand;
-		extCand = NULL;
-	}
 	if( heap != NULL ) {
 		delete heap;
 		heap = NULL;
@@ -106,10 +125,6 @@ void Backtrack::clearWorkspace()
 	if( isBinary != NULL ) {
 		delete[] isBinary;
 		isBinary = NULL;
-	}
-	if( failingset != NULL ) {
-		delete[] failingset;
-		failingset = NULL;
 	}
 }
 
@@ -485,7 +500,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 
 			//TODO: ++num_recur
 			curr = getMinExtVertex(); //get a node with the min-weight and delete it from the extendable vertex array.
-			computeExtCand(curr);	//compute the extendable candidates by intersection and store it in extCand[curr].
+			computeExtCand(curr, aNumMatching);	//compute the extendable candidates by intersection and store it in extCand[curr - aNumMatching].
 			candPos[curr] = 0;	//index of the extendable candidate array
 			matchingOrder[depth] = curr;	//store the matching order so as to get the previously matched node when backtracks.
 
@@ -531,7 +546,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 			}
 			
 			//if all candidate failed
-			if( candPos[curr] == extCand[curr].size() - 1 ) { 
+			if( candPos[curr] == extCand[curr - aNumMatching].size() - 1 ) { 
 				//failing set
 				if( fsetIndex != -1 ) { //if curr is in child_f (it is merged to curr_f)
 					vector<long long>& curr_f = failingset[depth - aNumMatching];
@@ -582,7 +597,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 			//	- then decrease depth by 1 and backtrack (with backtrack == true)
 			//	- if depth becomes -1, termindate
 
-			cand = extCand[curr][ candPos[curr] ];
+			cand = extCand[curr - aNumMatching][ candPos[curr] ];
 			mappingFailed = false;
 			needBacktrack = false; //when all candidate failed
 
@@ -599,7 +614,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 					++confSize;
 				}
 
-				if( candPos[curr] == extCand[curr].size() - 1 ) {
+				if( candPos[curr] == extCand[curr - aNumMatching].size() - 1 ) {
 					needBacktrack = true;
 				}
 				else {
@@ -667,7 +682,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 						--(numMappedParent[child]);
 					}
 
-					if( candPos[curr] == extCand[curr].size() - 1 ) {
+					if( candPos[curr] == extCand[curr - aNumMatching].size() - 1 ) {
 						needBacktrack = true;
 					}
 					else {
@@ -837,11 +852,11 @@ long long Backtrack::computeWeight(long long aVertex)
 	return w;
 }
 
-void Backtrack::computeExtCand(long long aVertex)
+void Backtrack::computeExtCand(long long aVertex, long long aNumMatching)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 
-	extCand[aVertex].clear();
+	extCand[aVertex - aNumMatching].clear();
 
 	long long* markNode = NULL; long long global_mark = 0; //SEE TODO
 	long long i, adjCand, ci;
@@ -867,7 +882,7 @@ void Backtrack::computeExtCand(long long aVertex)
 		p = coloring->color[ coloring->inv[aVertex] ] >> 1;
 		s = coloring->cellSize[ coloring->color[ coloring->inv[aVertex] ] ] >> 1;
 		for(i = p; i < p + s; ++i) {
-			extCand[aVertex].push_back( cs->candArr[i] );
+			extCand[aVertex - aNumMatching].push_back( cs->candArr[i] );
 		}
 	}
 	else {
@@ -879,7 +894,7 @@ void Backtrack::computeExtCand(long long aVertex)
 			p = cs->P[ adjPos2[adjCand] + ci ];
 			s = cs->S[ adjPos2[adjCand] + ci ];
 			for(i = p; i < p + s; ++i) {
-				extCand[aVertex].push_back( neigh[i] );
+				extCand[aVertex - aNumMatching].push_back( neigh[i] );
 			}
 		}
 		else {
@@ -923,7 +938,7 @@ void Backtrack::computeExtCand(long long aVertex)
 			for(i = p; i < p + s; ++i) {
 				v = neigh[i];
 				if( markNode[v] == global_mark - 1 )
-					extCand[aVertex].push_back(v);
+					extCand[aVertex - aNumMatching].push_back(v);
 			}
 		} //else of (if numMapped == 1)
 	} //else of (if numMapped == 0)

@@ -21,6 +21,7 @@ class Backtrack
 	Graph* g1 = NULL;
 	Graph* g2 = NULL;
 	Coloring* coloring = NULL;
+	long long numTreeNode = 0;
 	//end input
 
 	//output
@@ -32,17 +33,20 @@ class Backtrack
 	CS* cs = NULL;
 	long long* mapping = NULL;
 
-	//variables used in backtracking (Workspace)
+	//variables used in backtracking
 	// - for adaptive matching order
 	vector<long long>* extCand = NULL;
+	// - for the partial failing set
+	vector<long long>* failingset = NULL;
+
+	//variables used in backtracking (Workspace)
+	// - for adaptive matching order
 	Heap* heap = NULL;
 	long long* weight = NULL;
 	long long* numMappedParent = NULL;
 	long long* candPos = NULL;
 	long long* matchingOrder = NULL;
 	char* isBinary = NULL;
-	// - for the partial failing set
-	vector<long long>* failingset = NULL;
 	
 
 	void initWorkspace();
@@ -62,7 +66,7 @@ class Backtrack
 	long long getMinExtVertex();
 	void deleteExtVertex(long long);
 	long long computeWeight(long long);
-	void computeExtCand(long long);
+	void computeExtCand(long long, long long);
 	//for the partial failing set
 	long long binarySearch(vector<long long>&, long long);
 	void merge(vector<long long>&, vector<long long>&);
