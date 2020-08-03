@@ -1,5 +1,6 @@
 #include "global.h"
 
+//TODO: remove global_temp_array and use global_memory instead
 long long* global_temp_array = NULL; 	//size of max(e2, n2)
 long long* global_temp_array2 = NULL;	//size of n2
 long long* global_temp_array3 = NULL;	//size of n2

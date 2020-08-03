@@ -41,7 +41,7 @@ class Backtrack
 	DAG* buildDAG(Graph*, Coloring*);
 	long long selectRoot(Graph*, Coloring*);
 
-	CS* buildCS(DAG*, Graph*, Coloring*);
+	CS* buildCS(DAG*, Graph*, Graph*, Coloring*);
 	long long binarySearch(long long*, long long, long long);
 
 	void mapBinaryCell(Coloring*, long long*);

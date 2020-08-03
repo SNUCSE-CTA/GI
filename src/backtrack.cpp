@@ -50,7 +50,7 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2)
 		delete cs;
 		cs = NULL;
 	}
-	cs = buildCS(dag, aG1, aColoring);
+	cs = buildCS(dag, aG1, aG2, aColoring);
 
 	mapBinaryCell(aColoring, mapping);
 	return backtrack(cs, dag, mapping);
@@ -119,11 +119,11 @@ DAG* Backtrack::buildDAG(Graph* aG1, Coloring* aColoring)
 	DAG* bfsdag = new DAG;
 	bfsdag->numNode = n;
 	bfsdag->numEdge = e;
-	bfsdag->dagChildSize = new long long[n];
-	bfsdag->dagParentSize = new long long[n];
+	bfsdag->childSize = new long long[n];
+	bfsdag->parentSize = new long long[n];
 	bfsdag->dagArr = new long long[e2];
-	long long* childSize = bfsdag->dagChildSize;
-	long long* parentSize = bfsdag->dagParentSize;
+	long long* childSize = bfsdag->childSize;
+	long long* parentSize = bfsdag->parentSize;
 	long long* dagArr = bfsdag->dagArr;
 	long long* adjPos = aG1->adjPos;
 	long long* deg = aG1->d;
@@ -246,10 +246,106 @@ long long Backtrack::selectRoot(Graph* aG1, Coloring* aColoring)
 }
 
 
-CS* Backtrack::buildCS(DAG* aDag, Graph* aG1, Coloring* aColoring)
+CS* Backtrack::buildCS(DAG* aDag, Graph* aG1, Graph* aG2, Coloring* aColoring)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
-	return NULL;
+
+	long long i, j, v, d, size, prevColor, currColor;
+	long long* color = aColoring->color;
+	long long* perm = aColoring->perm;
+	long long* inv = aColoring->inv;
+	long long numNode = aColoring->numNode;
+
+	long long* neigh = NULL;
+	long long* deg2 = aG2->d;
+	char* one1 = aG1->one;
+	char* one2 = aG2->one;
+	long long* adjPos1 = aG1->adjPos;
+	long long* adjPos2 = aG2->adjPos;
+
+	//allocate memory for CS
+	CS* cs = new CS;
+	cs->candArr = new long long[n];
+	cs->P = new long long[e2];
+	cs->S = new long long[e2];
+	cs->dagColorIndex = new long long[e2];
+	long long* candArr = cs->candArr;
+	long long* P = cs->P;
+	long long* S = cs->S;
+	long long* dagColorIndex = cs->dagColorIndex;
+
+	//A. build candidate set
+	long long idx = 0;
+	for(i = 0; i < numNode; ++i) {
+		if( perm[i] >= n ) {
+			candArr[idx] = perm[i];
+			++idx;
+		}
+	}
+
+	//B. build edges
+	
+	//Step B-1. sort adjacency list of aG2
+	long long* NC = global_memory.getLLArray(e2);
+	long long* NCSize = global_memory.getLLArray(n);
+	for(i = 0; i < n; ++i) {
+		if( one2[i] == 1 || deg2[i] == 0 ) //nodes of coreness-1
+			continue;
+
+		d = deg2[i];
+		neigh = aG1->e[i];
+		//TODO: sort(neigh, neigh + d, sortByColor);
+
+		//store start position for each color in neigh
+		idx = 0; //color index
+		P[adjPos2[i]] = 0;
+		size = 1;
+		prevColor = color[inv[ neigh[0] + n ]];
+		NC[adjPos2[i]] = prevColor;
+		for(j = 1; j < d; ++j) {
+			currColor = color[inv[ neigh[j] + n ]];
+			if( currColor != prevColor ) {
+				S[adjPos2[i] + idx] = size;
+				++idx;
+				size = 1;
+				P[adjPos2[i] + idx] = j;
+				NC[adjPos2[i] + idx] = currColor;
+			}
+			else {
+				++size;
+			}
+			prevColor = currColor;
+		}
+		S[adjPos2[i] + idx] = size;
+		NCSize[i] = idx + 1;
+	}
+
+	//Step B-2. compute color index
+	long long adj, adjc, c, ci, cand;
+	long long* parentSize = aDag->parentSize;
+	long long* dagArr = aDag->dagArr;
+	for(i = 0; i < n; ++i) { //for each vertex ui
+		if( isBinary[i] == 1 ) //binary cells are already mapped.
+			continue;
+
+		if( one1[i] == 1 ) //coreness-1 vertices.
+			continue;
+
+		c = color[inv[i]]; //note that ID of a vertex in aG1 is in [0, n).
+		d = parentSize[i];
+		cand = candArr[ (c >> 1) ]; //a candidate of ui
+		for(j = 0; j < d; ++j) {
+			adj = dagArr[ adjPos1[i] + j ];
+			adjc = color[inv[ adj ]];
+			ci = binarySearch(NC + adjPos2[cand], NCSize[cand], c);
+			dagColorIndex[ adjPos1[i] + j ] = ci;
+		}
+	}
+
+	global_memory.returnLLArray(NC, e2);
+	global_memory.returnLLArray(NCSize, n);
+
+	return cs;
 }
 
 long long Backtrack::binarySearch(long long* aArray, long long aSize, long long aValue)
