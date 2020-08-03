@@ -14,6 +14,13 @@ using namespace std;
 
 class Backtrack
 {
+	//input (do not free)
+	Graph* g1 = NULL;
+	Graph* g2 = NULL;
+	Coloring* coloring = NULL;
+	//end input
+
+	//output
 	long long n = 0;
 	long long e = 0;
 	long long n2 = 0;
@@ -38,21 +45,21 @@ class Backtrack
 	void initWorkspace();
 	void clearWorkspace();
 
-	DAG* buildDAG(Graph*, Coloring*);
-	long long selectRoot(Graph*, Coloring*);
+	DAG* buildDAG();
+	long long selectRoot();
 
-	CS* buildCS(DAG*, Graph*, Graph*, Coloring*);
+	CS* buildCS();
 	long long binarySearch(long long*, long long, long long);
 
-	void mapBinaryCell(Coloring*, long long*);
+	long long mapBinaryCell();
 
-	bool backtrack(CS*, DAG*, long long*);
+	bool backtrack();
 	//for the adaptive matching order
 	void insertExtVertex(long long, long long);
-	long long computeWeight(long long);
-	void computeExtCand(long long);
 	long long getMinExtVertex();
 	void deleteExtVertex(long long);
+	long long computeWeight(long long);
+	void computeExtCand(long long);
 	//for the partial failing set
 	long long binarySearch(vector<long long>&, long long);
 	void merge(vector<long long>&, vector<long long>&);
