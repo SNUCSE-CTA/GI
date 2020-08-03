@@ -34,3 +34,10 @@ void Coloring::clear()
 		cellSize = NULL;
 	}
 }
+
+void Coloring::sortByColor(long long* aStart, long long* aEnd)
+{
+	sort(aStart, aEnd, [this](long long a, long long b) {
+		return ( color[inv[a]] < color[inv[b]] );
+	});
+}

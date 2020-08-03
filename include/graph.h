@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm> //sort
 
 using namespace std;
 
@@ -14,6 +15,7 @@ public:
 	~Graph();
 	void clear();
 	void readGraph(string);
+	void sortByDegreeDec(long long*, long long*);
 
 	long long numNode = 0;
 	long long numEdge = 0;

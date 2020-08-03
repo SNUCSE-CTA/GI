@@ -166,7 +166,7 @@ DAG* Backtrack::buildDAG()
 	nextQueueEnd = queueEnd;
 	while( true ) {
 		//start of a level
-		//TODO: sort(bfsQueue + queueStart, bfsQueue + queueEnd, sortByDegreeGraph1);
+		g1->sortByDegreeDec(bfsQueue + queueStart, bfsQueue + queueEnd);
 		
 		while( queueStart < queueEnd ) {
 			curr = bfsQueue[queueStart];
@@ -297,7 +297,7 @@ CS* Backtrack::buildCS()
 
 		d = deg2[i];
 		neigh = g2->e[i];
-		//TODO: sort(neigh, neigh + d, sortByColor);
+		coloring->sortByColor(neigh, neigh + d);
 
 		//store start position for each color in neigh
 		idx = 0; //color index
@@ -467,11 +467,9 @@ bool Backtrack::backtrack(long long aNumMatching)
 	long long* parentSize = dag->parentSize;
 	long long* dagArr = dag->dagArr;
 	long long* adjPos1 = g1->adjPos;
-
-	//TODO
+	//TODO: define markCell and global_mark in global.cpp
 	long long* markCell = NULL; long long global_mark = 0;
 	
-
 
 	//we implement the recursive backtracking function by iterative method
 	while( true ) {
@@ -967,9 +965,97 @@ long long Backtrack::binarySearch(vector<long long>& aVector, long long aValue)
 void Backtrack::merge(vector<long long>& aTo, vector<long long>& aSource)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
+
+	long long ind1 = 0;
+	long long ind2 = 0;
+	long long size1 = aTo.size();
+	long long size2 = aSource.size();
+	long long* mergeSet = global_memory.getLLArray(n);
+	long long setSize = 0;
+
+	while( ind1 < size1 && ind2 < size2 ) {
+		if( aTo[ind1] == aSource[ind2] ) {
+			mergeSet[setSize] = aTo[ind1];
+			++setSize;
+			++ind1;
+			++ind2;
+		}
+		else if( aTo[ind1] < aSource[ind2] ) {
+			mergeSet[setSize] = aTo[ind1];
+			++setSize;
+			++ind1;
+		}
+		else { //aTo[ind1] > aSource[ind2]
+			mergeSet[setSize] = aSource[ind2];
+			++setSize;
+			++ind2;
+		}
+	}
+
+	while( ind1 < size1 ) {
+		mergeSet[setSize] = aTo[ind1];
+		++setSize;
+		++ind1;
+	}
+	while( ind2 < size2 ) {
+		mergeSet[setSize] = aSource[ind2];
+		++setSize;
+		++ind2;
+	}
+
+	aTo.resize(setSize);
+	for(long long i = 0; i < setSize; ++i) {
+		aTo[i] = mergeSet[i];
+	}
+
+	global_memory.returnLLArray(mergeSet, n);
 }
 
 void Backtrack::merge(vector<long long>& aTo, long long* aSource, long long aSize)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
+
+	long long ind1 = 0;
+	long long ind2 = 0;
+	long long size1 = aTo.size();
+	long long size2 = aSize;
+	long long* mergeSet = global_memory.getLLArray(n);
+	long long setSize = 0;
+
+	while( ind1 < size1 && ind2 < size2 ) {
+		if( aTo[ind1] == aSource[ind2] ) {
+			mergeSet[setSize] = aTo[ind1];
+			++setSize;
+			++ind1;
+			++ind2;
+		}
+		else if( aTo[ind1] < aSource[ind2] ) {
+			mergeSet[setSize] = aTo[ind1];
+			++setSize;
+			++ind1;
+		}
+		else { //aTo[ind1] > aSource[ind2]
+			mergeSet[setSize] = aSource[ind2];
+			++setSize;
+			++ind2;
+		}
+	}
+
+	while( ind1 < size1 ) {
+		mergeSet[setSize] = aTo[ind1];
+		++setSize;
+		++ind1;
+	}
+	while( ind2 < size2 ) {
+		mergeSet[setSize] = aSource[ind2];
+		++setSize;
+		++ind2;
+	}
+
+	aTo.resize(setSize);
+	for(long long i = 0; i < setSize; ++i) {
+		aTo[i] = mergeSet[i];
+	}
+
+	global_memory.returnLLArray(mergeSet, n);
 }

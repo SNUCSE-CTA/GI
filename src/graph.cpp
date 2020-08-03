@@ -129,6 +129,13 @@ void Graph::clear()
 	}
 }
 
+void Graph::sortByDegreeDec(long long* aStart, long long* aEnd)
+{
+	sort(aStart, aEnd, [this](long long a, long long b) {
+		return (d[a] > d[b]);
+	});
+}
+
 //////////////////////////DAG
 DAG::DAG()
 {
@@ -142,13 +149,13 @@ DAG::~DAG()
 void DAG::clear()
 {
 	cout << __PRETTY_FUNCTION__ << endl;
-	if(dagChildSize != NULL) {
-		delete[] dagChildSize;
-		dagChildSize = NULL;
+	if(childSize != NULL) {
+		delete[] childSize;
+		childSize = NULL;
 	}
-	if(dagParentSize != NULL) {
-		delete[] dagParentSize;
-		dagParentSize = NULL;
+	if(parentSize != NULL) {
+		delete[] parentSize;
+		parentSize = NULL;
 	}
 	if(dagArr != NULL) {
 		delete[] dagArr;
