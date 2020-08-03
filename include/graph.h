@@ -33,6 +33,7 @@ public:
 
 	long long numNode = 0;
 	long long numEdge = 0;
+	long long root = 0;
 	long long* childSize = NULL;
 	long long* parentSize = NULL;
 	long long* dagArr = NULL;

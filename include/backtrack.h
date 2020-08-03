@@ -9,8 +9,11 @@
 #include "cs.h"
 #include "heap.h"
 #include "memory.h"
+#include "global.h"
 
 using namespace std;
+
+extern vector<long long> global_temp_vector;
 
 class Backtrack
 {
@@ -53,7 +56,7 @@ class Backtrack
 
 	long long mapBinaryCell();
 
-	bool backtrack();
+	bool backtrack(long long);
 	//for the adaptive matching order
 	void insertExtVertex(long long, long long);
 	long long getMinExtVertex();

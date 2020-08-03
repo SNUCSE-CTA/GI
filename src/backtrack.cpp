@@ -55,8 +55,8 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2)
 	}
 	cs = buildCS();
 
-	mapBinaryCell();
-	return backtrack();
+	long long numMatching = mapBinaryCell();
+	return backtrack(numMatching);
 }
 
 void Backtrack::initWorkspace()
@@ -156,10 +156,10 @@ DAG* Backtrack::buildDAG()
 
 	//if there is no binary cells
 	if( queueEnd == 0 ) {
-		long long root = selectRoot();
-		bfsQueue[queueEnd] = root;
+		bfsdag->root = selectRoot();
+		bfsQueue[queueEnd] = bfsdag->root;
 		++queueEnd;
-		visited[root] = 1;
+		visited[bfsdag->root] = 1;
 	}
 
 	//BFS
@@ -451,10 +451,281 @@ long long Backtrack::mapBinaryCell()
 }
 
 
-bool Backtrack::backtrack()
+bool Backtrack::backtrack(long long aNumMatching)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
-	return true;
+
+	long long depth = aNumMatching; //the number of mapped vertices
+	long long curr = dag->root; //current mapping node of graph 1 (start from the root)
+	long long i, j, p, prevCand, child, cand;
+	bool backtrack = false;
+	bool mappingFailed, needBacktrack;
+	long long confSize = 0; //for the partial failing set
+	long long* confArray = global_memory.getLLArray(n);
+
+	long long* childSize = dag->childSize;
+	long long* parentSize = dag->parentSize;
+	long long* dagArr = dag->dagArr;
+	long long* adjPos1 = g1->adjPos;
+
+	//TODO
+	long long* markCell = NULL; long long global_mark = 0;
+	
+
+
+	//we implement the recursive backtracking function by iterative method
+	while( true ) {
+		//two cases:
+		//	A. beginning of a new recursive function (backtrack == false)
+		//	B. retruning from a recursive function (backtrack == true)
+		if( backtrack == false ) {
+			// Case A. beginning
+			if( depth == n ) { //we found an isomorphism
+				global_memory.returnLLArray(confArray, n);
+				return true;
+			}
+
+			//TODO: ++num_recur
+			curr = getMinExtVertex(); //get a node with the min-weight and delete it from the extendable vertex array.
+			computeExtCand(curr);	//compute the extendable candidates by intersection and store it in extCand[curr].
+			candPos[curr] = 0;	//index of the extendable candidate array
+			matchingOrder[depth] = curr;	//store the matching order so as to get the previously matched node when backtracks.
+
+			//failing set
+			vector<long long>& curr_f = failingset[ depth - aNumMatching ];
+			curr_f.clear();
+		}
+		else {
+			// Case B. returning
+			curr = matchingOrder[depth]; //when returning, no need to call getMinExtVertex()
+			prevCand = mapping[curr];
+			mapping[prevCand] = -1;
+			mapping[curr] = -1;
+
+			//update extendable vertices in DAG-ordering
+			for(i = 0; i < childSize[curr]; ++i) {
+				//delete children whose numMappedParent == parentSize from extendable vertex
+				//, and decrease numMappedParent by 1 for each DAG child of u
+				child = dagArr[ adjPos1[curr] + parentSize[curr] + i ];
+				if( numMappedParent[child] == parentSize[child] ) {
+					deleteExtVertex(child);
+				}
+				--(numMappedParent[child]);
+			}
+
+			//failing set
+			vector<long long>& child_f = failingset[depth - aNumMatching + 1]; //failing set of a child node in the search tree
+			long long fsetIndex = binarySearch(child_f, curr);
+			if( fsetIndex == -1 ) { //if curr is not in child_f
+				failingset[depth - aNumMatching] = child_f;
+
+				backtrack = true;
+				--depth;
+				if( depth == aNumMatching - 1 ) {
+					global_memory.returnLLArray(confArray, n);
+					return false;
+				}
+				insertExtVertex(curr, weight[curr]);
+				continue;
+			}
+			else {
+				merge( failingset[depth - aNumMatching], child_f ); //union
+			}
+			
+			//if all candidate failed
+			if( candPos[curr] == extCand[curr].size() - 1 ) { 
+				//failing set
+				if( fsetIndex != -1 ) { //if curr is in child_f (it is merged to curr_f)
+					vector<long long>& curr_f = failingset[depth - aNumMatching];
+
+					//remove curr from curr_f
+					curr_f.erase( curr_f.begin() + fsetIndex );
+
+					//insert parent(curr) to curr_f
+					global_temp_vector.clear(); //TODO: not using vector
+					for(j = 0; j < parentSize[curr]; ++j) {
+						p = dagArr[ adjPos1[curr] + j ];
+						if( isBinary[p] == 0 )
+							global_temp_vector.push_back(p);
+					}
+					merge(curr_f, global_temp_vector);
+				}
+
+				backtrack = true;
+				--depth;
+				if( depth == aNumMatching - 1 ) {
+					global_memory.returnLLArray(confArray, n);
+					return false;
+				}
+				insertExtVertex(curr, weight[curr]);
+				continue;
+			} //if(candPos[curr] == size() - 1)
+			else {
+				++(candPos[curr]); //try the next extendable candidate of curr
+			}
+		} //if-else(backtrack == false)
+
+		//TODO: define global_mark in global.cpp
+		if( global_mark > INFINITY ) {
+			memset(markCell, 0, sizeof(long long) * n2);
+			global_mark = 0;
+		}
+		++global_mark;
+		confSize = 0;
+
+		//common part of Cases A and B.
+		while( true ) { //while mapping is not okay
+			//map curr to the extendable candidate at candPos[curr]
+			//if mapping is okay
+			//	- then make a new recursive call (with backtrack == false)
+			//if mapping is not okay
+			//	- then try the next extendable candidate
+			//if all extendable candidates are failed to be mapped
+			//	- then decrease depth by 1 and backtrack (with backtrack == true)
+			//	- if depth becomes -1, termindate
+
+			cand = extCand[curr][ candPos[curr] ];
+			mappingFailed = false;
+			needBacktrack = false; //when all candidate failed
+
+			if( mapping[cand] != -1 ) {
+				//partial failing set
+				if( markCell[ mapping[cand] ] != global_mark ) {
+					markCell[ mapping[cand] ] = global_mark;
+					confArray[confSize] = mapping[cand];
+					++confSize;
+				}
+				if( markCell[curr] != global_mark ) {
+					markCell[curr] = global_mark;
+					confArray[confSize] = curr;
+					++confSize;
+				}
+
+				if( candPos[curr] == extCand[curr].size() - 1 ) {
+					needBacktrack = true;
+				}
+				else {
+					++(candPos[curr]);
+				}
+			} // if mapping[cand] != -1
+			else {
+				mapping[curr] = cand;
+				mapping[cand] = curr;
+
+				//for each child of curr
+				for(i = 0; i < childSize[curr]; ++i) {
+					child = dagArr[ adjPos1[curr] + parentSize[curr] + i ];
+
+					++(numMappedParent[child]);
+					if( numMappedParent[child] == parentSize[child] ) {
+						weight[child] = computeWeight(child);
+						if( weight[child] == 0 ) {	//empty-set class
+							mappingFailed = true;
+							--(numMappedParent[child]);
+							weight[child] = INFINITY;
+
+							vector<long long>& curr_f = failingset[depth - aNumMatching];
+							global_temp_vector.clear(); //TODO: not using vector
+							for(j = 0; j < parentSize[child]; ++j) {
+								p = dagArr[ adjPos1[child] + j ];
+								if( isBinary[p] == 0 )
+									global_temp_vector.push_back(p);
+							}
+							merge(curr_f, global_temp_vector);
+							break; //break the for(i) loop
+						} //if weight[child] == 0
+						else { //weight[child] > 0
+							insertExtVertex(child, weight[child]);
+						} //if-else( weight[child] == 0 )
+					} //if numMappedParent[child] == parentSize
+					else {
+						//we can compute weight[child] even if child is not extendable
+						if( numMappedParent[child] > 1 && computeWeight(child) == 0 ) {
+							mappingFailed = true;
+							--(numMappedParent[child]);
+
+							vector<long long>& curr_f = failingset[depth - aNumMatching];
+							global_temp_vector.clear(); //TODO: not using vector
+							for(j = 0; j < parentSize[child]; ++j) {
+								p = dagArr[ adjPos1[child] + j ];
+								if( isBinary[p] == 0 )
+									global_temp_vector.push_back(p);
+							}
+							merge(curr_f, global_temp_vector);
+							break; //break the for(i) loop
+						} //if
+					} //if-else numMappedParent == parentSize
+				} //for (i)
+
+				if( mappingFailed ) {
+					//mapping failed because one of the children belongs the empty-set class
+					mapping[curr] = -1;
+					mapping[cand] = -1;
+					for(i = i - 1; i > -1; --i) {
+						child = dagArr[ adjPos1[curr] + parentSize[curr] + i ];
+						if( numMappedParent[child] == parentSize[child] ) {
+							deleteExtVertex(child);
+						}
+						--(numMappedParent[child]);
+					}
+
+					if( candPos[curr] == extCand[curr].size() - 1 ) {
+						needBacktrack = true;
+					}
+					else {
+						++(candPos[curr]);
+					}
+				} //if mappingFailed
+				else { //mapping OKAY!
+					if( confSize > 0 ) {
+						sort(confArray, confArray + confSize);
+						merge( failingset[depth - aNumMatching], confArray, confSize );
+					}
+
+					backtrack = false;
+					++depth;
+					break; //break the inner while loop
+				} //if-else mappingFailed
+			}//if-else mapping[cand] != -1
+			
+			if( needBacktrack ) {
+				vector<long long>& curr_f = failingset[depth - aNumMatching];
+				if( confSize > 0 ) {
+					sort(confArray, confArray + confSize);
+					merge(curr_f, confArray, confSize);
+				}
+
+				if( curr_f.size() != 0 ) {
+					long long fsetIndex = binarySearch(curr_f, curr);
+					if( fsetIndex != -1 ) {
+						//remove curr
+						curr_f.erase(curr_f.begin() + fsetIndex);
+
+						//add parent(curr)
+						global_temp_vector.clear(); //TODO: not using vector
+						for(j = 0; j < parentSize[curr]; ++j) {
+							p = dagArr[ adjPos1[curr] + j ];
+							if( isBinary[p] == 0 )
+								global_temp_vector.push_back(p);
+						}
+						merge(curr_f, global_temp_vector);
+					}
+				} //if curr_f.size() != 0
+
+				backtrack = true;
+				--depth;
+				if( depth == aNumMatching - 1 ) {
+					global_memory.returnLLArray(confArray, n);
+					return false;
+				}
+				insertExtVertex(curr, weight[curr]);
+				break; //break the inner while loop
+			} //if needBacktrack
+		} //while(true) of inner loop.
+	} //while(true) of outer loop.
+
+	global_memory.returnLLArray(confArray, n);
+	return false;
 }
 
 void Backtrack::insertExtVertex(long long aVertex, long long aWeight)
