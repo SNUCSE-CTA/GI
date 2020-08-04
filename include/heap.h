@@ -2,6 +2,7 @@
 #define __HEAP_H__
 
 #include <iostream>
+#include <cstring> //memset
 #include "memory.h"
 
 //macros for Heap
@@ -15,6 +16,9 @@ using namespace std;
 
 class Heap
 {
+private:
+	void minHeapify(long long*, long long);
+
 public:
 	long long* heap = NULL;
 	long long* locate = NULL;
@@ -22,7 +26,6 @@ public:
 
 	Heap(long long);
 	~Heap();
-	void minHeapify(long long*, long long);
 	void buildMinHeap(long long*);
 	void insert(long long*, long long);
 	void erase(long long*, long long);
