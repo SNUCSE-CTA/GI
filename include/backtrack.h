@@ -34,13 +34,12 @@ class Backtrack
 	long long* mapping = NULL;
 
 	//variables used in backtracking
-	// - for adaptive matching order
-	vector<long long>* extCand = NULL;
 	// - for the partial failing set
 	vector<long long>* failingset = NULL;
 
 	//variables used in backtracking (Workspace)
 	// - for adaptive matching order
+	vector<long long>* extCand = NULL;
 	Heap* heap = NULL;
 	long long* weight = NULL;
 	long long* numMappedParent = NULL;
@@ -66,7 +65,7 @@ class Backtrack
 	long long getMinExtVertex();
 	void deleteExtVertex(long long);
 	long long computeWeight(long long);
-	void computeExtCand(long long, long long);
+	void computeExtCand(long long);
 	//for the partial failing set
 	long long binarySearch(vector<long long>&, long long);
 	void merge(vector<long long>&, vector<long long>&);
