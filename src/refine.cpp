@@ -123,7 +123,19 @@ void Refinement::clearWorkspace()
 
 bool Refinement::checkColoring(Coloring* coloring)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
+
+	for (long long i = 0; i < coloring->numNode; i += coloring->cellSize[i]) {
+		long long acc = 0;
+		for (long long j = 0; j < coloring->cellSize[i]; ++j) {
+			acc += (coloring->perm[i+j] < n) ? 1 : -1;
+		}
+
+		if (acc != 0) return false;
+	}
+
 	return true;
 }
 
