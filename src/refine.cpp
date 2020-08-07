@@ -1,14 +1,12 @@
 #include "refine.h"
 
-Refinement::Refinement()
-{
-}
+Refinement::Refinement() {}
 
 Refinement::~Refinement()
 {
-	if( stableColoring != NULL ) {
+	if (stableColoring != nullptr) {
 		delete stableColoring;
-		stableColoring = NULL;
+		stableColoring = nullptr;
 	}
 	clearWorkspace();
 }
@@ -22,7 +20,7 @@ bool Refinement::run(Graph* aG1, Graph* aG2)
 	n2 = n * 2;
 	e2 = e * 2;
 
-	if( stableColoring != NULL ) {
+	if (stableColoring != nullptr) {
 		delete stableColoring;
 	}
 	stableColoring = new Coloring;
@@ -35,7 +33,7 @@ bool Refinement::run(Graph* aG1, Graph* aG2)
 	numTreeNode = prepCoreOne(stableColoring, aG1, aG2);
 
 	refine(stableColoring, aG1, aG2);
-	if(checkColoring(stableColoring) == false) {
+	if (checkColoring(stableColoring) == false) {
 		clearWorkspace();
 		return false;
 	}
@@ -78,45 +76,45 @@ void Refinement::initWorkspace()
 void Refinement::clearWorkspace()
 {
 	cout << __PRETTY_FUNCTION__ << endl;
-	if( cellStack != NULL ) {
+	if (cellStack != nullptr) {
 		global_memory.returnLLArray(cellStack, n2);
-		cellStack = NULL;
+		cellStack = nullptr;
 	}
-	if( markCell != NULL ) {
+	if (markCell != nullptr) {
 		global_memory.returnLLArray(markCell, n2);
-		markCell = NULL;
+		markCell = nullptr;
 	}
-	if( markNode != NULL ) {
+	if (markNode != nullptr) {
 		global_memory.returnLLArray(markNode, n2);
-		markNode = NULL;
+		markNode = nullptr;
 	}
-	if( neighCount != NULL ) {
+	if (neighCount != nullptr) {
 		global_memory.returnLLArray(neighCount, n2);
-		neighCount = NULL;
+		neighCount = nullptr;
 	}
-	if( visitCell != NULL ) {
+	if (visitCell != nullptr) {
 		global_memory.returnLLArray(visitCell, n2);
-		visitCell = NULL;
+		visitCell = nullptr;
 	}
-	if( visitNode != NULL ) {
+	if (visitNode != nullptr) {
 		global_memory.returnLLArray(visitNode, n2);
-		visitNode = NULL;
+		visitNode = nullptr;
 	}
-	if( numVisitNode != NULL ) {
+	if (numVisitNode != nullptr) {
 		global_memory.returnLLArray(numVisitNode, n2);
-		numVisitNode = NULL;
+		numVisitNode = nullptr;
 	}
-	if( splitCell != NULL ) {
+	if (splitCell != nullptr) {
 		global_memory.returnLLArray(splitCell, n2);
-		splitCell = NULL;
+		splitCell = nullptr;
 	}
-	if( splitCount != NULL ) {
+	if (splitCount != nullptr) {
 		global_memory.returnLLArray(splitCount, n2);
-		splitCount = NULL;
+		splitCount = nullptr;
 	}
-	if( splitPos != NULL ) {
+	if (splitPos != nullptr) {
 		global_memory.returnLLArray(splitPos, n2);
-		splitPos = NULL;
+		splitPos = nullptr;
 	}
 }
 
@@ -153,7 +151,6 @@ long long Refinement::selectFromStack()
 	return 0;
 }
 
-
 long long Refinement::prepCoreOne(Coloring* coloring, Graph* aG1, Graph* aG2)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -164,3 +161,4 @@ void Refinement::deleteEdge(long long aVertex, long long aNumDegOne, Graph* aG1,
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 }
+
