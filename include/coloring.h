@@ -14,13 +14,14 @@ public:
 
 	long long numNode;
 	long long numCell;
-	long long* color = NULL;
-	long long* perm = NULL;
-	long long* inv = NULL;
-	long long* cellSize = NULL;
+	long long* color = nullptr;
+	long long* perm = nullptr;
+	long long* inv = nullptr;
+	long long* cellSize = nullptr;
 
 	void init();
 	void clear();
 };
 
 #endif
+

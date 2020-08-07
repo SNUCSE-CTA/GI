@@ -17,20 +17,21 @@ void Coloring::init()
 void Coloring::clear()
 {
 	cout << __PRETTY_FUNCTION__ << endl;
-	if(color != NULL) {
+	if (color != nullptr) {
 		delete[] color;
-		color = NULL;
+		color = nullptr;
 	}
-	if(perm != NULL) {
+	if (perm != nullptr) {
 		delete[] perm;
-		perm = NULL;
+		perm = nullptr;
 	}
-	if(inv != NULL) {
+	if (inv != nullptr) {
 		delete[] inv;
-		inv = NULL;
+		inv = nullptr;
 	}
-	if(cellSize != NULL) {
+	if (cellSize != nullptr) {
 		delete[] cellSize;
-		cellSize = NULL;
+		cellSize = nullptr;
 	}
 }
+
