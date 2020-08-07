@@ -2,6 +2,7 @@
 #define __COLORING_H__
 
 #include <iostream>
+#include <algorithm>
 #include "graph.h"
 
 using namespace std;
@@ -21,6 +22,7 @@ public:
 
 	void init();
 	void clear();
+	void sortByColor(long long*, long long*);
 };
 
 #endif
