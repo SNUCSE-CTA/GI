@@ -1,5 +1,7 @@
 #include "refine.h"
 
+#include <cassert>
+
 Refinement::Refinement() {}
 
 Refinement::~Refinement()
@@ -23,7 +25,8 @@ bool Refinement::run(Graph* aG1, Graph* aG2)
 	if (stableColoring != nullptr) {
 		delete stableColoring;
 	}
-	stableColoring = new Coloring;
+	stableColoring = new Coloring(n2);
+
 	initWorkspace(); //allocate workspace variables
 
 	//initial coloring
@@ -124,9 +127,51 @@ bool Refinement::checkColoring(Coloring* coloring)
 	return true;
 }
 
-void Refinement::colorByDegreeAndLabel(Coloring*coloring, Graph* aG1, Graph* aG2)
+void Refinement::colorByDegreeAndLabel(Coloring* coloring, Graph* aG1, Graph* aG2)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
+
+	sort(coloring->perm, coloring->perm + coloring->numNode,
+			[aG1, aG2](const long long& i, const long long& j) -> bool {
+				const long long di = (i < aG1->numNode) ? aG1->d[i] : aG2->d[i - aG1->numNode];
+				const long long li = (i < aG1->numNode) ? aG1->l[i] : aG2->l[i - aG1->numNode];
+
+				const long long dj = (j < aG1->numNode) ? aG1->d[j] : aG2->d[j - aG1->numNode];
+				const long long lj = (j < aG1->numNode) ? aG1->l[j] : aG2->l[j - aG1->numNode];
+
+				return (di == dj && li < lj) || di < dj;
+			}
+		);
+
+	for (long long i = 0; i < coloring->numNode; ++i)
+		coloring->inv[coloring->perm[i]] = i;
+
+	coloring->numCell = 1;
+	coloring->color[0] = 0;
+	coloring->cellSize[0] = 1;
+	for (long long i = 1; i < coloring->numNode; ++i) {
+		const long long u = coloring->perm[i];
+		const long long v = coloring->perm[i-1];
+
+		const long long du = (u < aG1->numNode) ? aG1->d[u] : aG2->d[u - aG1->numNode];
+		const long long lu = (u < aG1->numNode) ? aG1->l[u] : aG2->l[u - aG1->numNode];
+
+		const long long dv = (v < aG1->numNode) ? aG1->d[v] : aG2->d[v - aG1->numNode];
+		const long long lv = (v < aG1->numNode) ? aG1->l[v] : aG2->l[v - aG1->numNode];
+
+		if (du == dv && lu == lv) {
+			coloring->color[i] = coloring->color[i-1];
+			++coloring->cellSize[coloring->color[i-1]];
+		} else {
+			++coloring->numCell;
+			coloring->color[i] = i;
+			coloring->cellSize[i] = 1;
+		}
+	}
+
+	return;
 }
 
 void Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)

@@ -1,11 +1,12 @@
 #include "coloring.h"
 
-Coloring::Coloring()
-{
+Coloring::Coloring() {}
+
+Coloring::Coloring(long long n) {
+	init(n);
 }
 
-Coloring::~Coloring()
-{
+Coloring::~Coloring() {
 	clear();
 }
 

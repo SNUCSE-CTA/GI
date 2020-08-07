@@ -15,6 +15,7 @@ class Coloring
 {
 public:
 	Coloring();
+	Coloring(long long _numNode);
 	~Coloring();
 
 	long long numNode;
