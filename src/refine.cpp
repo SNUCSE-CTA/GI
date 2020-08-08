@@ -6,9 +6,9 @@ Refinement::Refinement() {}
 
 Refinement::~Refinement()
 {
-	if (stableColoring != nullptr) {
+	if (stableColoring != NULL) {
 		delete stableColoring;
-		stableColoring = nullptr;
+		stableColoring = NULL;
 	}
 	clearWorkspace();
 }
@@ -22,7 +22,7 @@ bool Refinement::run(Graph* aG1, Graph* aG2)
 	n2 = n * 2;
 	e2 = e * 2;
 
-	if (stableColoring != nullptr) {
+	if (stableColoring != NULL) {
 		delete stableColoring;
 	}
 	stableColoring = new Coloring(n2);
@@ -78,45 +78,45 @@ void Refinement::initWorkspace()
 void Refinement::clearWorkspace()
 {
 	cout << __PRETTY_FUNCTION__ << endl;
-	if (cellStack != nullptr) {
+	if (cellStack != NULL) {
 		global_memory.returnLLArray(cellStack, n2);
-		cellStack = nullptr;
+		cellStack = NULL;
 	}
-	if (markCell != nullptr) {
+	if (markCell != NULL) {
 		global_memory.returnLLArray(markCell, n2);
-		markCell = nullptr;
+		markCell = NULL;
 	}
-	if (markNode != nullptr) {
+	if (markNode != NULL) {
 		global_memory.returnLLArray(markNode, n2);
-		markNode = nullptr;
+		markNode = NULL;
 	}
-	if (neighCount != nullptr) {
+	if (neighCount != NULL) {
 		global_memory.returnLLArray(neighCount, n2);
-		neighCount = nullptr;
+		neighCount = NULL;
 	}
-	if (visitCell != nullptr) {
+	if (visitCell != NULL) {
 		global_memory.returnLLArray(visitCell, n2);
-		visitCell = nullptr;
+		visitCell = NULL;
 	}
-	if (visitNode != nullptr) {
+	if (visitNode != NULL) {
 		global_memory.returnLLArray(visitNode, n2);
-		visitNode = nullptr;
+		visitNode = NULL;
 	}
-	if (numVisitNode != nullptr) {
+	if (numVisitNode != NULL) {
 		global_memory.returnLLArray(numVisitNode, n2);
-		numVisitNode = nullptr;
+		numVisitNode = NULL;
 	}
-	if (splitCell != nullptr) {
+	if (splitCell != NULL) {
 		global_memory.returnLLArray(splitCell, n2);
-		splitCell = nullptr;
+		splitCell = NULL;
 	}
-	if (splitCount != nullptr) {
+	if (splitCount != NULL) {
 		global_memory.returnLLArray(splitCount, n2);
-		splitCount = nullptr;
+		splitCount = NULL;
 	}
-	if (splitPos != nullptr) {
+	if (splitPos != NULL) {
 		global_memory.returnLLArray(splitPos, n2);
-		splitPos = nullptr;
+		splitPos = NULL;
 	}
 }
 
