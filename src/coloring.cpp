@@ -19,10 +19,10 @@ void Coloring::init(long long _numNode)
 	numNode = _numNode;
 	numCell = 1;
 
-	color = global_memory.getLLArray(numNode);
-	perm = global_memory.getLLArray(numNode);
-	inv = global_memory.getLLArray(numNode);
-	cellSize = global_memory.getLLArray(numNode);
+	color = new long long[numNode]();
+	perm = new long long[numNode]();
+	inv = new long long[numNode]();
+	cellSize = new long long[numNode]();
 
 	for (long long i = 0; i < numNode; ++i) {
 		color[i] = 0;
@@ -40,21 +40,21 @@ void Coloring::clear()
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	if (color != nullptr) {
-		global_memory.returnLLArray(color, numNode);
-		color = nullptr;
+	if (color != NULL) {
+		delete[] color;
+		color = NULL;
 	}
-	if (perm != nullptr) {
-		global_memory.returnLLArray(perm, numNode);
-		perm = nullptr;
+	if (perm != NULL) {
+		delete[] perm;
+		perm = NULL;
 	}
-	if (inv != nullptr) {
-		global_memory.returnLLArray(inv, numNode);
-		inv = nullptr;
+	if (inv != NULL) {
+		delete[] inv;
+		inv = NULL;
 	}
-	if (cellSize != nullptr) {
-		global_memory.returnLLArray(cellSize, numNode);
-		cellSize = nullptr;
+	if (cellSize != NULL) {
+		delete[] cellSize;
+		cellSize = NULL;
 	}
 }
 

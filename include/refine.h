@@ -2,6 +2,8 @@
 #define __REFINE_H__
 
 #include <iostream>
+#include <cstring>
+
 #include "coloring.h"
 #include "graph.h"
 #include "global.h"
@@ -30,7 +32,7 @@ extern Memory global_memory;
 
 class Refinement
 {
-	Coloring* stableColoring = nullptr;
+	Coloring* stableColoring = NULL;
 	long long numTreeNode = 0;
 	long long n = 0;
 	long long n2 = 0;
@@ -38,18 +40,18 @@ class Refinement
 	long long e2 = 0;
 
 	//variables used in color refinement (Workspace)
-	long long* cellStack = nullptr;
+	long long* cellStack = NULL;
 	long long stackSize = 0;
-	long long* markCell = nullptr;
-	long long* markNode = nullptr;
+	long long* markCell = NULL;
+	long long* markNode = NULL;
 	long long mark = 0;
-	long long* neighCount = nullptr;
-	long long* visitCell = nullptr;
-	long long* visitNode = nullptr;
-	long long* numVisitNode = nullptr;
-	long long* splitCell = nullptr;
-	long long* splitCount = nullptr;
-	long long* splitPos = nullptr;
+	long long* neighCount = NULL;
+	long long* visitCell = NULL;
+	long long* visitNode = NULL;
+	long long* numVisitNode = NULL;
+	long long* splitCell = NULL;
+	long long* splitCount = NULL;
+	long long* splitPos = NULL;
 
 
 	void initWorkspace();
@@ -58,15 +60,15 @@ class Refinement
 
 	//color refinement
 	void colorByDegreeAndLabel(Coloring*, Graph*, Graph*);
-	void refine(Coloring*, Graph*, Graph*);
-	void sortArray(long long*, long long);
-	void sortTwoArrays(long long*, long long*, long long);
-	long long selectFromStack();
-	
+	bool refine(Coloring*, Graph*, Graph*);
+	// void sortArray(long long*, long long);
+	// void sortTwoArrays(long long*, long long*, long long);
+	long long selectFromStack(Coloring*);
+
 	//preprocessing coreness-1 nodes
 	long long prepCoreOne(Coloring*, Graph*, Graph*);
 	void deleteEdge(long long, long long, Graph*, Graph*);
-	
+
 public:
 	Refinement();
 	~Refinement();
