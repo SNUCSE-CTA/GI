@@ -35,14 +35,13 @@ bool Refinement::run(Graph* aG1, Graph* aG2)
 	//process coreness-1 vertices
 	numTreeNode = prepCoreOne(stableColoring, aG1, aG2);
 
-	refine(stableColoring, aG1, aG2);
-	if (checkColoring(stableColoring) == false) {
+	if (refine(stableColoring, aG1, aG2) == false) {
 		clearWorkspace();
 		return false;
+	} else {
+		clearWorkspace();
+		return true;
 	}
-	
-	clearWorkspace();
-	return true;
 }
 
 Coloring* Refinement::getStableColoring()
@@ -186,9 +185,298 @@ void Refinement::colorByDegreeAndLabel(Coloring* coloring, Graph* aG1, Graph* aG
 	return;
 }
 
-void Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
+bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
+
+	auto deg = [aG1, aG2](const long long& u) -> long long {
+		return (u < aG1->numNode) ? aG1->d[u] : aG2->d[u - aG1->numNode];
+	};
+
+	auto adj = [aG1, aG2](const long long& u, const long long& i) -> long long {
+		return (u < aG1->numNode) ? aG1->e[u][i] : (aG2->e[u - aG1->numNode][i] + aG1->numNode);
+	};
+
+	const long long numNode = aG1->numNode + aG2->numNode;
+
+	long long* inStack = global_memory.getLLArray(numNode);
+	long long* stackCand = global_memory.getLLArray(numNode);
+
+	fill(inStack, inStack+numNode, 0);
+	fill(stackCand, stackCand+numNode, 0);
+
+	long long numStackCand = 0;
+	long long numVisitCell = 0;
+	long long numSplitCell = 0;
+	long long numSplitCount = 0;
+
+	// Push all cells of the coloring into the stack.
+	long long stackSize = 0;
+	for (long long i = 0; i < numNode; i += coloring->cellSize[i]) {
+		cellStack[stackSize++] = i;
+		inStack[i] = 1;
+	}
+
+	while (stackSize > 0) {
+		if (coloring->numCell == numNode) break;
+
+		if (mark > INFINITY) {
+			fill(markCell, markCell+numNode, 0);
+			fill(markNode, markNode+numNode, 0);
+			mark = 0;
+		}
+		++mark;
+
+		long long weightend = 0;
+		long long idx = selectFromStack();
+		long long currCell = cellStack[idx];
+		long long currEnd = currCell + coloring->cellSize[currCell];
+
+		cellStack[idx] = cellStack[--stackSize];
+		inStack[currCell] = 0;
+
+		// The first node.
+		long long currNode = coloring->perm[currCell];
+		long long currDegree = deg(currNode);
+
+		do {
+			long long start = currCell;
+			long long end = currEnd;
+			weightend = deg(currNode);
+
+			if (coloring->cellSize[start] == 1) {
+				return false;
+			} else if (coloring->cellSize[start] == 2) {
+				bool u_in_G1 = (coloring->perm[start] < aG1->numNode);
+				bool v_in_G1 = (coloring->perm[start+1] < aG1->numNode);
+				if ((u_in_G1 && v_in_G1) || (!u_in_G1 && !v_in_G1)) {
+					return false;
+				}
+
+				numVisitCell = 0;
+				for (long long i = 0; i < 2; ++i) {
+					currNode = coloring->perm[start+i];
+					for (long long j = 0; j < deg(currNode); ++j) {
+						long long neigh = adj(currNode, j);
+						long long c = coloring->color[coloring->inv[neigh]];
+						if (coloring->cellSize[c] > 1) {
+							if (markCell[c] != mark) {
+								visitCell[numVisitCell++] = c;
+								markCell[c] = mark;
+								visitNode[c] = neigh;
+								numVisitNode[c] = 1;
+							} else {
+								visitNode[c + numVisitNode[c]] = neigh;
+								++numVisitNode[c];
+							}
+						}
+					}
+				}
+				++mark;
+
+				// Find cells that needs to be split.
+				numSplitCell = 0;
+				for (long long idx = 0; idx < numVisitCell; ++idx) {
+					long long c = visitCell[idx];
+					if (numVisitNode[c] < coloring->cellSize[c]) {
+						splitCell[numSplitCell++] = c;
+					}
+				}
+
+				if (numSplitCell > 0) {
+					sort(splitCell, splitCell+numSplitCell);
+
+					for (long long idx = 0; idx < numSplitCell; ++idx) {
+						long long sc = splitCell[idx];
+
+						coloring->cellSize[sc] -= numVisitNode[sc];
+
+						long long newCell = sc + coloring->cellSize[sc];
+						coloring->cellSize[newCell] = numVisitNode[sc];
+
+						++coloring->numCell;
+
+						if (inStack[sc]) {
+							cellStack[stackSize++] = newCell;
+							inStack[newCell] = 1;
+						} else {
+							if (coloring->cellSize[newCell] < coloring->cellSize[sc]) {
+								cellStack[stackSize++] = newCell;
+								inStack[newCell] = 1;
+							} else {
+								cellStack[stackSize++] = sc;
+								inStack[sc] = 1;
+							}
+						}
+
+						for (long long i = 0; i < numVisitNode[sc]; ++i) {
+							long long node = visitNode[sc+i];
+
+							long long newPos = newCell + i;
+							long long oldPos = coloring->inv[node];
+
+							coloring->perm[oldPos] = coloring->perm[newPos];
+							coloring->perm[newPos] = node;
+							coloring->inv[node] = newPos;
+							coloring->inv[coloring->perm[oldPos]] = oldPos;
+							coloring->color[newPos] = newCell;
+						}
+					}
+				}
+			} else { // if cellSize[start] > 2
+				if (coloring->cellSize[start] != numNode) {
+					numVisitCell = 0;
+					for (long long i = start; i < end; ++i) {
+						currNode = coloring->perm[i];
+						for (long long j = 0; j < deg(currNode); ++j) {
+							long long neigh = adj(currNode, j);
+
+							if (markNode[neigh] == mark) {
+								++neighCount[neigh];
+							} else {
+								int c = coloring->color[coloring->inv[neigh]];
+								if (coloring->cellSize[c] > 1) {
+									markNode[neigh] = mark;
+									neighCount[neigh] = 1;
+
+									if (markCell[c] != mark) {
+										visitCell[numVisitCell++] = c;
+										markCell[c] = mark;
+										visitNode[c] = neigh;
+										numVisitNode[c] = 1;
+									} else {
+										visitNode[c + numVisitNode[c]++] = neigh;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			++mark;
+
+			// Find cells that need to be split.
+			numSplitCell = 0;
+			for (long long idx = 0; idx < numVisitCell; ++idx) {
+				long long c = visitCell[idx];
+
+				if (numVisitNode[c] < coloring->cellSize[c]) {
+					splitCell[numSplitCell++] = c;
+				} else {
+					long long count = neighCount[coloring->perm[c]];
+					for (long long i = c+1; i < c+coloring->cellSize[c]; ++i) {
+						if (neighCount[coloring->perm[i]] != count) {
+							splitCell[numSplitCell++] = c;
+							break;
+						}
+					}
+				}
+			}
+
+			if (numSplitCell > 0) {
+				sort(splitCell, splitCell+numSplitCell);
+
+				for (long long idx = 0; idx < numSplitCell; ++idx) {
+					long long sc = splitCell[idx];
+
+					long long scEnd = sc + coloring->cellSize[sc];
+					numSplitCount = 0;
+					if (numVisitNode[sc] < scEnd) {
+						splitCount[numSplitCount++] = 0;
+						splitPos[0] = scEnd - numVisitNode[sc];
+					}
+
+					long long thisEnd = sc + numVisitNode[sc];
+					for (long long i = sc; i < thisEnd; ++i) {
+						long long count = neighCount[visitNode[i]];
+
+						if (markCell[count] != mark) {
+							markCell[count] = mark;
+							splitCount[numSplitCount++] = count;
+							splitPos[count] = 1;
+						} else {
+							++splitPos[count];
+						}
+					}
+					++mark;
+
+					sort(splitCount, splitCount+numSplitCount);
+
+					stackCand[0] = sc;
+					numStackCand = 1;
+
+					long long newCell = sc;
+					for (long long k = 0; k < numSplitCount; ++k) {
+						long long size = splitPos[splitCount[k]];
+						coloring->cellSize[newCell] = size;
+						splitPos[splitCount[k]] = newCell;
+
+						newCell += size;
+						if (newCell < scEnd) {
+							// Push new cells into the stack.
+							// Note that the first new cell is not pushed.
+							stackCand[numStackCand++] = newCell;
+							++coloring->numCell;
+						}
+					}
+
+					if (inStack[sc]) {
+						for (long long k = 1; k < numStackCand; ++k) {
+							cellStack[stackSize++] = stackCand[k];
+							inStack[stackCand[k]] = 1;
+						}
+					} else {
+						long long maxCell = sc;
+						long long maxCellSize = coloring->cellSize[sc];
+						for (long long k = 1; k < numStackCand; ++k) {
+							if (coloring->cellSize[stackCand[k]] > maxCellSize) {
+								maxCell = stackCand[k];
+								maxCellSize = coloring->cellSize[maxCell];
+							}
+						}
+
+						for (long long k = 0; k < numStackCand; ++k) {
+							if (stackCand[k] != maxCell) {
+								cellStack[stackSize++] = stackCand[k];
+								inStack[stackCand[k]] = 1;
+							}
+						}
+					}
+
+					for (long long i = sc; i < thisEnd; ++i) {
+						long long node = visitNode[i];
+
+						long long newPos = splitPos[neighCount[node]]++;
+						long long oldPos = coloring->inv[node];
+
+						coloring->perm[oldPos] = coloring->perm[newPos];
+						coloring->perm[newPos] = node;
+						coloring->inv[node] = newPos;
+						coloring->inv[coloring->perm[oldPos]] = oldPos;
+						neighCount[node] = 0;
+					}
+
+					newCell = scEnd - numVisitNode[sc];
+					long long nc = newCell;
+					long long ncEnd = newCell + coloring->cellSize[newCell] - 1;
+					do {
+						coloring->color[nc] = newCell;
+						if (nc == ncEnd) {
+							newCell = nc + 1;
+							if (newCell < numNode) {
+								ncEnd = newCell + coloring->cellSize[newCell] - 1;
+							}
+						}
+						++nc;
+					} while (nc < scEnd);
+				}
+			}
+		} while (weightend < currDegree);
+	}
+
+	return checkColoring(coloring);
 }
 
 void Refinement::sortArray(long long* aArray, long long aSize)

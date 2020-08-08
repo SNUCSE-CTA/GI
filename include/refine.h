@@ -58,15 +58,15 @@ class Refinement
 
 	//color refinement
 	void colorByDegreeAndLabel(Coloring*, Graph*, Graph*);
-	void refine(Coloring*, Graph*, Graph*);
+	bool refine(Coloring*, Graph*, Graph*);
 	void sortArray(long long*, long long);
 	void sortTwoArrays(long long*, long long*, long long);
 	long long selectFromStack();
-	
+
 	//preprocessing coreness-1 nodes
 	long long prepCoreOne(Coloring*, Graph*, Graph*);
 	void deleteEdge(long long, long long, Graph*, Graph*);
-	
+
 public:
 	Refinement();
 	~Refinement();
