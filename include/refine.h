@@ -59,8 +59,8 @@ class Refinement
 	//color refinement
 	void colorByDegreeAndLabel(Coloring*, Graph*, Graph*);
 	bool refine(Coloring*, Graph*, Graph*);
-	void sortArray(long long*, long long);
-	void sortTwoArrays(long long*, long long*, long long);
+	// void sortArray(long long*, long long);
+	// void sortTwoArrays(long long*, long long*, long long);
 	long long selectFromStack();
 
 	//preprocessing coreness-1 nodes

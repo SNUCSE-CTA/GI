@@ -479,16 +479,16 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 	return checkColoring(coloring);
 }
 
-void Refinement::sortArray(long long* aArray, long long aSize)
-{
-	cout << __PRETTY_FUNCTION__ << endl;
-}
+// void Refinement::sortArray(long long* aArray, long long aSize)
+// {
+// 	cout << __PRETTY_FUNCTION__ << endl;
+// }
 
 //sort aArray1 in ascending order, and sort aArray2 according to aArray1.
-void Refinement::sortTwoArrays(long long* aArray1, long long* aArray2, long long aSize)
-{
-	cout << __PRETTY_FUNCTION__ << endl;
-}
+// void Refinement::sortTwoArrays(long long* aArray1, long long* aArray2, long long aSize)
+// {
+// 	cout << __PRETTY_FUNCTION__ << endl;
+// }
 
 long long Refinement::selectFromStack()
 {
