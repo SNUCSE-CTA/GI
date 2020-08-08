@@ -2,6 +2,8 @@
 #define __REFINE_H__
 
 #include <iostream>
+#include <cstring>
+
 #include "coloring.h"
 #include "graph.h"
 #include "global.h"

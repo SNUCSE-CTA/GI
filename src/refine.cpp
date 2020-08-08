@@ -204,8 +204,8 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 	long long* inStack = global_memory.getLLArray(numNode);
 	long long* stackCand = global_memory.getLLArray(numNode);
 
-	fill(inStack, inStack+numNode, 0);
-	fill(stackCand, stackCand+numNode, 0);
+	memset(inStack, 0, sizeof(long long)*numNode);
+	memset(stackCand, 0, sizeof(long long)*numNode);
 
 	long long numStackCand = 0;
 	long long numVisitCell = 0;
@@ -223,8 +223,8 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 		if (coloring->numCell == numNode) break;
 
 		if (mark > INFINITY) {
-			fill(markCell, markCell+numNode, 0);
-			fill(markNode, markNode+numNode, 0);
+			memset(markCell, 0, sizeof(long long)*numNode);
+			memset(markNode, 0, sizeof(long long)*numNode);
 			mark = 0;
 		}
 		++mark;
