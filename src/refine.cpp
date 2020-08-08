@@ -230,7 +230,7 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 		++mark;
 
 		long long weightend = 0;
-		long long idx = selectFromStack();
+		long long idx = selectFromStack(coloring);
 		long long currCell = cellStack[idx];
 		long long currEnd = currCell + coloring->cellSize[currCell];
 
@@ -490,10 +490,27 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 // 	cout << __PRETTY_FUNCTION__ << endl;
 // }
 
-long long Refinement::selectFromStack()
+long long Refinement::selectFromStack(Coloring* coloring)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
-	return 0;
+	#endif
+
+	long long ret = stackSize - 1;
+	long long idx = stackSize - 2;
+	while (idx >= 0) {
+		if (coloring->cellSize[cellStack[idx]] < coloring->cellSize[cellStack[ret]]) {
+			ret = idx;
+		}
+
+		if (coloring->cellSize[cellStack[ret]] == 2 || idx < stackSize - 13) {
+			break;
+		}
+
+		--idx;
+	}
+
+	return ret;
 }
 
 long long Refinement::prepCoreOne(Coloring* coloring, Graph* aG1, Graph* aG2)

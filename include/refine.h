@@ -61,7 +61,7 @@ class Refinement
 	bool refine(Coloring*, Graph*, Graph*);
 	// void sortArray(long long*, long long);
 	// void sortTwoArrays(long long*, long long*, long long);
-	long long selectFromStack();
+	long long selectFromStack(Coloring*);
 
 	//preprocessing coreness-1 nodes
 	long long prepCoreOne(Coloring*, Graph*, Graph*);
