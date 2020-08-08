@@ -513,14 +513,308 @@ long long Refinement::selectFromStack(Coloring* coloring)
 	return ret;
 }
 
-long long Refinement::prepCoreOne(Coloring* coloring, Graph* aG1, Graph* aG2)
+long long Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
-	return 0;
+
+	Graph* g1 = aG1;
+	Graph* g2 = aG2;
+
+	long long n = g1->numNode;
+	long long* d1 = g1->d;
+	char* one1 = g1->one;
+	long long** neigh1 = g1->e;
+	long long* d2 = g2->d;
+	char* one2 = g2->one;
+	long long** neigh2 = g2->e;
+	long long numNode = aColoring->numNode;
+	long long* perm = aColoring->perm;
+	long long* inv = aColoring->inv;
+	long long* cellSize = aColoring->cellSize;
+	long long* color = aColoring->color;
+	
+
+	long long i, j, k, sc, stackSize, ind, currCell, cellEnd, visitCellInd;
+	long long u, du, v, adj, cell, splitInd, splitCountInd, count, size, endIdx, newCell;
+	long long numDeleted = 0;
+
+	//check if there are coreness-1 vertices.
+	bool hasDegreeOne = false;
+	for(i = 0; i < n; ++i) {
+		if( d1[i] == 1 ){
+			hasDegreeOne = true;
+			break;
+		}
+	}
+	if( hasDegreeOne == false )
+		return 0;
+
+	//now there is at least one degree one vertex
+	
+	//push cells having degree one vertices to cellStack
+	stackSize = 0;
+	for( i = 0; i < numNode; i += cellSize[i] ) {
+		u = perm[i];
+		du = (u < n) ? d1[u] : d2[u - n];
+		if( du == 1 ) {
+			cellStack[stackSize] = i;
+			++stackSize;
+		}
+	}
+
+	ind = 0;
+	while( ind < stackSize ) {
+		if( mark > INFINITY ) {
+			memset(markCell, 0, sizeof(long long) * n);
+			memset(markNode, 0, sizeof(long long) * n);
+			mark = 0;
+		}
+		++mark;
+
+		//Step 1. select a cell from cellStack and count the cell
+		currCell = cellStack[ind];
+		++ind;
+
+		cellEnd = currCell + cellSize[currCell];
+		visitCellInd = 0;
+		for(i = currCell; i < cellEnd; ++i) {
+			u = perm[i];
+			if(u < n) { //g1
+				adj = *(neigh1[u]); //the only neighbor of u
+				if( d1[adj] != 1 ) {
+					d1[u] = -1;
+					one1[u] = 1;
+				}
+
+				if( markNode[adj] == mark ) {
+					++(neighCount[adj]);
+				}
+				else { //adj is visited first time
+					cell = color[ inv[adj] ];
+					markNode[adj] = mark;
+					neighCount[adj] = 1;
+					if( markCell[cell] != mark ) { //cell is visited first time
+						visitCell[visitCellInd] = cell;
+						++visitCellInd;
+						markCell[cell] = mark;
+						visitNode[cell] = adj;
+						numVisitNode[cell] = 1;
+					}
+					else {
+						visitNode[cell + numVisitNode[cell]] = adj;
+						++(numVisitNode[cell]);
+					}
+				}
+			}
+			else { //g2
+				adj = *(neigh2[u - n]); //the only neighbor of u
+				if( d2[adj] != 1 ) {
+					d2[u - n] = -1;
+					one2[u - n] = 1;
+				}
+
+				if( markNode[adj + n] == mark ) {
+					++(neighCount[adj + n]);
+				}
+				else { //adj is visited first time
+					cell = color[ inv[adj + n] ];
+					markNode[adj + n] = mark;
+					neighCount[adj + n] = 1;
+					if( markCell[cell] != mark ) { //cell is visited first time
+						visitCell[visitCellInd] = cell;
+						++visitCellInd;
+						markCell[cell] = mark;
+						visitNode[cell] = adj + n;
+						numVisitNode[cell] = 1;
+					}
+					else {
+						visitNode[cell + numVisitNode[cell]] = adj + n;
+						++(numVisitNode[cell]);
+					}
+				}
+			} //if-else ( u < n )
+		} //for (i)
+		++mark;
+
+		//Step 2. find out cells to split & delete edges whose degree not 1
+		sort(visitCell, visitCell+visitCellInd);
+		splitInd = 0;
+		splitCell[0] = numNode;
+		for(j = 0; j < visitCellInd; ++j) {
+			cell = visitCell[j]; //for each visited cell
+			//TODO: I think we have always (numVisitNode[cell] > 0).
+			if( numVisitNode[cell] > 0 && numVisitNode[cell] < cellSize[cell] ) {
+				splitCell[splitInd] = cell;
+				++splitInd;
+			}
+			else {
+				cellEnd = cell + cellSize[cell];
+				count = neighCount[ perm[cell] ];
+				for(i = cell + 1; i < cellEnd; ++i) {
+					if( neighCount[ perm[i] ] != count ) {
+						splitCell[splitInd] = cell;
+						++splitInd;
+						break;
+					}
+				}
+				if( i == cellEnd ) { //cell does not split
+					u = perm[cell];
+					du = (u < n) ? d1[u] : d2[u - n];
+					if( du != 1 ) {
+						for(k = cell; k < cellEnd; ++k) {
+							v = perm[k]; //each vertex in this cell
+							deleteEdge(v, neighCount[v], g1, g2);
+							numDeleted += neighCount[v];
+						}
+						//if degree becomes 1 after deleting edges
+						du = (u < n) ? d1[u] : d2[u - n];
+						if( du == 1 ) { 
+							cellStack[stackSize] = cell;
+							++stackSize;
+						}
+					} //if (du != 1)
+				} //if (i == cellEnd)
+			} //if-else (numVisitNode[cell] < cellSize[cell])
+		} //for (j)
+
+		//Step 3. split the cells in splitCell
+		if( splitInd > 0 ) {
+			for(sc = 0; sc < splitInd; ++sc) { //for each cell to split
+				cell = splitCell[sc];
+				cellEnd = cell + cellSize[cell];
+
+				//Step 3-1. count #vertices of each new cell
+				splitCountInd = 0;
+				if( numVisitNode[cell] < cellSize[cell] ) {
+					splitCount[splitCountInd] = 0;
+					++splitCountInd;
+					splitPos[0] = cellSize[cell] - numVisitNode[cell];
+				}
+				endIdx = cell + numVisitNode[cell];
+				for(i = cell; i < endIdx; ++i) {
+					count = neighCount[ visitNode[i] ];
+					//Note that markCell marks 'count' in below.
+					if( markCell[count] != mark ) {
+						markCell[count] = mark;
+						splitCount[splitCountInd] = count;
+						++splitCountInd;
+						splitPos[count] = 1;
+					}
+					else {
+						++(splitPos[count]);
+					}
+				} //for (i)
+				++mark;
+
+				sort(splitCount, splitCount + splitCountInd);
+				aColoring->numCell += (splitCountInd - 1);
+
+				//Step 3-2. compute start position of each new cell
+				i = cell;
+				for(k = 0; k < splitCountInd; ++k) {
+					size = splitPos[ splitCount[k] ];
+					cellSize[i] = size;
+					splitPos[ splitCount[k] ] = i;
+					i += size;
+				}
+
+				//Step 3-3. move vertices to its appropriate new cells
+				endIdx = cell + numVisitNode[cell];
+				for(i = cell; i < endIdx; ++i) {
+					u = visitNode[i];
+					deleteEdge(u, neighCount[u], g1, g2);
+					numDeleted += neighCount[u];
+					j = splitPos[ neighCount[u] ]; //where u goes
+					++(splitPos[ neighCount[u] ]);
+					k = inv[u]; //where u was
+
+					perm[k] = perm[j];
+					perm[j] = u;
+					inv[u] = j;
+					inv[ perm[k] ] = k;
+					neighCount[u] = 0;
+				}
+
+				//Step 3-4. recolor the vertices in new cells
+				newCell = cellEnd - numVisitNode[cell];
+				i = newCell;
+				endIdx = newCell + cellSize[newCell] - 1;
+				do {
+					color[i] = newCell;
+					if( i == endIdx ) {
+						newCell = i + 1;
+						if( newCell < numNode )
+							endIdx = newCell + cellSize[newCell] - 1;
+					}
+				} while( ++i < cellEnd );
+
+				//Step 3-5. push the new cells to the stack
+				for(i = cell, k = 0; k < splitCountInd; i += cellSize[i], ++k) {
+					if( k > 0 || splitCount[0] > 0 ) {
+						u = perm[i];
+						du = (u < n) ? d1[u] : d2[u - n];
+						if( du == 1 ) {
+							cellStack[stackSize] = i;
+							++stackSize;
+						}
+					}
+				}
+			} //for (sc)
+		} //if( splitInd > 0 )
+	} //while (ind < stackSize)
+
+	return numDeleted;
 }
 
 void Refinement::deleteEdge(long long aVertex, long long aNumDegOne, Graph* aG1, Graph* aG2)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
+
+
+	Graph* g1 = aG1;
+	Graph* g2 = aG2;
+	long long n = g1->numNode;
+	long long* d1 = g1->d;
+	long long* d2 = g2->d;
+
+	long long du = (aVertex < n) ? d1[aVertex] : d2[aVertex - n];
+	if( du < 2 )
+		return;
+
+	long long i, newDegree, temp, lastInd;
+	long long* edge = NULL;
+	char* one = NULL;
+
+	newDegree = du - aNumDegOne;
+	if( aVertex < n ) {
+		lastInd = newDegree;
+		edge = g1->e[aVertex];
+		one = g1->one;
+		for(i = 0; i < newDegree; ++i) {
+			if( one[edge[i]] ) {
+				while( d1[ edge[lastInd] ] == -1 )
+					++lastInd;
+				temp = edge[i];
+				edge[i] = edge[lastInd];
+				edge[lastInd] = temp;
+			}
+		}
+		d1[aVertex] = newDegree;
+	}
+	else {
+		lastInd = newDegree;
+		edge = g2->e[aVertex - n];
+		one = g2->one;
+		for(i = 0; i < newDegree; ++i) {
+			if( one[edge[i]] ) {
+				while( d2[ edge[lastInd] ] == -1 )
+					++lastInd;
+				temp = edge[i];
+				edge[i] = edge[lastInd];
+				edge[lastInd] = temp;
+			}
+		}
+		d2[aVertex - n] = newDegree;
+	} //if-else (aVertex < n)
 }
 
