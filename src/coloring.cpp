@@ -19,10 +19,10 @@ void Coloring::init(long long _numNode)
 	numNode = _numNode;
 	numCell = 1;
 
-	color = new long long[numNode]();
-	perm = new long long[numNode]();
-	inv = new long long[numNode]();
-	cellSize = new long long[numNode]();
+	color = new long long[numNode];
+	perm = new long long[numNode];
+	inv = new long long[numNode];
+	cellSize = new long long[numNode];
 
 	for (long long i = 0; i < numNode; ++i) {
 		color[i] = 0;

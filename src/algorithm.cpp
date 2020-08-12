@@ -52,20 +52,30 @@ bool Algorithm::checkSimpleInvariants(Graph* aG1, Graph* aG2)
 	for (long long i = 0; i < numNode; ++i)
 		nodes1[i] = nodes2[i] = i;
 
-	sort(nodes1, nodes1+numNode,
+	sort(nodes1, nodes1 + numNode,
 			[aG1, nodes1](const long long& i, const long long& j) -> bool {
-				if (aG1->d[nodes1[i]] == aG1->d[nodes1[j]])
-					return aG1->l[nodes1[i]] < aG1->l[nodes1[j]];
+				if( aG1->d[i] == aG1->d[j])
+					return aG1->l[i] < aG1->l[j];
 
-				return aG1->d[nodes1[i]] < aG1->d[nodes1[j]];
+				return aG1->d[i] < aG1->d[j];
+
+				//if (aG1->d[nodes1[i]] == aG1->d[nodes1[j]])
+				//	return aG1->l[nodes1[i]] < aG1->l[nodes1[j]];
+
+				//return aG1->d[nodes1[i]] < aG1->d[nodes1[j]];
 			});
 
-	sort(nodes2, nodes2+numNode,
+	sort(nodes2, nodes2 + numNode,
 			[aG2, nodes2](const long long& i, const long long& j) -> bool {
-				if (aG2->d[nodes2[i]] == aG2->d[nodes2[j]])
-					return aG2->l[nodes2[i]] < aG2->l[nodes2[j]];
+				if (aG2->d[i] == aG2->d[j])
+					return aG2->l[i] < aG2->l[j];
 
-				return aG2->d[nodes2[i]] < aG2->d[nodes2[j]];
+				return aG2->d[i] < aG2->d[j];
+				
+				//if (aG2->d[nodes2[i]] == aG2->d[nodes2[j]])
+				//	return aG2->l[nodes2[i]] < aG2->l[nodes2[j]];
+
+				//return aG2->d[nodes2[i]] < aG2->d[nodes2[j]];
 			});
 
 	for (long long i = 0; i < numNode; ++i) {

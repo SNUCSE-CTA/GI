@@ -213,9 +213,11 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 	long long numSplitCount = 0;
 
 	// Push all cells of the coloring into the stack.
-	long long stackSize = 0;
+	//long long stackSize = 0;
+	stackSize = 0;
 	for (long long i = 0; i < numNode; i += coloring->cellSize[i]) {
-		cellStack[stackSize++] = i;
+		cellStack[stackSize] = i;
+		++stackSize;
 		inStack[i] = 1;
 	}
 
@@ -234,13 +236,13 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 		long long currCell = cellStack[idx];
 		long long currEnd = currCell + coloring->cellSize[currCell];
 
-		cellStack[idx] = cellStack[--stackSize];
+		cellStack[idx] = cellStack[stackSize - 1];
+		--stackSize;
 		inStack[currCell] = 0;
 
 		// The first node.
 		long long currNode = coloring->perm[currCell];
 		long long currDegree = deg(currNode);
-
 		do {
 			long long start = currCell;
 			long long end = currEnd;
@@ -331,7 +333,9 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 					for (long long i = start; i < end; ++i) {
 						currNode = coloring->perm[i];
 						for (long long j = 0; j < deg(currNode); ++j) {
+cout << __LINE__ << " " << currNode << " " << j << endl;
 							long long neigh = adj(currNode, j);
+cout << __LINE__ << endl;
 
 							if (markNode[neigh] == mark) {
 								++neighCount[neigh];
@@ -349,12 +353,12 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 									} else {
 										visitNode[c + numVisitNode[c]++] = neigh;
 									}
-								}
-							}
-						}
-					}
-				}
-			}
+								} //if (cellSize[c] > 1)
+							} //if-else (markNode[neigh])
+						} //for (j)
+					} //for (i)
+				} //if
+			} //if-else (cellSize[start])
 			++mark;
 
 			// Find cells that need to be split.
@@ -534,7 +538,7 @@ long long Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 	long long* color = aColoring->color;
 	
 
-	long long i, j, k, sc, stackSize, ind, currCell, cellEnd, visitCellInd;
+	long long i, j, k, sc, ind, currCell, cellEnd, visitCellInd;
 	long long u, du, v, adj, cell, splitInd, splitCountInd, count, size, endIdx, newCell;
 	long long numDeleted = 0;
 
