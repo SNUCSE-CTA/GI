@@ -10,8 +10,8 @@ SOURCES := $(wildcard $(SRC)/*.cpp)
 OBJECTS := $(SOURCES:$(SRC)/%.cpp=$(OBJ)/%.o)
 
 TARGET := program
-INPUT1 := lcc_yeast.igraph
-INPUT2 := sfl_lcc_yeast.igraph
+INPUT1 := ./input/lcc_yeast.igraph
+INPUT2 := ./input/sfl_lcc_yeast.igraph
 
 .PHONY: all clean run
 
