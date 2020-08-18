@@ -14,6 +14,9 @@
 using namespace std;
 
 extern vector<long long> global_temp_vector;
+extern long long* markNode;
+extern long long* markCell;
+extern long long global_mark;
 
 class Backtrack
 {

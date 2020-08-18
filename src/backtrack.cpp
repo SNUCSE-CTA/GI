@@ -481,8 +481,6 @@ bool Backtrack::backtrack(long long aNumMatching)
 	long long* parentSize = dag->parentSize;
 	long long* dagArr = dag->dagArr;
 	long long* adjPos1 = g1->adjPos;
-	//TODO: define markCell and global_mark in global.cpp
-	long long* markCell = NULL; long long global_mark = 0;
 	
 
 	//we implement the recursive backtracking function by iterative method
@@ -577,7 +575,6 @@ bool Backtrack::backtrack(long long aNumMatching)
 			}
 		} //if-else(backtrack == false)
 
-		//TODO: define global_mark in global.cpp
 		if( global_mark > INFINITY ) {
 			memset(markCell, 0, sizeof(long long) * n2);
 			global_mark = 0;
@@ -770,7 +767,6 @@ long long Backtrack::computeWeight(long long aVertex)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 
-	long long* markNode = NULL; long long global_mark = 0; //SEE TODO
 	long long w = 0;
 	long long i, adjCand, ci;
 	long long* adjPos1 = g1->adjPos;
@@ -800,7 +796,6 @@ long long Backtrack::computeWeight(long long aVertex)
 			w = cs->S[ adjPos2[adjCand] + ci ];
 		}
 		else {
-			//TODO: mark should be defined in global.cpp
 			if( global_mark > INFINITY ) {
 				memset(markNode, 0, sizeof(long long) * n2);
 				global_mark = 0;
@@ -857,7 +852,6 @@ void Backtrack::computeExtCand(long long aVertex)
 
 	extCand[aVertex].clear();
 
-	long long* markNode = NULL; long long global_mark = 0; //SEE TODO
 	long long i, adjCand, ci;
 	long long* adjPos1 = g1->adjPos;
 	long long* adjPos2 = g2->adjPos;
@@ -897,7 +891,6 @@ void Backtrack::computeExtCand(long long aVertex)
 			}
 		}
 		else {
-			//TODO: mark should be defined in global.cpp
 			if( global_mark > INFINITY ) {
 				memset(markNode, 0, sizeof(long long) * n2);
 				global_mark = 0;

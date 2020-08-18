@@ -75,9 +75,7 @@ void Refinement::initWorkspace()
 
 	cellStack = global_memory.getLLArray(n2);
 	stackSize = 0;
-	markCell = global_memory.getLLArray(n2);
-	markNode = global_memory.getLLArray(n2);
-	mark = 0;
+	//global_mark = 0;
 	neighCount = global_memory.getLLArray(n2);
 	visitCell = global_memory.getLLArray(n2);
 	visitNode = global_memory.getLLArray(n2);
@@ -97,14 +95,14 @@ void Refinement::clearWorkspace()
 		global_memory.returnLLArray(cellStack, n2);
 		cellStack = NULL;
 	}
-	if (markCell != NULL) {
-		global_memory.returnLLArray(markCell, n2);
-		markCell = NULL;
-	}
-	if (markNode != NULL) {
-		global_memory.returnLLArray(markNode, n2);
-		markNode = NULL;
-	}
+	//if (markCell != NULL) {
+	//	global_memory.returnLLArray(markCell, n2);
+	//	markCell = NULL;
+	//}
+	//if (markNode != NULL) {
+	//	global_memory.returnLLArray(markNode, n2);
+	//	markNode = NULL;
+	//}
 	if (neighCount != NULL) {
 		global_memory.returnLLArray(neighCount, n2);
 		neighCount = NULL;
@@ -239,12 +237,12 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 		if (coloring->numCell == numNode)
 			break;
 
-		if (mark > INFINITY) {
+		if (global_mark > INFINITY) {
 			memset(markCell, 0, sizeof(long long) * numNode);
 			memset(markNode, 0, sizeof(long long) * numNode);
-			mark = 0;
+			global_mark = 0;
 		}
-		++mark;
+		++global_mark;
 
 		long long weightend = 0;
 		long long idx = selectFromStack(coloring);
@@ -279,9 +277,9 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 						long long neigh = adj(currNode, j);
 						long long c = coloring->color[coloring->inv[neigh]];
 						if (coloring->cellSize[c] > 1) {
-							if (markCell[c] != mark) {
+							if (markCell[c] != global_mark) {
 								visitCell[numVisitCell++] = c;
-								markCell[c] = mark;
+								markCell[c] = global_mark;
 								visitNode[c] = neigh;
 								numVisitNode[c] = 1;
 							} else {
@@ -291,7 +289,7 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 						}
 					}
 				}
-				++mark;
+				++global_mark;
 
 				// Find cells that needs to be split.
 				numSplitCell = 0;
@@ -353,17 +351,17 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 						for (long long j = 0; j < deg(currNode); ++j) {
 							long long neigh = adj(currNode, j);
 
-							if (markNode[neigh] == mark) {
+							if (markNode[neigh] == global_mark) {
 								++neighCount[neigh];
 							} else {
 								int c = coloring->color[coloring->inv[neigh]];
 								if (coloring->cellSize[c] > 1) {
-									markNode[neigh] = mark;
+									markNode[neigh] = global_mark;
 									neighCount[neigh] = 1;
 
-									if (markCell[c] != mark) {
+									if (markCell[c] != global_mark) {
 										visitCell[numVisitCell++] = c;
-										markCell[c] = mark;
+										markCell[c] = global_mark;
 										visitNode[c] = neigh;
 										numVisitNode[c] = 1;
 									} else {
@@ -374,7 +372,7 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 						} //for (j)
 					} //for (i)
 				} //if
-				++mark;
+				++global_mark;
 
 				// Find cells that need to be split.
 				numSplitCell = 0;
@@ -412,8 +410,8 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 						for (long long i = sc; i < thisEnd; ++i) {
 							long long count = neighCount[visitNode[i]];
 
-							if (markCell[count] != mark) {
-								markCell[count] = mark;
+							if (markCell[count] != global_mark) {
+								markCell[count] = global_mark;
 								splitCount[numSplitCount] = count;
 								++numSplitCount;
 								splitPos[count] = 1;
@@ -421,7 +419,7 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 								++splitPos[count];
 							}
 						}
-						++mark;
+						++global_mark;
 
 						sort(splitCount, splitCount+numSplitCount);
 
@@ -586,12 +584,12 @@ long long Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 
 	ind = 0;
 	while( ind < stackSize ) {
-		if( mark > INFINITY ) {
+		if( global_mark > INFINITY ) {
 			memset(markCell, 0, sizeof(long long) * n);
 			memset(markNode, 0, sizeof(long long) * n);
-			mark = 0;
+			global_mark = 0;
 		}
-		++mark;
+		++global_mark;
 
 		//Step 1. select a cell from cellStack and count the cell
 		currCell = cellStack[ind];
@@ -608,17 +606,17 @@ long long Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 					one1[u] = 1;
 				}
 
-				if( markNode[adj] == mark ) {
+				if( markNode[adj] == global_mark ) {
 					++(neighCount[adj]);
 				}
 				else { //adj is visited first time
 					cell = color[ inv[adj] ];
-					markNode[adj] = mark;
+					markNode[adj] = global_mark;
 					neighCount[adj] = 1;
-					if( markCell[cell] != mark ) { //cell is visited first time
+					if( markCell[cell] != global_mark ) { //cell is visited first time
 						visitCell[visitCellInd] = cell;
 						++visitCellInd;
-						markCell[cell] = mark;
+						markCell[cell] = global_mark;
 						visitNode[cell] = adj;
 						numVisitNode[cell] = 1;
 					}
@@ -635,17 +633,17 @@ long long Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 					one2[u - n] = 1;
 				}
 
-				if( markNode[adj + n] == mark ) {
+				if( markNode[adj + n] == global_mark ) {
 					++(neighCount[adj + n]);
 				}
 				else { //adj is visited first time
 					cell = color[ inv[adj + n] ];
-					markNode[adj + n] = mark;
+					markNode[adj + n] = global_mark;
 					neighCount[adj + n] = 1;
-					if( markCell[cell] != mark ) { //cell is visited first time
+					if( markCell[cell] != global_mark ) { //cell is visited first time
 						visitCell[visitCellInd] = cell;
 						++visitCellInd;
-						markCell[cell] = mark;
+						markCell[cell] = global_mark;
 						visitNode[cell] = adj + n;
 						numVisitNode[cell] = 1;
 					}
@@ -656,7 +654,7 @@ long long Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 				}
 			} //if-else ( u < n )
 		} //for (i)
-		++mark;
+		++global_mark;
 
 		//Step 2. find out cells to split & delete edges whose degree not 1
 		sort(visitCell, visitCell+visitCellInd);
@@ -716,8 +714,8 @@ long long Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 				for(i = cell; i < endIdx; ++i) {
 					count = neighCount[ visitNode[i] ];
 					//Note that markCell marks 'count' in below.
-					if( markCell[count] != mark ) {
-						markCell[count] = mark;
+					if( markCell[count] != global_mark ) {
+						markCell[count] = global_mark;
 						splitCount[splitCountInd] = count;
 						++splitCountInd;
 						splitPos[count] = 1;
@@ -726,7 +724,7 @@ long long Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 						++(splitPos[count]);
 					}
 				} //for (i)
-				++mark;
+				++global_mark;
 
 				sort(splitCount, splitCount + splitCountInd);
 				aColoring->numCell += (splitCountInd - 1);

@@ -5,6 +5,9 @@ long long* global_temp_array = NULL; 	//size of max(e2, n2)
 long long* global_temp_array2 = NULL;	//size of n2
 long long* global_temp_array3 = NULL;	//size of n2
 vector<long long> global_temp_vector;
+long long* markCell = NULL;
+long long* markNode = NULL;
+long long global_mark = 0;
 Memory global_memory;
 
 //n: #vertices in a graph
@@ -22,6 +25,10 @@ void initGlobal(long long n, long long e)
 	global_temp_array = new long long[e2];
 	global_temp_array2 = new long long[n2];
 	global_temp_array3 = new long long[n2];
+
+	markCell = new long long[n2];
+	markNode = new long long[n2];
+	global_mark = 0;
 }
 
 void clearGlobal()
@@ -39,5 +46,13 @@ void clearGlobal()
 	if( global_temp_array3 != NULL ) {
 		delete[] global_temp_array3;
 		global_temp_array3 = NULL;
+	}
+	if( markCell != NULL ) {
+		delete[] markCell;
+		markCell = NULL;
+	}
+	if( markNode != NULL ) {
+		delete[] markNode;
+		markNode = NULL;
 	}
 }
