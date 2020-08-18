@@ -77,6 +77,9 @@ bool Algorithm::checkSimpleInvariants(Graph* aG1, Graph* aG2)
 			return false;
 	}
 
+	global_memory.returnLLArray(nodes1, numNode);
+	global_memory.returnLLArray(nodes2, numNode);
+
 	return true;
 }
 
