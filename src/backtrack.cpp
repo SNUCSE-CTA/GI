@@ -29,14 +29,13 @@ Backtrack::~Backtrack()
 	}
 }
 
-//TODO: get numTreeNode as a parameter
-bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2)
+bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, long long aNumTreeNode)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 	g1 = aG1;
 	g2 = aG2;
 	coloring = aColoring;
-	//TODO: numTreeNode = aNumTreeNode; 
+	numTreeNode = aNumTreeNode; 
 
 	n = g1->numNode;
 	e = g1->numEdge;

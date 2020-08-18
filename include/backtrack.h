@@ -75,7 +75,7 @@ public:
 	Backtrack();
 	~Backtrack();
 
-	bool run(Coloring*, Graph*, Graph*);
+	bool run(Coloring*, Graph*, Graph*, long long);
 };
 
 #endif

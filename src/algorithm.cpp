@@ -28,7 +28,7 @@ bool Algorithm::run(Graph* aG1, Graph* aG2)
 	Coloring* coloring = cr.getStableColoring();
 
 	Backtrack bt;
-	result = bt.run(coloring, aG1, aG2);
+	result = bt.run(coloring, aG1, aG2, cr.getNumTreeNode());
 
 	clearGlobal();
 
