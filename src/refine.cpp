@@ -56,13 +56,14 @@ Coloring* Refinement::getStableColoring()
 	return stableColoring;
 }
 
+//NOTE: return the number of tree nodes in g1
 long long Refinement::getNumTreeNode()
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	return numTreeNode;
+	return numTreeNode/2;
 }
 
 void Refinement::initWorkspace()
@@ -75,7 +76,6 @@ void Refinement::initWorkspace()
 
 	cellStack = global_memory.getLLArray(n2);
 	stackSize = 0;
-	//global_mark = 0;
 	neighCount = global_memory.getLLArray(n2);
 	visitCell = global_memory.getLLArray(n2);
 	visitNode = global_memory.getLLArray(n2);
@@ -95,14 +95,6 @@ void Refinement::clearWorkspace()
 		global_memory.returnLLArray(cellStack, n2);
 		cellStack = NULL;
 	}
-	//if (markCell != NULL) {
-	//	global_memory.returnLLArray(markCell, n2);
-	//	markCell = NULL;
-	//}
-	//if (markNode != NULL) {
-	//	global_memory.returnLLArray(markNode, n2);
-	//	markNode = NULL;
-	//}
 	if (neighCount != NULL) {
 		global_memory.returnLLArray(neighCount, n2);
 		neighCount = NULL;

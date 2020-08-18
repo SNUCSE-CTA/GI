@@ -45,9 +45,6 @@ class Refinement
 	//variables used in color refinement (Workspace)
 	long long* cellStack = NULL;
 	long long stackSize = 0;
-	//long long* markCell = NULL;
-	//long long* markNode = NULL;
-	//long long mark = 0;
 	long long* neighCount = NULL;
 	long long* visitCell = NULL;
 	long long* visitNode = NULL;

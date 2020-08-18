@@ -27,7 +27,6 @@ public:
 
 	void init(long long _numNode);
 	void clear();
-	void sortByColor(long long*, long long*);
 };
 
 #endif

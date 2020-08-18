@@ -62,7 +62,6 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, long long aNumT
 	cs = buildCS();
 
 	long long numMatching = mapBinaryCell();
-
 	if( failingset != NULL ) {
 		delete[] failingset;
 		failingset = NULL;
@@ -313,7 +312,12 @@ CS* Backtrack::buildCS()
 			continue;
 
 		neigh = g2->e[i];
-		coloring->sortByColor(neigh, neigh + d2[i]);
+		long long padn = n;
+		sort(neigh, neigh + d2[i],
+			[color, inv, padn](const long long& a, const long long& b) -> bool {
+				return color[inv[a + padn]] < color[inv[b + padn]];
+			}
+		);
 
 		//store start position for each color in neigh
 		idx = 0; //color index
@@ -416,7 +420,6 @@ long long Backtrack::mapBinaryCell()
 
 	memset(mapping, -1, sizeof(long long) * n2);
 	memset(numMappedParent, 0, sizeof(long long) * n);
-
 	//for each cell
 	for(i = 0; i < numNode; i += cellSize[i]) {
 		if( cellSize[i] != 2 ) 
@@ -807,8 +810,9 @@ long long Backtrack::computeWeight(long long aVertex)
 			long long* neigh = g2->e[adjCand];
 			long long p = cs->P[ adjPos2[adjCand] + ci ];
 			long long s = cs->S[ adjPos2[adjCand] + ci ];
-			for(i = p; i < p + s; ++i)
+			for(i = p; i < p + s; ++i) {
 				markNode[ neigh[i] ] = global_mark;
+			}
 			++global_mark;
 
 			//Step 2. the second to the second last array
