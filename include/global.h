@@ -9,7 +9,7 @@ using namespace std;
 
 #define INFINITY 2000000000
 
-void initGlobal(long long, long long);
+void initGlobal(long long);
 void clearGlobal();
 
 #endif

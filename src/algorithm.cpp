@@ -12,7 +12,7 @@ bool Algorithm::run(Graph* aG1, Graph* aG2)
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	initGlobal(aG1->numNode, aG1->numEdge);
+	initGlobal(aG1->numNode);
 
 	bool result = checkSimpleInvariants(aG1, aG2);
 	if (result == false) {
@@ -48,8 +48,8 @@ bool Algorithm::checkSimpleInvariants(Graph* aG1, Graph* aG2)
 
 	const long long numNode = aG1->numNode;
 
-	long long* nodes1 = global_temp_array;
-	long long* nodes2 = global_temp_array2;
+	long long* nodes1 = global_memory.getLLArray(numNode);
+	long long* nodes2 = global_memory.getLLArray(numNode);
 
 	for (long long i = 0; i < numNode; ++i)
 		nodes1[i] = nodes2[i] = i;
@@ -76,6 +76,9 @@ bool Algorithm::checkSimpleInvariants(Graph* aG1, Graph* aG2)
 		if (aG1->l[nodes1[i]] != aG2->l[nodes2[i]])
 			return false;
 	}
+
+	global_memory.returnLLArray(nodes1, numNode);
+	global_memory.returnLLArray(nodes2, numNode);
 
 	return true;
 }
