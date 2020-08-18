@@ -24,7 +24,7 @@ long long* Memory::getLLArray(long long aSize)
 	long long* p = NULL;	//output
 
 	//find the reusable array in the pool
-	for(long long i = 0; i < (long long)llPool.size(); ++i) {
+	for(long long i = llPool.size() - 1; i >= 0; --i) {
 		auto slot = llPool[i];
 		if( slot.second == aSize ) {
 			exact = i;
