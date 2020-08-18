@@ -283,7 +283,7 @@ CS* Backtrack::buildCS()
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	long long i, j, v, size, prevColor, currColor;
+	long long i, j, size, prevColor, currColor;
 	long long* color = coloring->color;
 	long long* perm = coloring->perm;
 	long long* inv = coloring->inv;
@@ -566,7 +566,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 			}
 			
 			//if all candidate failed
-			if( candPos[curr] == extCand[curr].size() - 1 ) { 
+			if( candPos[curr] == (long long)extCand[curr].size() - 1 ) { 
 				//failing set
 				if( fsetIndex != -1 ) { //if curr is in child_f (it is merged to curr_f)
 					vector<long long>& curr_f = failingset[depth - aNumMatching];
@@ -633,7 +633,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 					++confSize;
 				}
 
-				if( candPos[curr] == extCand[curr].size() - 1 ) {
+				if( candPos[curr] == (long long)extCand[curr].size() - 1 ) {
 					needBacktrack = true;
 				}
 				else {
@@ -701,7 +701,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 						--(numMappedParent[child]);
 					}
 
-					if( candPos[curr] == extCand[curr].size() - 1 ) {
+					if( candPos[curr] == (long long)extCand[curr].size() - 1 ) {
 						needBacktrack = true;
 					}
 					else {

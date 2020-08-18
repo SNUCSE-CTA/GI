@@ -6,7 +6,7 @@ Memory::Memory()
 
 Memory::~Memory()
 {
-	for(long long i = 0; i < createdArray.size(); ++i) {
+	for(long long i = 0; i < (long long)createdArray.size(); ++i) {
 		delete[] createdArray[i];
 	}
 	createdArray.clear();
@@ -24,7 +24,7 @@ long long* Memory::getLLArray(long long aSize)
 	long long* p = NULL;	//output
 
 	//find the reusable array in the pool
-	for(long long i = 0; i < llPool.size(); ++i) {
+	for(long long i = 0; i < (long long)llPool.size(); ++i) {
 		auto slot = llPool[i];
 		if( slot.second == aSize ) {
 			exact = i;
