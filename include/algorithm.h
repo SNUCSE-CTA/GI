@@ -8,11 +8,6 @@
 #include "backtrack.h"
 #include "global.h"
 
-// defined in global.cpp
-extern long long* global_temp_array;
-extern long long* global_temp_array2;
-extern long long* global_temp_array3;
-
 class Algorithm
 {
 public:
