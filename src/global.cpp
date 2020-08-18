@@ -14,8 +14,11 @@ Memory global_memory;
 //e: #(undirected)edges in a graph
 void initGlobal(long long n, long long e)
 {
-	clearGlobal(); //avoid double allocation
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
+
+	clearGlobal(); //avoid double allocation
 
 	long long n2 = n * 2;
 	long long e2 = e * 2;
@@ -33,7 +36,9 @@ void initGlobal(long long n, long long e)
 
 void clearGlobal()
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	if( global_temp_array != NULL ) {
 		delete[] global_temp_array;

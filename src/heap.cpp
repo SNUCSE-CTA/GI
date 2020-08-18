@@ -2,7 +2,9 @@
 
 Heap::Heap(long long aSize)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	heap = new long long[aSize];
 	locate = new long long[aSize];
@@ -23,7 +25,10 @@ Heap::~Heap()
 
 void Heap::minHeapify(long long* aValue, long long aIndex)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
+
 	long long l, r, s, t;
 	long long i = aIndex;
 
@@ -53,7 +58,9 @@ void Heap::minHeapify(long long* aValue, long long aIndex)
 
 void Heap::buildMinHeap(long long* aValue)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	//heap, heapLocate, and size are set before calling this function
 	for(long long i = (size >> 1); i > 0; --i)
@@ -62,7 +69,9 @@ void Heap::buildMinHeap(long long* aValue)
 
 void Heap::insert(long long* aValue, long long aVertex)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	long long i, p, t;
 	++size;
@@ -89,7 +98,9 @@ void Heap::insert(long long* aValue, long long aVertex)
 
 void Heap::erase(long long* aValue, long long aVertex)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	long long i = locate[aVertex];
 	if( i < 0 )
@@ -105,7 +116,9 @@ void Heap::erase(long long* aValue, long long aVertex)
 
 long long Heap::extractMin(long long* aValue)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	if( size < 1 ) {
 		return -1;

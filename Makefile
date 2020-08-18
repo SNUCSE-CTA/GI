@@ -1,6 +1,6 @@
 CXX := g++
 
-CXXFLAGS := -std=c++0x -O3 -w -DDEBUG
+CXXFLAGS := -std=c++0x -O3 -w #-DDEBUG
 CPPFLAGS := -Iinclude
 
 SRC := src

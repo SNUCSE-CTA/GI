@@ -22,9 +22,11 @@ Graph::~Graph()
 //Also, single label per vertex and label.
 void Graph::readGraph(string aFileName)
 {
-	clear(); // avoid double allocation
-
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
+
+	clear(); // avoid double allocation
 
 	ifstream infile(aFileName);
 	streampos edgePos = infile.tellg();
@@ -101,7 +103,10 @@ void Graph::readGraph(string aFileName)
 
 void Graph::clear()
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
+
 	if(d != NULL) {
 		delete[] d;
 		d = NULL;
@@ -148,7 +153,10 @@ DAG::~DAG()
 
 void DAG::clear()
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif 
+
 	if(childSize != NULL) {
 		delete[] childSize;
 		childSize = NULL;

@@ -15,7 +15,9 @@ Memory::~Memory()
 
 long long* Memory::getLLArray(long long aSize)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	long long exact = -1; 	//an array of size aSize
 	long long bigger = -1;	//an array bigger than aSize
@@ -61,7 +63,9 @@ long long* Memory::getLLArray(long long aSize)
 
 void Memory::returnLLArray(long long* aArray, long long aSize)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	llPool.push_back(make_pair(aArray, aSize));
 	

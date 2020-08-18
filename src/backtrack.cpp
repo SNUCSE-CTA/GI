@@ -31,7 +31,10 @@ Backtrack::~Backtrack()
 
 bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, long long aNumTreeNode)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
+
 	g1 = aG1;
 	g2 = aG2;
 	coloring = aColoring;
@@ -81,8 +84,11 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, long long aNumT
 
 void Backtrack::initWorkspace()
 {
-	clearWorkspace();
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
+
+	clearWorkspace();
 
 	extCand = new vector<long long>[n];
 	heap = new Heap(n);
@@ -95,7 +101,9 @@ void Backtrack::initWorkspace()
 
 void Backtrack::clearWorkspace()
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	if( extCand != NULL ) {
 		delete[] extCand;
@@ -129,7 +137,9 @@ void Backtrack::clearWorkspace()
 
 DAG* Backtrack::buildDAG()
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	DAG* bfsdag = new DAG;
 	bfsdag->numNode = n;
@@ -233,7 +243,9 @@ DAG* Backtrack::buildDAG()
 
 long long Backtrack::selectRoot()
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	long long root = 0;
 	long long v, size;
@@ -267,7 +279,9 @@ long long Backtrack::selectRoot()
 
 CS* Backtrack::buildCS()
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	long long i, j, v, size, prevColor, currColor;
 	long long* color = coloring->color;
@@ -373,7 +387,9 @@ CS* Backtrack::buildCS()
 
 long long Backtrack::binarySearch(long long* aArray, long long aSize, long long aValue)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	long long l, r, m;
 
@@ -404,7 +420,9 @@ long long Backtrack::binarySearch(long long* aArray, long long aSize, long long 
 
 long long Backtrack::mapBinaryCell()
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	long long numMatching = 0;
 	long long i, j, u, v, child;
@@ -470,7 +488,9 @@ long long Backtrack::mapBinaryCell()
 
 bool Backtrack::backtrack(long long aNumMatching)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	long long depth = aNumMatching; //the number of mapped vertices
 	long long curr = dag->root; //current mapping node of graph 1 (start from the root)
@@ -742,7 +762,9 @@ bool Backtrack::backtrack(long long aNumMatching)
 
 void Backtrack::insertExtVertex(long long aVertex, long long aWeight)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	weight[aVertex] = aWeight;
 	heap->insert(weight, aVertex);
@@ -750,7 +772,9 @@ void Backtrack::insertExtVertex(long long aVertex, long long aWeight)
 
 long long Backtrack::getMinExtVertex()
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	if( heap->size == 0 ) {
 		cout << "ERROR in " << __FUNCTION__ << "(): numExtVertex == 0" << endl;
@@ -761,14 +785,18 @@ long long Backtrack::getMinExtVertex()
 
 void Backtrack::deleteExtVertex(long long aVertex)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	heap->erase(weight, aVertex);
 }
 
 long long Backtrack::computeWeight(long long aVertex)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	long long w = 0;
 	long long i, adjCand, ci;
@@ -852,7 +880,9 @@ long long Backtrack::computeWeight(long long aVertex)
 
 void Backtrack::computeExtCand(long long aVertex)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	extCand[aVertex].clear();
 
@@ -944,7 +974,9 @@ void Backtrack::computeExtCand(long long aVertex)
 
 long long Backtrack::binarySearch(vector<long long>& aVector, long long aValue)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	if( aVector.size() == 0 )
 		return -1;
@@ -978,7 +1010,9 @@ long long Backtrack::binarySearch(vector<long long>& aVector, long long aValue)
 
 void Backtrack::merge(vector<long long>& aTo, vector<long long>& aSource)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	if( aSource.size() == 0)
 		return;
@@ -1035,7 +1069,9 @@ void Backtrack::merge(vector<long long>& aTo, vector<long long>& aSource)
 
 void Backtrack::merge(vector<long long>& aTo, long long* aSource, long long aSize)
 {
+	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
+	#endif
 
 	if( aSize == 0)
 		return;
