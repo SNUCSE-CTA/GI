@@ -1,5 +1,10 @@
 #include "backtrack.h"
 
+#include "timer.h"
+
+extern double searchTime;
+extern long long numRecur;
+
 Backtrack::Backtrack()
 {
 }
@@ -71,7 +76,10 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, long long aNumT
 	}
 	failingset = new vector<long long>[n - numMatching - numTreeNode];
 	
+	Timer t;
+	t.start();
 	bool result = backtrack(numMatching + numTreeNode);
+	searchTime = t.end();
 	
 	clearWorkspace();
 	if( failingset != NULL ) {
@@ -518,7 +526,8 @@ bool Backtrack::backtrack(long long aNumMatching)
 				return true;
 			}
 
-			//TODO: ++num_recur
+			++numRecur;
+
 			curr = getMinExtVertex(); //get a node with the min-weight and delete it from the extendable vertex array.
 			computeExtCand(curr);	//compute the extendable candidates by intersection and store it in extCand[curr].
 			candPos[curr] = 0;	//index of the extendable candidate array
