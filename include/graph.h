@@ -18,6 +18,7 @@ public:
 	void readGraph(string);
 	void sortByDegreeDec(int32_t*, int32_t*);
 	bool fail();
+	void printExample();
 
 	int32_t numNode = 0;
 	int32_t numEdge = 0;
@@ -42,8 +43,5 @@ public:
 	int32_t* parentSize = NULL;
 	int32_t* dagArr = NULL;
 };
-
-//TODO: void readGraph() -> int readGraph() that returns success/fail
-//TODO: print example file of the igraph format
 
 #endif
