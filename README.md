@@ -1,7 +1,7 @@
 # Graph Isomorphism
 
 ## Introduction
-The graph isomorphism problem is to determine whether there exists an isomorphism between two input graphs. This project is a C++ software that solves graph isomorphism. Current version assumes that the input graphs are simple, undirected, connected and vertex-labeled (single label is permitted for each vertex).
+The graph isomorphism problem is to determine whether there exists an isomorphism between two input graphs. This project is a C++ software that solves graph isomorphism. Current version assumes that the input graphs are simple, undirected, connected, and vertex-labeled (single label is permitted for each vertex).
 
 Graph isomorphism is a core problem in graph analyses of various domains including social networks, bioinformatics, chemistry, mechanics, and so on. As the real-world graphs are getting bigger and bigger, applications demand practically fast algorithms that can run on large graphs.
 
