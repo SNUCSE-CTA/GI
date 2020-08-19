@@ -197,7 +197,7 @@ bool Refinement::colorByDegreeAndLabel(Coloring* coloring, Graph* aG1, Graph* aG
 		}
 	}
 
-	return true;
+	return (acc == 0);
 }
 
 bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
