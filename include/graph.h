@@ -10,12 +10,14 @@ using namespace std;
 
 class Graph
 {
+	bool nofile = false;
 public:
 	Graph(string);
 	~Graph();
 	void clear();
 	void readGraph(string);
 	void sortByDegreeDec(int32_t*, int32_t*);
+	bool fail();
 
 	int32_t numNode = 0;
 	int32_t numEdge = 0;

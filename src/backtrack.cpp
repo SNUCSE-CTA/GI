@@ -54,7 +54,7 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, int32_t aNumTre
 		global_memory.returnLLArray(mapping, n2);
 		mapping = NULL;
 	}
-	mapping = global_memory.getLLArray(n2); //TODO: in global.cpp, search from the end.
+	mapping = global_memory.getLLArray(n2);
 	initWorkspace();
 
 	if( dag != NULL ) {

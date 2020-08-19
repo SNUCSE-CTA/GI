@@ -29,6 +29,14 @@ void Graph::readGraph(string aFileName)
 	clear(); // avoid double allocation
 
 	ifstream infile(aFileName);
+	if(infile.fail()) {
+		nofile = true;
+		return;
+	}
+	else {
+		nofile = false;
+	}
+
 	streampos edgePos = infile.tellg();
 	char tag;
 	int32_t vid, vlabel, left, right, elabel, gid;
@@ -139,6 +147,10 @@ void Graph::sortByDegreeDec(int32_t* aStart, int32_t* aEnd)
 	sort(aStart, aEnd, [this](int32_t a, int32_t b) {
 		return (d[a] > d[b]);
 	});
+}
+
+bool Graph::fail() {
+	return nofile;
 }
 
 //////////////////////////DAG

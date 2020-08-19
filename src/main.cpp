@@ -26,6 +26,16 @@ int main(int argc, char* argv[])
 	//1. read input graph files
 	Graph* g1 = new Graph(file1);
 	Graph* g2 = new Graph(file2);
+	//check if input files exist.
+	if(g1->fail())
+		cout << "There is no file " << file1 << endl;
+	if(g2->fail())
+		cout << "There is no file " << file2 << endl;
+	if(g1->fail() || g2->fail() ) {
+		delete g1;
+		delete g2;
+		return -1;
+	}
 
 	//2. GI algorithm
 	Algorithm alg;
