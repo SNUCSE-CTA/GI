@@ -3,10 +3,7 @@
 ## Introduction
 The graph isomorphism problem is to determine whether there exists an isomorphism between two input graphs. This project is a C++ software that solves graph isomorphism. Current version assumes that the input graphs are simple, undirected, connected and vertex-labeled (single label is permitted for each vertex).
 
-Graph isomorphism is a core problem in graph analyses of various domains including social networks, bioinformatics, chemistry, mechanics, and so on. As the real-world graphs are getting bigger and bigger, applications demand practically fast algorithms that can run on large graphs. For example:
-- Social networks.
-- Electronic systems.
-- Mechanics.
+Graph isomorphism is a core problem in graph analyses of various domains including social networks, bioinformatics, chemistry, mechanics, and so on. As the real-world graphs are getting bigger and bigger, applications demand practically fast algorithms that can run on large graphs.
 
 ## Installation
 To download and compile the project, use the following commands.
@@ -25,7 +22,7 @@ To run the proram:
 
 ## Running Example
 ``` console
-./program lcc_yeast.igraph sfl_lcc_yeast.igraph
+./program input/lcc_yeast.igraph input/sfl_lcc_yeast.igraph
 ```
 
 ## Input File Format
@@ -56,5 +53,3 @@ The main contributors to this project are:
 This project is an open source software provided under the Apache License 2.0.
 
 ## Contribute
-
-## References
