@@ -6,25 +6,25 @@ Memory::Memory()
 
 Memory::~Memory()
 {
-	for(long long i = 0; i < (long long)createdArray.size(); ++i) {
+	for(int32_t i = 0; i < (int32_t)createdArray.size(); ++i) {
 		delete[] createdArray[i];
 	}
 	createdArray.clear();
 	llPool.clear();
 }
 
-long long* Memory::getLLArray(long long aSize)
+int32_t* Memory::getLLArray(int32_t aSize)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	long long exact = -1; 	//an array of size aSize
-	long long bigger = -1;	//an array bigger than aSize
-	long long* p = NULL;	//output
+	int32_t exact = -1; 	//an array of size aSize
+	int32_t bigger = -1;	//an array bigger than aSize
+	int32_t* p = NULL;	//output
 
 	//find the reusable array in the pool
-	for(long long i = llPool.size() - 1; i >= 0; --i) {
+	for(int32_t i = llPool.size() - 1; i >= 0; --i) {
 		auto slot = llPool[i];
 		if( slot.second == aSize ) {
 			exact = i;
@@ -36,7 +36,7 @@ long long* Memory::getLLArray(long long aSize)
 	}
 
 	if(exact == -1 && bigger == -1) { //if there is no array reusable
-		p = new long long[aSize];
+		p = new int32_t[aSize];
 		createdArray.push_back(p);
 
 		//cout << "Case: create " << aSize << endl;
@@ -50,8 +50,8 @@ long long* Memory::getLLArray(long long aSize)
 	else if(bigger != -1) { //if there is a bigger array
 		//split the array
 		p = llPool[bigger].first;
-		long long rest = llPool[bigger].second - aSize;
-		long long* restP = p + aSize;
+		int32_t rest = llPool[bigger].second - aSize;
+		int32_t* restP = p + aSize;
 		llPool.erase(llPool.begin() + bigger);
 		llPool.push_back(make_pair(restP, rest));
 
@@ -61,7 +61,7 @@ long long* Memory::getLLArray(long long aSize)
 	return p;
 }
 
-void Memory::returnLLArray(long long* aArray, long long aSize)
+void Memory::returnLLArray(int32_t* aArray, int32_t aSize)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;

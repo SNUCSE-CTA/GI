@@ -17,19 +17,19 @@ using namespace std;
 class Heap
 {
 private:
-	void minHeapify(long long*, long long);
+	void minHeapify(int32_t*, int32_t);
 
 public:
-	long long* heap = NULL;
-	long long* locate = NULL;
-	long long size = 0;
+	int32_t* heap = NULL;
+	int32_t* locate = NULL;
+	int32_t size = 0;
 
-	Heap(long long);
+	Heap(int32_t);
 	~Heap();
-	void buildMinHeap(long long*);
-	void insert(long long*, long long);
-	void erase(long long*, long long);
-	long long extractMin(long long*);
+	void buildMinHeap(int32_t*);
+	void insert(int32_t*, int32_t);
+	void erase(int32_t*, int32_t);
+	int32_t extractMin(int32_t*);
 };
 
 #endif

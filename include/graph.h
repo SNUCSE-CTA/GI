@@ -15,15 +15,15 @@ public:
 	~Graph();
 	void clear();
 	void readGraph(string);
-	void sortByDegreeDec(long long*, long long*);
+	void sortByDegreeDec(int32_t*, int32_t*);
 
-	long long numNode = 0;
-	long long numEdge = 0;
-	long long* d = NULL; //degree
-	long long* l = NULL; //label
+	int32_t numNode = 0;
+	int32_t numEdge = 0;
+	int32_t* d = NULL; //degree
+	int32_t* l = NULL; //label
 	char* one = NULL; //if coreness-1, then one == 1.
-	long long** e = NULL; //edge
-	long long* adjPos = NULL; //adjPos[i] = adjPos[i-1] + degree[i-1]
+	int32_t** e = NULL; //edge
+	int32_t* adjPos = NULL; //adjPos[i] = adjPos[i-1] + degree[i-1]
 };
 
 class DAG
@@ -33,12 +33,12 @@ public:
 	~DAG();
 	void clear();
 
-	long long numNode = 0;
-	long long numEdge = 0;
-	long long root = 0;
-	long long* childSize = NULL;
-	long long* parentSize = NULL;
-	long long* dagArr = NULL;
+	int32_t numNode = 0;
+	int32_t numEdge = 0;
+	int32_t root = 0;
+	int32_t* childSize = NULL;
+	int32_t* parentSize = NULL;
+	int32_t* dagArr = NULL;
 };
 
 //TODO: void readGraph() -> int readGraph() that returns success/fail

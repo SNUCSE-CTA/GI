@@ -8,14 +8,14 @@ using namespace std;
 
 class Memory
 {
-	vector<long long*> createdArray;
-	vector<pair<long long*, long long> > llPool; //pair=(pointer, size)
+	vector<int32_t*> createdArray;
+	vector<pair<int32_t*, int32_t> > llPool; //pair=(pointer, size)
 public:
 	Memory();
 	~Memory();
 
-	long long* getLLArray(long long aSize);
-	void returnLLArray(long long* aArray, long long aSize);
+	int32_t* getLLArray(int32_t aSize);
+	void returnLLArray(int32_t* aArray, int32_t aSize);
 };
 
 #endif

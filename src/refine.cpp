@@ -58,7 +58,7 @@ Coloring* Refinement::getStableColoring()
 }
 
 //NOTE: return the number of tree nodes in g1
-long long Refinement::getNumTreeNode()
+int32_t Refinement::getNumTreeNode()
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -132,9 +132,9 @@ bool Refinement::checkColoring(Coloring* coloring)
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	for (long long i = 0; i < coloring->numNode; i += coloring->cellSize[i]) {
-		long long acc = 0;
-		for (long long j = 0; j < coloring->cellSize[i]; ++j) {
+	for (int32_t i = 0; i < coloring->numNode; i += coloring->cellSize[i]) {
+		int32_t acc = 0;
+		for (int32_t j = 0; j < coloring->cellSize[i]; ++j) {
 			acc += (coloring->perm[i+j] < n) ? 1 : -1;
 		}
 
@@ -151,34 +151,34 @@ bool Refinement::colorByDegreeAndLabel(Coloring* coloring, Graph* aG1, Graph* aG
 	#endif
 
 	sort(coloring->perm, coloring->perm + coloring->numNode,
-			[aG1, aG2](const long long& i, const long long& j) -> bool {
-				const long long di = (i < aG1->numNode) ? aG1->d[i] : aG2->d[i - aG1->numNode];
-				const long long li = (i < aG1->numNode) ? aG1->l[i] : aG2->l[i - aG1->numNode];
+			[aG1, aG2](const int32_t& i, const int32_t& j) -> bool {
+				const int32_t di = (i < aG1->numNode) ? aG1->d[i] : aG2->d[i - aG1->numNode];
+				const int32_t li = (i < aG1->numNode) ? aG1->l[i] : aG2->l[i - aG1->numNode];
 
-				const long long dj = (j < aG1->numNode) ? aG1->d[j] : aG2->d[j - aG1->numNode];
-				const long long lj = (j < aG1->numNode) ? aG1->l[j] : aG2->l[j - aG1->numNode];
+				const int32_t dj = (j < aG1->numNode) ? aG1->d[j] : aG2->d[j - aG1->numNode];
+				const int32_t lj = (j < aG1->numNode) ? aG1->l[j] : aG2->l[j - aG1->numNode];
 
 				return (di == dj && li < lj) || di < dj;
 			}
 		);
 
-	for (long long i = 0; i < coloring->numNode; ++i)
+	for (int32_t i = 0; i < coloring->numNode; ++i)
 		coloring->inv[coloring->perm[i]] = i;
 
-	long long acc = (coloring->perm[0] < aG1->numNode) ? 1 : -1;
+	int32_t acc = (coloring->perm[0] < aG1->numNode) ? 1 : -1;
 
 	coloring->numCell = 1;
 	coloring->color[0] = 0;
 	coloring->cellSize[0] = 1;
-	for (long long i = 1; i < coloring->numNode; ++i) {
-		const long long u = coloring->perm[i];
-		const long long v = coloring->perm[i-1];
+	for (int32_t i = 1; i < coloring->numNode; ++i) {
+		const int32_t u = coloring->perm[i];
+		const int32_t v = coloring->perm[i-1];
 
-		const long long du = (u < aG1->numNode) ? aG1->d[u] : aG2->d[u - aG1->numNode];
-		const long long lu = (u < aG1->numNode) ? aG1->l[u] : aG2->l[u - aG1->numNode];
+		const int32_t du = (u < aG1->numNode) ? aG1->d[u] : aG2->d[u - aG1->numNode];
+		const int32_t lu = (u < aG1->numNode) ? aG1->l[u] : aG2->l[u - aG1->numNode];
 
-		const long long dv = (v < aG1->numNode) ? aG1->d[v] : aG2->d[v - aG1->numNode];
-		const long long lv = (v < aG1->numNode) ? aG1->l[v] : aG2->l[v - aG1->numNode];
+		const int32_t dv = (v < aG1->numNode) ? aG1->d[v] : aG2->d[v - aG1->numNode];
+		const int32_t lv = (v < aG1->numNode) ? aG1->l[v] : aG2->l[v - aG1->numNode];
 
 		if (du == dv && lu == lv) {
 			acc += (u < aG1->numNode) ? 1 : -1;
@@ -206,30 +206,30 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	auto deg = [aG1, aG2](const long long& u) -> long long {
+	auto deg = [aG1, aG2](const int32_t& u) -> int32_t {
 		return (u < aG1->numNode) ? aG1->d[u] : aG2->d[u - aG1->numNode];
 	};
 
-	auto adj = [aG1, aG2](const long long& u, const long long& i) -> long long {
+	auto adj = [aG1, aG2](const int32_t& u, const int32_t& i) -> int32_t {
 		return (u < aG1->numNode) ? aG1->e[u][i] : (aG2->e[u - aG1->numNode][i] + aG1->numNode);
 	};
 
-	const long long numNode = aG1->numNode + aG2->numNode;
+	const int32_t numNode = aG1->numNode + aG2->numNode;
 
-	long long* inStack = global_memory.getLLArray(numNode);
-	long long* stackCand = global_memory.getLLArray(numNode);
+	int32_t* inStack = global_memory.getLLArray(numNode);
+	int32_t* stackCand = global_memory.getLLArray(numNode);
 
-	memset(inStack, 0, sizeof(long long) * numNode);
-	memset(stackCand, 0, sizeof(long long) * numNode);
+	memset(inStack, 0, sizeof(int32_t) * numNode);
+	memset(stackCand, 0, sizeof(int32_t) * numNode);
 
-	long long numStackCand = 0;
-	long long numVisitCell = 0;
-	long long numSplitCell = 0;
-	long long numSplitCount = 0;
+	int32_t numStackCand = 0;
+	int32_t numVisitCell = 0;
+	int32_t numSplitCell = 0;
+	int32_t numSplitCount = 0;
 
 	// Push all cells of the coloring into the stack.
 	stackSize = 0;
-	for (long long i = 0; i < numNode; i += coloring->cellSize[i]) {
+	for (int32_t i = 0; i < numNode; i += coloring->cellSize[i]) {
 		cellStack[stackSize] = i;
 		++stackSize;
 		inStack[i] = 1;
@@ -240,27 +240,27 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 			break;
 
 		if (global_mark > INFINITY) {
-			memset(markCell, 0, sizeof(long long) * numNode);
-			memset(markNode, 0, sizeof(long long) * numNode);
+			memset(markCell, 0, sizeof(int32_t) * numNode);
+			memset(markNode, 0, sizeof(int32_t) * numNode);
 			global_mark = 0;
 		}
 		++global_mark;
 
-		long long weightend = 0;
-		long long idx = selectFromStack(coloring);
-		long long currCell = cellStack[idx];
-		long long currEnd = currCell + coloring->cellSize[currCell];
+		int32_t weightend = 0;
+		int32_t idx = selectFromStack(coloring);
+		int32_t currCell = cellStack[idx];
+		int32_t currEnd = currCell + coloring->cellSize[currCell];
 
 		cellStack[idx] = cellStack[stackSize - 1];
 		--stackSize;
 		inStack[currCell] = 0;
 
 		// The first node.
-		long long currNode = coloring->perm[currCell];
-		long long currDegree = deg(currNode);
+		int32_t currNode = coloring->perm[currCell];
+		int32_t currDegree = deg(currNode);
 		do {
-			long long start = currCell;
-			long long end = currEnd;
+			int32_t start = currCell;
+			int32_t end = currEnd;
 			weightend = deg(currNode);
 
 			if (coloring->cellSize[start] == 1) {
@@ -273,11 +273,11 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 				}
 
 				numVisitCell = 0;
-				for (long long i = 0; i < 2; ++i) {
+				for (int32_t i = 0; i < 2; ++i) {
 					currNode = coloring->perm[start+i];
-					for (long long j = 0; j < deg(currNode); ++j) {
-						long long neigh = adj(currNode, j);
-						long long c = coloring->color[coloring->inv[neigh]];
+					for (int32_t j = 0; j < deg(currNode); ++j) {
+						int32_t neigh = adj(currNode, j);
+						int32_t c = coloring->color[coloring->inv[neigh]];
 						if (coloring->cellSize[c] > 1) {
 							if (markCell[c] != global_mark) {
 								visitCell[numVisitCell++] = c;
@@ -295,8 +295,8 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 
 				// Find cells that needs to be split.
 				numSplitCell = 0;
-				for (long long idx = 0; idx < numVisitCell; ++idx) {
-					long long c = visitCell[idx];
+				for (int32_t idx = 0; idx < numVisitCell; ++idx) {
+					int32_t c = visitCell[idx];
 					if (numVisitNode[c] < coloring->cellSize[c]) {
 						splitCell[numSplitCell++] = c;
 					}
@@ -305,12 +305,12 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 				if (numSplitCell > 0) {
 					sort(splitCell, splitCell+numSplitCell);
 
-					for (long long idx = 0; idx < numSplitCell; ++idx) {
-						long long sc = splitCell[idx];
+					for (int32_t idx = 0; idx < numSplitCell; ++idx) {
+						int32_t sc = splitCell[idx];
 
 						coloring->cellSize[sc] -= numVisitNode[sc];
 
-						long long newCell = sc + coloring->cellSize[sc];
+						int32_t newCell = sc + coloring->cellSize[sc];
 						coloring->cellSize[newCell] = numVisitNode[sc];
 
 						++coloring->numCell;
@@ -331,11 +331,11 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 							}
 						}
 
-						for (long long i = 0; i < numVisitNode[sc]; ++i) {
-							long long node = visitNode[sc+i];
+						for (int32_t i = 0; i < numVisitNode[sc]; ++i) {
+							int32_t node = visitNode[sc+i];
 
-							long long newPos = newCell + i;
-							long long oldPos = coloring->inv[node];
+							int32_t newPos = newCell + i;
+							int32_t oldPos = coloring->inv[node];
 
 							coloring->perm[oldPos] = coloring->perm[newPos];
 							coloring->perm[newPos] = node;
@@ -348,15 +348,15 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 			} else { // if cellSize[start] > 2
 				if (coloring->cellSize[start] != numNode) {
 					numVisitCell = 0;
-					for (long long i = start; i < end; ++i) {
+					for (int32_t i = start; i < end; ++i) {
 						currNode = coloring->perm[i];
-						for (long long j = 0; j < deg(currNode); ++j) {
-							long long neigh = adj(currNode, j);
+						for (int32_t j = 0; j < deg(currNode); ++j) {
+							int32_t neigh = adj(currNode, j);
 
 							if (markNode[neigh] == global_mark) {
 								++neighCount[neigh];
 							} else {
-								int c = coloring->color[coloring->inv[neigh]];
+								int32_t c = coloring->color[coloring->inv[neigh]];
 								if (coloring->cellSize[c] > 1) {
 									markNode[neigh] = global_mark;
 									neighCount[neigh] = 1;
@@ -378,14 +378,14 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 
 				// Find cells that need to be split.
 				numSplitCell = 0;
-				for (long long idx = 0; idx < numVisitCell; ++idx) {
-					long long c = visitCell[idx];
+				for (int32_t idx = 0; idx < numVisitCell; ++idx) {
+					int32_t c = visitCell[idx];
 
 					if (numVisitNode[c] < coloring->cellSize[c]) {
 						splitCell[numSplitCell++] = c;
 					} else {
-						long long count = neighCount[coloring->perm[c]];
-						for (long long i = c+1; i < c+coloring->cellSize[c]; ++i) {
+						int32_t count = neighCount[coloring->perm[c]];
+						for (int32_t i = c+1; i < c+coloring->cellSize[c]; ++i) {
 							if (neighCount[coloring->perm[i]] != count) {
 								splitCell[numSplitCell++] = c;
 								break;
@@ -397,10 +397,10 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 				if (numSplitCell > 0) {
 					sort(splitCell, splitCell+numSplitCell);
 
-					for (long long idx = 0; idx < numSplitCell; ++idx) {
-						long long sc = splitCell[idx];
+					for (int32_t idx = 0; idx < numSplitCell; ++idx) {
+						int32_t sc = splitCell[idx];
 
-						long long scEnd = sc + coloring->cellSize[sc];
+						int32_t scEnd = sc + coloring->cellSize[sc];
 						numSplitCount = 0;
 						if (numVisitNode[sc] < scEnd) {
 							splitCount[numSplitCount] = 0;
@@ -408,9 +408,9 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 							splitPos[0] = coloring->cellSize[sc] - numVisitNode[sc];
 						}
 
-						long long thisEnd = sc + numVisitNode[sc];
-						for (long long i = sc; i < thisEnd; ++i) {
-							long long count = neighCount[visitNode[i]];
+						int32_t thisEnd = sc + numVisitNode[sc];
+						for (int32_t i = sc; i < thisEnd; ++i) {
+							int32_t count = neighCount[visitNode[i]];
 
 							if (markCell[count] != global_mark) {
 								markCell[count] = global_mark;
@@ -428,9 +428,9 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 						stackCand[0] = sc;
 						numStackCand = 1;
 
-						long long newCell = sc;
-						for (long long k = 0; k < numSplitCount; ++k) {
-							long long size = splitPos[splitCount[k]];
+						int32_t newCell = sc;
+						for (int32_t k = 0; k < numSplitCount; ++k) {
+							int32_t size = splitPos[splitCount[k]];
 							coloring->cellSize[newCell] = size;
 							splitPos[splitCount[k]] = newCell;
 
@@ -445,22 +445,22 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 						}
 
 						if (inStack[sc]) {
-							for (long long k = 1; k < numStackCand; ++k) {
+							for (int32_t k = 1; k < numStackCand; ++k) {
 								cellStack[stackSize] = stackCand[k];
 								inStack[stackCand[k]] = 1;
 								++stackSize;
 							}
 						} else {
-							long long maxCell = sc;
-							long long maxCellSize = coloring->cellSize[sc];
-							for (long long k = 1; k < numStackCand; ++k) {
+							int32_t maxCell = sc;
+							int32_t maxCellSize = coloring->cellSize[sc];
+							for (int32_t k = 1; k < numStackCand; ++k) {
 								if (coloring->cellSize[stackCand[k]] > maxCellSize) {
 									maxCell = stackCand[k];
 									maxCellSize = coloring->cellSize[maxCell];
 								}
 							}
 
-							for (long long k = 0; k < numStackCand; ++k) {
+							for (int32_t k = 0; k < numStackCand; ++k) {
 								if (stackCand[k] != maxCell) {
 									cellStack[stackSize] = stackCand[k];
 									inStack[stackCand[k]] = 1;
@@ -469,11 +469,11 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 							}
 						}
 
-						for (long long i = sc; i < thisEnd; ++i) {
-							long long node = visitNode[i];
+						for (int32_t i = sc; i < thisEnd; ++i) {
+							int32_t node = visitNode[i];
 
-							long long newPos = splitPos[neighCount[node]]++;
-							long long oldPos = coloring->inv[node];
+							int32_t newPos = splitPos[neighCount[node]]++;
+							int32_t oldPos = coloring->inv[node];
 
 							coloring->perm[oldPos] = coloring->perm[newPos];
 							coloring->perm[newPos] = node;
@@ -483,8 +483,8 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 						}
 
 						newCell = scEnd - numVisitNode[sc];
-						long long nc = newCell;
-						long long ncEnd = newCell + coloring->cellSize[newCell] - 1;
+						int32_t nc = newCell;
+						int32_t ncEnd = newCell + coloring->cellSize[newCell] - 1;
 						do {
 							coloring->color[nc] = newCell;
 							if (nc == ncEnd) {
@@ -504,21 +504,21 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 	return checkColoring(coloring);
 }
 
-// void Refinement::sortArray(long long* aArray, long long aSize)
+// void Refinement::sortArray(int32_t* aArray, int32_t aSize)
 // {
 // 	cout << __PRETTY_FUNCTION__ << endl;
 // }
 
 //sort aArray1 in ascending order, and sort aArray2 according to aArray1.
-// void Refinement::sortTwoArrays(long long* aArray1, long long* aArray2, long long aSize)
+// void Refinement::sortTwoArrays(int32_t* aArray1, int32_t* aArray2, int32_t aSize)
 // {
 // 	cout << __PRETTY_FUNCTION__ << endl;
 // }
 
-long long Refinement::selectFromStack(Coloring* coloring)
+int32_t Refinement::selectFromStack(Coloring* coloring)
 {
-	long long ret = stackSize - 1;
-	long long idx = stackSize - 2;
+	int32_t ret = stackSize - 1;
+	int32_t idx = stackSize - 2;
 	while (idx >= 0) {
 		if (coloring->cellSize[cellStack[idx]] < coloring->cellSize[cellStack[ret]]) {
 			ret = idx;
@@ -534,7 +534,7 @@ long long Refinement::selectFromStack(Coloring* coloring)
 	return ret;
 }
 
-long long Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
+int32_t Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -543,22 +543,22 @@ long long Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 	Graph* g1 = aG1;
 	Graph* g2 = aG2;
 
-	long long n = g1->numNode;
-	long long* d1 = g1->d;
+	int32_t n = g1->numNode;
+	int32_t* d1 = g1->d;
 	char* one1 = g1->one;
-	long long** neigh1 = g1->e;
-	long long* d2 = g2->d;
+	int32_t** neigh1 = g1->e;
+	int32_t* d2 = g2->d;
 	char* one2 = g2->one;
-	long long** neigh2 = g2->e;
-	long long numNode = aColoring->numNode;
-	long long* perm = aColoring->perm;
-	long long* inv = aColoring->inv;
-	long long* cellSize = aColoring->cellSize;
-	long long* color = aColoring->color;
+	int32_t** neigh2 = g2->e;
+	int32_t numNode = aColoring->numNode;
+	int32_t* perm = aColoring->perm;
+	int32_t* inv = aColoring->inv;
+	int32_t* cellSize = aColoring->cellSize;
+	int32_t* color = aColoring->color;
 
-	long long i, j, k, sc, ind, currCell, cellEnd, visitCellInd;
-	long long u, du, v, adj, cell, splitInd, splitCountInd, count, size, endIdx, newCell;
-	long long numDeleted = 0;
+	int32_t i, j, k, sc, ind, currCell, cellEnd, visitCellInd;
+	int32_t u, du, v, adj, cell, splitInd, splitCountInd, count, size, endIdx, newCell;
+	int32_t numDeleted = 0;
 
 	//check if there are coreness-1 vertices.
 	bool hasDegreeOne = false;
@@ -587,8 +587,8 @@ long long Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 	ind = 0;
 	while( ind < stackSize ) {
 		if( global_mark > INFINITY ) {
-			memset(markCell, 0, sizeof(long long) * n);
-			memset(markNode, 0, sizeof(long long) * n);
+			memset(markCell, 0, sizeof(int32_t) * n);
+			memset(markNode, 0, sizeof(int32_t) * n);
 			global_mark = 0;
 		}
 		++global_mark;
@@ -788,20 +788,20 @@ long long Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 	return numDeleted;
 }
 
-void Refinement::deleteEdge(long long aVertex, long long aNumDegOne, Graph* aG1, Graph* aG2)
+void Refinement::deleteEdge(int32_t aVertex, int32_t aNumDegOne, Graph* aG1, Graph* aG2)
 {
 	Graph* g1 = aG1;
 	Graph* g2 = aG2;
-	long long n = g1->numNode;
-	long long* d1 = g1->d;
-	long long* d2 = g2->d;
+	int32_t n = g1->numNode;
+	int32_t* d1 = g1->d;
+	int32_t* d2 = g2->d;
 
-	long long du = (aVertex < n) ? d1[aVertex] : d2[aVertex - n];
+	int32_t du = (aVertex < n) ? d1[aVertex] : d2[aVertex - n];
 	if( du < 2 )
 		return;
 
-	long long i, newDegree, temp, lastInd;
-	long long* edge = NULL;
+	int32_t i, newDegree, temp, lastInd;
+	int32_t* edge = NULL;
 	char* one = NULL;
 
 	newDegree = du - aNumDegOne;

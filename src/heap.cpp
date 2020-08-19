@@ -1,14 +1,14 @@
 #include "heap.h"
 
-Heap::Heap(long long aSize)
+Heap::Heap(int32_t aSize)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	heap = new long long[aSize];
-	locate = new long long[aSize];
-	memset(locate, -1, sizeof(long long) * aSize);
+	heap = new int32_t[aSize];
+	locate = new int32_t[aSize];
+	memset(locate, -1, sizeof(int32_t) * aSize);
 }
 
 Heap::~Heap()
@@ -23,14 +23,14 @@ Heap::~Heap()
 	}
 }
 
-void Heap::minHeapify(long long* aValue, long long aIndex)
+void Heap::minHeapify(int32_t* aValue, int32_t aIndex)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	long long l, r, s, t;
-	long long i = aIndex;
+	int32_t l, r, s, t;
+	int32_t i = aIndex;
 
 	while(true) {
 		s = i;	//smaller one's index
@@ -56,24 +56,24 @@ void Heap::minHeapify(long long* aValue, long long aIndex)
 	} //while(true)
 }
 
-void Heap::buildMinHeap(long long* aValue)
+void Heap::buildMinHeap(int32_t* aValue)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
 	//heap, heapLocate, and size are set before calling this function
-	for(long long i = (size >> 1); i > 0; --i)
+	for(int32_t i = (size >> 1); i > 0; --i)
 		minHeapify(aValue, i);
 }
 
-void Heap::insert(long long* aValue, long long aVertex)
+void Heap::insert(int32_t* aValue, int32_t aVertex)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	long long i, p, t;
+	int32_t i, p, t;
 	++size;
 	heap[size] = aVertex;
 	locate[aVertex] = size;
@@ -96,13 +96,13 @@ void Heap::insert(long long* aValue, long long aVertex)
 	}
 }
 
-void Heap::erase(long long* aValue, long long aVertex)
+void Heap::erase(int32_t* aValue, int32_t aVertex)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	long long i = locate[aVertex];
+	int32_t i = locate[aVertex];
 	if( i < 0 )
 		return;
 	
@@ -114,7 +114,7 @@ void Heap::erase(long long* aValue, long long aVertex)
 		minHeapify(aValue, i);
 }
 
-long long Heap::extractMin(long long* aValue)
+int32_t Heap::extractMin(int32_t* aValue)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -124,7 +124,7 @@ long long Heap::extractMin(long long* aValue)
 		return -1;
 	}
 	
-	long long min = heap[1];
+	int32_t min = heap[1];
 	locate[min] = -1;
 	heap[1] = heap[size];
 	locate[ heap[1] ] = 1;

@@ -15,17 +15,17 @@ class Coloring
 {
 public:
 	Coloring();
-	Coloring(long long _numNode);
+	Coloring(int32_t _numNode);
 	~Coloring();
 
-	long long numNode;
-	long long numCell;
-	long long* color = NULL;
-	long long* perm = NULL;
-	long long* inv = NULL;
-	long long* cellSize = NULL;
+	int32_t numNode;
+	int32_t numCell;
+	int32_t* color = NULL;
+	int32_t* perm = NULL;
+	int32_t* inv = NULL;
+	int32_t* cellSize = NULL;
 
-	void init(long long _numNode);
+	void init(int32_t _numNode);
 	void clear();
 };
 

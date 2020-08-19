@@ -2,7 +2,7 @@
 
 Coloring::Coloring() {}
 
-Coloring::Coloring(long long n) {
+Coloring::Coloring(int32_t n) {
 	init(n);
 }
 
@@ -10,7 +10,7 @@ Coloring::~Coloring() {
 	clear();
 }
 
-void Coloring::init(long long _numNode)
+void Coloring::init(int32_t _numNode)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -19,12 +19,12 @@ void Coloring::init(long long _numNode)
 	numNode = _numNode;
 	numCell = 1;
 
-	color = new long long[numNode];
-	perm = new long long[numNode];
-	inv = new long long[numNode];
-	cellSize = new long long[numNode];
+	color = new int32_t[numNode];
+	perm = new int32_t[numNode];
+	inv = new int32_t[numNode];
+	cellSize = new int32_t[numNode];
 
-	for (long long i = 0; i < numNode; ++i) {
+	for (int32_t i = 0; i < numNode; ++i) {
 		color[i] = 0;
 		perm[i] = inv[i] = i;
 		cellSize[i] = 0;

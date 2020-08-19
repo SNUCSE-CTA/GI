@@ -1,14 +1,14 @@
 #include "global.h"
 
-vector<long long> global_temp_vector;
-long long* markCell = NULL;
-long long* markNode = NULL;
-long long global_mark = 0;
+vector<int32_t> global_temp_vector;
+int32_t* markCell = NULL;
+int32_t* markNode = NULL;
+int32_t global_mark = 0;
 Memory global_memory;
 
 //n: #vertices in a graph
 //e: #(undirected)edges in a graph
-void initGlobal(long long n)
+void initGlobal(int32_t n)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -16,10 +16,10 @@ void initGlobal(long long n)
 
 	clearGlobal(); //avoid double allocation
 
-	long long n2 = n * 2;
+	int32_t n2 = n * 2;
 
-	markCell = new long long[n2];
-	markNode = new long long[n2];
+	markCell = new int32_t[n2];
+	markNode = new int32_t[n2];
 	global_mark = 0;
 }
 

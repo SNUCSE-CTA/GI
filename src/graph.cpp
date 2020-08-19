@@ -31,7 +31,7 @@ void Graph::readGraph(string aFileName)
 	ifstream infile(aFileName);
 	streampos edgePos = infile.tellg();
 	char tag;
-	long long vid, vlabel, left, right, elabel, gid;
+	int32_t vid, vlabel, left, right, elabel, gid;
 	string line;
 	numNode = 0;
 	numEdge = 0;
@@ -41,8 +41,8 @@ void Graph::readGraph(string aFileName)
 		if( tag == 't' ) {
 			infile >> gid >> numNode;
 			//allocate memory for vertices
-			d = new long long[numNode];
-			l = new long long[numNode];
+			d = new int32_t[numNode];
+			l = new int32_t[numNode];
 			one = new char[numNode];
 		}
 		else if( tag == 'v' ) {
@@ -68,9 +68,9 @@ void Graph::readGraph(string aFileName)
 	}
 
 	//allocate memory for edges
-	e = new long long*[numNode];
+	e = new int32_t*[numNode];
 	for(vid = 0; vid < numNode; ++vid) {
-		e[vid] = new long long[ d[vid] ];
+		e[vid] = new int32_t[ d[vid] ];
 		d[vid] = 0; //we will use it as index in the second read.
 	}
 
@@ -93,7 +93,7 @@ void Graph::readGraph(string aFileName)
 	}
 
 	//calculate the start position of edge list for each vertex
-	adjPos = new long long[numNode];
+	adjPos = new int32_t[numNode];
 	adjPos[0] = 0;
 	for(vid = 1; vid < numNode; ++vid)
 		adjPos[vid] = adjPos[vid - 1] + d[vid - 1];
@@ -120,7 +120,7 @@ void Graph::clear()
 		one = NULL;
 	}
 	if(e != NULL) {
-		for(long long i = 0; i < numNode; ++i) {
+		for(int32_t i = 0; i < numNode; ++i) {
 			if(e[i] != NULL) {
 				delete[] e[i];
 			}
@@ -134,9 +134,9 @@ void Graph::clear()
 	}
 }
 
-void Graph::sortByDegreeDec(long long* aStart, long long* aEnd)
+void Graph::sortByDegreeDec(int32_t* aStart, int32_t* aEnd)
 {
-	sort(aStart, aEnd, [this](long long a, long long b) {
+	sort(aStart, aEnd, [this](int32_t a, int32_t b) {
 		return (d[a] > d[b]);
 	});
 }

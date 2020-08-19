@@ -9,7 +9,7 @@ using namespace std;
 
 double totalTime = 0;
 double searchTime = 0;
-long long numRecur = 0;
+int32_t numRecur = 0;
 
 int main(int argc, char* argv[])
 {

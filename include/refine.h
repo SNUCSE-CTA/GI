@@ -29,29 +29,29 @@
 using namespace std;
 
 extern Memory global_memory;
-extern long long* markCell;
-extern long long* markNode;
-extern long long global_mark;
+extern int32_t* markCell;
+extern int32_t* markNode;
+extern int32_t global_mark;
 
 class Refinement
 {
 	Coloring* stableColoring = NULL;
-	long long numTreeNode = 0;
-	long long n = 0;
-	long long n2 = 0;
-	long long e = 0;
-	long long e2 = 0;
+	int32_t numTreeNode = 0;
+	int32_t n = 0;
+	int32_t n2 = 0;
+	int32_t e = 0;
+	int32_t e2 = 0;
 
 	//variables used in color refinement (Workspace)
-	long long* cellStack = NULL;
-	long long stackSize = 0;
-	long long* neighCount = NULL;
-	long long* visitCell = NULL;
-	long long* visitNode = NULL;
-	long long* numVisitNode = NULL;
-	long long* splitCell = NULL;
-	long long* splitCount = NULL;
-	long long* splitPos = NULL;
+	int32_t* cellStack = NULL;
+	int32_t stackSize = 0;
+	int32_t* neighCount = NULL;
+	int32_t* visitCell = NULL;
+	int32_t* visitNode = NULL;
+	int32_t* numVisitNode = NULL;
+	int32_t* splitCell = NULL;
+	int32_t* splitCount = NULL;
+	int32_t* splitPos = NULL;
 
 
 	void initWorkspace();
@@ -61,13 +61,13 @@ class Refinement
 	//color refinement
 	bool colorByDegreeAndLabel(Coloring*, Graph*, Graph*);
 	bool refine(Coloring*, Graph*, Graph*);
-	// void sortArray(long long*, long long);
-	// void sortTwoArrays(long long*, long long*, long long);
-	long long selectFromStack(Coloring*);
+	// void sortArray(int32_t*, int32_t);
+	// void sortTwoArrays(int32_t*, int32_t*, int32_t);
+	int32_t selectFromStack(Coloring*);
 
 	//preprocessing coreness-1 nodes
-	long long prepCoreOne(Coloring*, Graph*, Graph*);
-	void deleteEdge(long long, long long, Graph*, Graph*);
+	int32_t prepCoreOne(Coloring*, Graph*, Graph*);
+	void deleteEdge(int32_t, int32_t, Graph*, Graph*);
 
 public:
 	Refinement();
@@ -75,7 +75,7 @@ public:
 
 	bool run(Graph*, Graph*);
 	Coloring* getStableColoring();
-	long long getNumTreeNode();
+	int32_t getNumTreeNode();
 };
 
 #endif

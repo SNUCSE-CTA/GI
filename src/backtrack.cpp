@@ -3,7 +3,7 @@
 #include "timer.h"
 
 extern double searchTime;
-extern long long numRecur;
+extern int32_t numRecur;
 
 Backtrack::Backtrack()
 {
@@ -34,7 +34,7 @@ Backtrack::~Backtrack()
 	}
 }
 
-bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, long long aNumTreeNode)
+bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, int32_t aNumTreeNode)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -69,12 +69,12 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, long long aNumT
 	}
 	cs = buildCS();
 
-	long long numMatching = mapBinaryCell();
+	int32_t numMatching = mapBinaryCell();
 	if( failingset != NULL ) {
 		delete[] failingset;
 		failingset = NULL;
 	}
-	failingset = new vector<long long>[n - numMatching - numTreeNode];
+	failingset = new vector<int32_t>[n - numMatching - numTreeNode];
 	
 	Timer t;
 	t.start();
@@ -98,7 +98,7 @@ void Backtrack::initWorkspace()
 
 	clearWorkspace();
 
-	extCand = new vector<long long>[n];
+	extCand = new vector<int32_t>[n];
 	heap = new Heap(n);
 	weight = global_memory.getLLArray(n);
 	numMappedParent = global_memory.getLLArray(n);
@@ -138,7 +138,7 @@ void Backtrack::clearWorkspace()
 		matchingOrder = NULL;
 	}
 	if( isBinary != NULL ) {
-		global_memory.returnLLArray((long long*)isBinary, n);
+		global_memory.returnLLArray((int32_t*)isBinary, n);
 		isBinary = NULL;
 	}
 }
@@ -152,28 +152,28 @@ DAG* Backtrack::buildDAG()
 	DAG* bfsdag = new DAG;
 	bfsdag->numNode = n;
 	bfsdag->numEdge = e;
-	bfsdag->childSize = new long long[n];
-	bfsdag->parentSize = new long long[n];
-	bfsdag->dagArr = new long long[e2];
-	long long* childSize = bfsdag->childSize;
-	memset(childSize, 0, sizeof(long long) * n);
-	long long* parentSize = bfsdag->parentSize;
-	memset(parentSize, 0, sizeof(long long) * n);
-	long long* dagArr = bfsdag->dagArr;
-	long long* adjPos1 = g1->adjPos;
-	long long* d1 = g1->d;
+	bfsdag->childSize = new int32_t[n];
+	bfsdag->parentSize = new int32_t[n];
+	bfsdag->dagArr = new int32_t[e2];
+	int32_t* childSize = bfsdag->childSize;
+	memset(childSize, 0, sizeof(int32_t) * n);
+	int32_t* parentSize = bfsdag->parentSize;
+	memset(parentSize, 0, sizeof(int32_t) * n);
+	int32_t* dagArr = bfsdag->dagArr;
+	int32_t* adjPos1 = g1->adjPos;
+	int32_t* d1 = g1->d;
 	char* one1 = g1->one;
 
-	long long i, curr, child;
+	int32_t i, curr, child;
 	char* popped = (char*)global_memory.getLLArray(n); 
 	memset(popped, 0, sizeof(char) * n);
 	char* visited = (char*)global_memory.getLLArray(n); 
 	memset(visited, 0, sizeof(char) * n);
-	long long* bfsQueue = global_memory.getLLArray(n);
+	int32_t* bfsQueue = global_memory.getLLArray(n);
 
-	long long queueStart = 0;
-	long long queueEnd = 0;
-	long long nextQueueEnd = 0;
+	int32_t queueStart = 0;
+	int32_t queueEnd = 0;
+	int32_t nextQueueEnd = 0;
 
 	//set binary cells as roots
 	memset(isBinary, 0, sizeof(char) * n);
@@ -207,7 +207,7 @@ DAG* Backtrack::buildDAG()
 			popped[curr] = 1;
 
 			//for each neighbor of curr
-			long long* neigh = g1->e[curr];
+			int32_t* neigh = g1->e[curr];
 			for(i = 0; i < d1[curr]; ++i) {
 				child = neigh[i];
 				if( popped[child] == 0 ) {
@@ -242,34 +242,34 @@ DAG* Backtrack::buildDAG()
 		}
 	}
 
-	global_memory.returnLLArray((long long*)popped, n);
-	global_memory.returnLLArray((long long*)visited, n);
+	global_memory.returnLLArray((int32_t*)popped, n);
+	global_memory.returnLLArray((int32_t*)visited, n);
 	global_memory.returnLLArray(bfsQueue, n);
 
 	return bfsdag;
 }
 
-long long Backtrack::selectRoot()
+int32_t Backtrack::selectRoot()
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	long long root = 0;
-	long long v, size;
+	int32_t root = 0;
+	int32_t v, size;
 	double value;
 	double minValue = (double)n;
 	char* one1 = g1->one;
-	long long* d1 = g1->d;
-	long long* perm = coloring->perm;
-	long long* cellSize = coloring->cellSize;
-	long long numNode = coloring->numNode;
+	int32_t* d1 = g1->d;
+	int32_t* perm = coloring->perm;
+	int32_t* cellSize = coloring->cellSize;
+	int32_t numNode = coloring->numNode;
 
 	//for each cell
-	for(long long i = 0; i < numNode; i += cellSize[i]) {
+	for(int32_t i = 0; i < numNode; i += cellSize[i]) {
 		size = cellSize[i];
 		//for each element in the cell
-		for(long long j = 0; j < size; ++j) {
+		for(int32_t j = 0; j < size; ++j) {
 			v = perm[i + j];
 			if( v < n && one1[v] == 0 ) { //if v is in aG1
 				value = size/((double)d1[v]);
@@ -291,32 +291,32 @@ CS* Backtrack::buildCS()
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	long long i, j, size, prevColor, currColor;
-	long long* color = coloring->color;
-	long long* perm = coloring->perm;
-	long long* inv = coloring->inv;
-	long long numNode = coloring->numNode;
+	int32_t i, j, size, prevColor, currColor;
+	int32_t* color = coloring->color;
+	int32_t* perm = coloring->perm;
+	int32_t* inv = coloring->inv;
+	int32_t numNode = coloring->numNode;
 
-	long long* neigh = NULL;
-	long long* d2 = g2->d;
+	int32_t* neigh = NULL;
+	int32_t* d2 = g2->d;
 	char* one1 = g1->one;
 	char* one2 = g2->one;
-	long long* adjPos1 = g1->adjPos;
-	long long* adjPos2 = g2->adjPos;
+	int32_t* adjPos1 = g1->adjPos;
+	int32_t* adjPos2 = g2->adjPos;
 
 	//allocate memory for CS
 	CS* cs = new CS;
-	cs->candArr = new long long[n];
-	cs->P = new long long[e2];
-	cs->S = new long long[e2];
-	cs->dagColorIndex = new long long[e2];
-	long long* candArr = cs->candArr;
-	long long* P = cs->P;
-	long long* S = cs->S;
-	long long* dagColorIndex = cs->dagColorIndex;
+	cs->candArr = new int32_t[n];
+	cs->P = new int32_t[e2];
+	cs->S = new int32_t[e2];
+	cs->dagColorIndex = new int32_t[e2];
+	int32_t* candArr = cs->candArr;
+	int32_t* P = cs->P;
+	int32_t* S = cs->S;
+	int32_t* dagColorIndex = cs->dagColorIndex;
 
 	//A. build candidate set
-	long long idx = 0;
+	int32_t idx = 0;
 	for(i = 0; i < numNode; ++i) {
 		if( perm[i] >= n ) {
 			candArr[idx] = perm[i];
@@ -327,16 +327,16 @@ CS* Backtrack::buildCS()
 	//B. build edges
 	
 	//Step B-1. sort adjacency list of aG2
-	long long* NC = global_memory.getLLArray(e2);
-	long long* NCSize = global_memory.getLLArray(n);
+	int32_t* NC = global_memory.getLLArray(e2);
+	int32_t* NCSize = global_memory.getLLArray(n);
 	for(i = 0; i < n; ++i) {
 		if( one2[i] == 1 || d2[i] == 0 ) //nodes of coreness-1
 			continue;
 
 		neigh = g2->e[i];
-		long long padn = n;
+		int32_t padn = n;
 		sort(neigh, neigh + d2[i],
-			[color, inv, padn](const long long& a, const long long& b) -> bool {
+			[color, inv, padn](const int32_t& a, const int32_t& b) -> bool {
 				return color[inv[a + padn]] < color[inv[b + padn]];
 			}
 		);
@@ -366,9 +366,9 @@ CS* Backtrack::buildCS()
 	}
 
 	//Step B-2. compute color index
-	long long adj, adjc, c, ci, cand;
-	long long* parentSize = dag->parentSize;
-	long long* dagArr = dag->dagArr;
+	int32_t adj, adjc, c, ci, cand;
+	int32_t* parentSize = dag->parentSize;
+	int32_t* dagArr = dag->dagArr;
 	for(i = 0; i < n; ++i) { //for each vertex ui in G1
 		if( isBinary[i] == 1 ) //binary cells are already mapped.
 			continue;
@@ -393,13 +393,13 @@ CS* Backtrack::buildCS()
 	return cs;
 }
 
-long long Backtrack::binarySearch(long long* aArray, long long aSize, long long aValue)
+int32_t Backtrack::binarySearch(int32_t* aArray, int32_t aSize, int32_t aValue)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	long long l, r, m;
+	int32_t l, r, m;
 
 	//do linear search when aSize is small
 	if( aSize < 10 ) { 
@@ -426,26 +426,26 @@ long long Backtrack::binarySearch(long long* aArray, long long aSize, long long 
 }
 
 
-long long Backtrack::mapBinaryCell()
+int32_t Backtrack::mapBinaryCell()
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	long long numMatching = 0;
-	long long i, j, u, v, child;
-	long long numNode = coloring->numNode;
-	long long* perm = coloring->perm;
-	long long* cellSize = coloring->cellSize;
-	long long* adjPos1 = g1->adjPos;
+	int32_t numMatching = 0;
+	int32_t i, j, u, v, child;
+	int32_t numNode = coloring->numNode;
+	int32_t* perm = coloring->perm;
+	int32_t* cellSize = coloring->cellSize;
+	int32_t* adjPos1 = g1->adjPos;
 	char* one1 = g1->one;
 
-	long long* childSize = dag->childSize;
-	long long* parentSize = dag->parentSize;
-	long long* dagArr = dag->dagArr;
+	int32_t* childSize = dag->childSize;
+	int32_t* parentSize = dag->parentSize;
+	int32_t* dagArr = dag->dagArr;
 
-	memset(mapping, -1, sizeof(long long) * n2);
-	memset(numMappedParent, 0, sizeof(long long) * n);
+	memset(mapping, -1, sizeof(int32_t) * n2);
+	memset(numMappedParent, 0, sizeof(int32_t) * n);
 	//for each cell
 	for(i = 0; i < numNode; i += cellSize[i]) {
 		if( cellSize[i] != 2 ) 
@@ -494,24 +494,24 @@ long long Backtrack::mapBinaryCell()
 	return numMatching;
 }
 
-bool Backtrack::backtrack(long long aNumMatching)
+bool Backtrack::backtrack(int32_t aNumMatching)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	long long depth = aNumMatching; //the number of mapped vertices
-	long long curr = dag->root; //current mapping node of graph 1 (start from the root)
-	long long i, j, p, prevCand, child, cand;
+	int32_t depth = aNumMatching; //the number of mapped vertices
+	int32_t curr = dag->root; //current mapping node of graph 1 (start from the root)
+	int32_t i, j, p, prevCand, child, cand;
 	bool backtrack = false;
 	bool mappingFailed, needBacktrack;
-	long long confSize = 0; //for the partial failing set
-	long long* confArray = global_memory.getLLArray(n);
+	int32_t confSize = 0; //for the partial failing set
+	int32_t* confArray = global_memory.getLLArray(n);
 
-	long long* childSize = dag->childSize;
-	long long* parentSize = dag->parentSize;
-	long long* dagArr = dag->dagArr;
-	long long* adjPos1 = g1->adjPos;
+	int32_t* childSize = dag->childSize;
+	int32_t* parentSize = dag->parentSize;
+	int32_t* dagArr = dag->dagArr;
+	int32_t* adjPos1 = g1->adjPos;
 	
 
 	//we implement the recursive backtracking function by iterative method
@@ -534,7 +534,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 			matchingOrder[depth] = curr;	//store the matching order so as to get the previously matched node when backtracks.
 
 			//failing set
-			vector<long long>& curr_f = failingset[ depth - aNumMatching ];
+			vector<int32_t>& curr_f = failingset[ depth - aNumMatching ];
 			curr_f.clear();
 		}
 		else {
@@ -556,8 +556,8 @@ bool Backtrack::backtrack(long long aNumMatching)
 			}
 
 			//failing set
-			vector<long long>& child_f = failingset[depth - aNumMatching + 1]; //failing set of a child node in the search tree
-			long long fsetIndex = binarySearch(child_f, curr);
+			vector<int32_t>& child_f = failingset[depth - aNumMatching + 1]; //failing set of a child node in the search tree
+			int32_t fsetIndex = binarySearch(child_f, curr);
 			if( fsetIndex == -1 ) { //if curr is not in child_f
 				failingset[depth - aNumMatching] = child_f;
 
@@ -575,10 +575,10 @@ bool Backtrack::backtrack(long long aNumMatching)
 			}
 			
 			//if all candidate failed
-			if( candPos[curr] == (long long)extCand[curr].size() - 1 ) { 
+			if( candPos[curr] == (int32_t)extCand[curr].size() - 1 ) { 
 				//failing set
 				if( fsetIndex != -1 ) { //if curr is in child_f (it is merged to curr_f)
-					vector<long long>& curr_f = failingset[depth - aNumMatching];
+					vector<int32_t>& curr_f = failingset[depth - aNumMatching];
 
 					//remove curr from curr_f
 					curr_f.erase( curr_f.begin() + fsetIndex );
@@ -608,7 +608,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 		} //if-else(backtrack == false)
 
 		if( global_mark > INFINITY ) {
-			memset(markCell, 0, sizeof(long long) * n2);
+			memset(markCell, 0, sizeof(int32_t) * n2);
 			global_mark = 0;
 		}
 		++global_mark;
@@ -642,7 +642,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 					++confSize;
 				}
 
-				if( candPos[curr] == (long long)extCand[curr].size() - 1 ) {
+				if( candPos[curr] == (int32_t)extCand[curr].size() - 1 ) {
 					needBacktrack = true;
 				}
 				else {
@@ -665,7 +665,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 							--(numMappedParent[child]);
 							weight[child] = INFINITY;
 
-							vector<long long>& curr_f = failingset[depth - aNumMatching];
+							vector<int32_t>& curr_f = failingset[depth - aNumMatching];
 							global_temp_vector.clear(); //TODO: not using vector
 							for(j = 0; j < parentSize[child]; ++j) {
 								p = dagArr[ adjPos1[child] + j ];
@@ -685,7 +685,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 							mappingFailed = true;
 							--(numMappedParent[child]);
 
-							vector<long long>& curr_f = failingset[depth - aNumMatching];
+							vector<int32_t>& curr_f = failingset[depth - aNumMatching];
 							global_temp_vector.clear(); //TODO: not using vector
 							for(j = 0; j < parentSize[child]; ++j) {
 								p = dagArr[ adjPos1[child] + j ];
@@ -710,7 +710,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 						--(numMappedParent[child]);
 					}
 
-					if( candPos[curr] == (long long)extCand[curr].size() - 1 ) {
+					if( candPos[curr] == (int32_t)extCand[curr].size() - 1 ) {
 						needBacktrack = true;
 					}
 					else {
@@ -730,14 +730,14 @@ bool Backtrack::backtrack(long long aNumMatching)
 			}//if-else mapping[cand] != -1
 			
 			if( needBacktrack ) {
-				vector<long long>& curr_f = failingset[depth - aNumMatching];
+				vector<int32_t>& curr_f = failingset[depth - aNumMatching];
 				if( confSize > 0 ) {
 					sort(confArray, confArray + confSize);
 					merge(curr_f, confArray, confSize);
 				}
 
 				if( curr_f.size() != 0 ) {
-					long long fsetIndex = binarySearch(curr_f, curr);
+					int32_t fsetIndex = binarySearch(curr_f, curr);
 					if( fsetIndex != -1 ) {
 						//remove curr
 						curr_f.erase(curr_f.begin() + fsetIndex);
@@ -769,7 +769,7 @@ bool Backtrack::backtrack(long long aNumMatching)
 	return false;
 }
 
-void Backtrack::insertExtVertex(long long aVertex, long long aWeight)
+void Backtrack::insertExtVertex(int32_t aVertex, int32_t aWeight)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -779,7 +779,7 @@ void Backtrack::insertExtVertex(long long aVertex, long long aWeight)
 	heap->insert(weight, aVertex);
 }
 
-long long Backtrack::getMinExtVertex()
+int32_t Backtrack::getMinExtVertex()
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -792,7 +792,7 @@ long long Backtrack::getMinExtVertex()
 	return heap->extractMin(weight);
 }
 
-void Backtrack::deleteExtVertex(long long aVertex)
+void Backtrack::deleteExtVertex(int32_t aVertex)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -801,22 +801,22 @@ void Backtrack::deleteExtVertex(long long aVertex)
 	heap->erase(weight, aVertex);
 }
 
-long long Backtrack::computeWeight(long long aVertex)
+int32_t Backtrack::computeWeight(int32_t aVertex)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	long long w = 0;
-	long long i, adjCand, ci;
-	long long* adjPos1 = g1->adjPos;
-	long long* adjPos2 = g2->adjPos;
-	long long* parentSize = dag->parentSize;
-	long long* dagArr = dag->dagArr;
+	int32_t w = 0;
+	int32_t i, adjCand, ci;
+	int32_t* adjPos1 = g1->adjPos;
+	int32_t* adjPos2 = g2->adjPos;
+	int32_t* parentSize = dag->parentSize;
+	int32_t* dagArr = dag->dagArr;
 	
 	//compute the number of mapped parent
-	long long numMapped = 0;
-	long long* mappedParent = global_memory.getLLArray(n);
+	int32_t numMapped = 0;
+	int32_t* mappedParent = global_memory.getLLArray(n);
 	for(i = 0; i < parentSize[aVertex]; ++i) {
 		if( mapping[ dagArr[adjPos1[aVertex] + i] ] != -1 ) {
 			mappedParent[numMapped] = i; //keep the index of the parent
@@ -837,16 +837,16 @@ long long Backtrack::computeWeight(long long aVertex)
 		}
 		else {
 			if( global_mark > INFINITY ) {
-				memset(markNode, 0, sizeof(long long) * n2);
+				memset(markNode, 0, sizeof(int32_t) * n2);
 				global_mark = 0;
 			}
 			++global_mark;
 	
 			//Step 1. the first array
-			long long j, v;
-			long long* neigh = g2->e[adjCand];
-			long long p = cs->P[ adjPos2[adjCand] + ci ];
-			long long s = cs->S[ adjPos2[adjCand] + ci ];
+			int32_t j, v;
+			int32_t* neigh = g2->e[adjCand];
+			int32_t p = cs->P[ adjPos2[adjCand] + ci ];
+			int32_t s = cs->S[ adjPos2[adjCand] + ci ];
 			for(i = p; i < p + s; ++i) {
 				markNode[ neigh[i] ] = global_mark;
 			}
@@ -887,7 +887,7 @@ long long Backtrack::computeWeight(long long aVertex)
 	return w;
 }
 
-void Backtrack::computeExtCand(long long aVertex)
+void Backtrack::computeExtCand(int32_t aVertex)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -895,17 +895,17 @@ void Backtrack::computeExtCand(long long aVertex)
 
 	extCand[aVertex].clear();
 
-	long long i, adjCand, ci;
-	long long* adjPos1 = g1->adjPos;
-	long long* adjPos2 = g2->adjPos;
-	long long* parentSize = dag->parentSize;
-	long long* dagArr = dag->dagArr;
-	long long p, s;
-	long long* neigh = NULL;
+	int32_t i, adjCand, ci;
+	int32_t* adjPos1 = g1->adjPos;
+	int32_t* adjPos2 = g2->adjPos;
+	int32_t* parentSize = dag->parentSize;
+	int32_t* dagArr = dag->dagArr;
+	int32_t p, s;
+	int32_t* neigh = NULL;
 	
 	//compute the number of mapped parent
-	long long numMapped = 0;
-	long long* mappedParent = global_memory.getLLArray(n);
+	int32_t numMapped = 0;
+	int32_t* mappedParent = global_memory.getLLArray(n);
 	for(i = 0; i < parentSize[aVertex]; ++i) {
 		if( mapping[ dagArr[adjPos1[aVertex] + i] ] != -1 ) {
 			mappedParent[numMapped] = i; //keep the index of the parent
@@ -935,14 +935,14 @@ void Backtrack::computeExtCand(long long aVertex)
 		}
 		else {
 			if( global_mark > INFINITY ) {
-				memset(markNode, 0, sizeof(long long) * n2);
+				memset(markNode, 0, sizeof(int32_t) * n2);
 				global_mark = 0;
 			}
 			++global_mark;
 	
 			//Step 1. the first array
-			long long j, v;
-			long long* neigh = g2->e[adjCand];
+			int32_t j, v;
+			int32_t* neigh = g2->e[adjCand];
 			p = cs->P[ adjPos2[adjCand] + ci ];
 			s = cs->S[ adjPos2[adjCand] + ci ];
 			for(i = p; i < p + s; ++i)
@@ -981,7 +981,7 @@ void Backtrack::computeExtCand(long long aVertex)
 	global_memory.returnLLArray(mappedParent, n);
 }
 
-long long Backtrack::binarySearch(vector<long long>& aVector, long long aValue)
+int32_t Backtrack::binarySearch(vector<int32_t>& aVector, int32_t aValue)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -990,8 +990,8 @@ long long Backtrack::binarySearch(vector<long long>& aVector, long long aValue)
 	if( aVector.size() == 0 )
 		return -1;
 
-	long long l, r, m;
-	long long size = aVector.size();
+	int32_t l, r, m;
+	int32_t size = aVector.size();
 
 	//do linear search when size is small
 	if( size < 10 ) { 
@@ -1017,7 +1017,7 @@ long long Backtrack::binarySearch(vector<long long>& aVector, long long aValue)
 	return -1;
 }
 
-void Backtrack::merge(vector<long long>& aTo, vector<long long>& aSource)
+void Backtrack::merge(vector<int32_t>& aTo, vector<int32_t>& aSource)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -1031,12 +1031,12 @@ void Backtrack::merge(vector<long long>& aTo, vector<long long>& aSource)
 		return;
 	}
 
-	long long ind1 = 0;
-	long long ind2 = 0;
-	long long size1 = aTo.size();
-	long long size2 = aSource.size();
-	long long* mergeSet = global_memory.getLLArray(n);
-	long long setSize = 0;
+	int32_t ind1 = 0;
+	int32_t ind2 = 0;
+	int32_t size1 = aTo.size();
+	int32_t size2 = aSource.size();
+	int32_t* mergeSet = global_memory.getLLArray(n);
+	int32_t setSize = 0;
 
 	while( ind1 < size1 && ind2 < size2 ) {
 		if( aTo[ind1] == aSource[ind2] ) {
@@ -1069,14 +1069,14 @@ void Backtrack::merge(vector<long long>& aTo, vector<long long>& aSource)
 	}
 
 	aTo.resize(setSize);
-	for(long long i = 0; i < setSize; ++i) {
+	for(int32_t i = 0; i < setSize; ++i) {
 		aTo[i] = mergeSet[i];
 	}
 
 	global_memory.returnLLArray(mergeSet, n);
 }
 
-void Backtrack::merge(vector<long long>& aTo, long long* aSource, long long aSize)
+void Backtrack::merge(vector<int32_t>& aTo, int32_t* aSource, int32_t aSize)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -1086,17 +1086,17 @@ void Backtrack::merge(vector<long long>& aTo, long long* aSource, long long aSiz
 		return;
 	if( aTo.size() == 0 ) {
 		aTo.resize( aSize );
-		for(long long i = 0; i < aSize; ++i)
+		for(int32_t i = 0; i < aSize; ++i)
 			aTo[i] = aSource[i];
 		return;
 	}
 
-	long long ind1 = 0;
-	long long ind2 = 0;
-	long long size1 = aTo.size();
-	long long size2 = aSize;
-	long long* mergeSet = global_memory.getLLArray(n);
-	long long setSize = 0;
+	int32_t ind1 = 0;
+	int32_t ind2 = 0;
+	int32_t size1 = aTo.size();
+	int32_t size2 = aSize;
+	int32_t* mergeSet = global_memory.getLLArray(n);
+	int32_t setSize = 0;
 
 	while( ind1 < size1 && ind2 < size2 ) {
 		if( aTo[ind1] == aSource[ind2] ) {
@@ -1129,7 +1129,7 @@ void Backtrack::merge(vector<long long>& aTo, long long* aSource, long long aSiz
 	}
 
 	aTo.resize(setSize);
-	for(long long i = 0; i < setSize; ++i) {
+	for(int32_t i = 0; i < setSize; ++i) {
 		aTo[i] = mergeSet[i];
 	}
 

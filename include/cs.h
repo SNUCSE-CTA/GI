@@ -8,10 +8,10 @@ using namespace std;
 class CS
 {
 public:
-	long long* candArr = NULL;
-	long long* P = NULL;
-	long long* S = NULL;
-	long long* dagColorIndex = NULL;
+	int32_t* candArr = NULL;
+	int32_t* P = NULL;
+	int32_t* S = NULL;
+	int32_t* dagColorIndex = NULL;
 
 	CS();
 	~CS();
