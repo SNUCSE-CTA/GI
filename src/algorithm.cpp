@@ -14,13 +14,13 @@ bool Algorithm::run(Graph* aG1, Graph* aG2)
 
 	initGlobal(aG1->numNode);
 
-	bool result = checkSimpleInvariants(aG1, aG2);
-	if (result == false) {
-		return false;
-	}
+	// bool result = checkSimpleInvariants(aG1, aG2);
+	// if (result == false) {
+	// 	return false;
+	// }
 
 	Refinement cr;
-	result = cr.run(aG1, aG2);
+	bool result = cr.run(aG1, aG2);
 	if (result == false) {
 		return false;
 	}

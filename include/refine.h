@@ -59,7 +59,7 @@ class Refinement
 	bool checkColoring(Coloring*);
 
 	//color refinement
-	void colorByDegreeAndLabel(Coloring*, Graph*, Graph*);
+	bool colorByDegreeAndLabel(Coloring*, Graph*, Graph*);
 	bool refine(Coloring*, Graph*, Graph*);
 	// void sortArray(long long*, long long);
 	// void sortTwoArrays(long long*, long long*, long long);

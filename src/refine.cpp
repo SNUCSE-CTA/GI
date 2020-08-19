@@ -33,13 +33,14 @@ bool Refinement::run(Graph* aG1, Graph* aG2)
 	initWorkspace();
 
 	// Initial coloring
-	colorByDegreeAndLabel(stableColoring, aG1, aG2);
+	bool ret = colorByDegreeAndLabel(stableColoring, aG1, aG2);
+	if (ret) {
+		// Process coreness-1 vertices
+		numTreeNode = prepCoreOne(stableColoring, aG1, aG2);
 
-	// Process coreness-1 vertices
-	numTreeNode = prepCoreOne(stableColoring, aG1, aG2);
-
-	// Refine coloring
-	bool ret = refine(stableColoring, aG1, aG2);
+		// Refine coloring
+		ret = refine(stableColoring, aG1, aG2);
+	}
 
 	// Free workspace variables
 	clearWorkspace();
@@ -143,7 +144,7 @@ bool Refinement::checkColoring(Coloring* coloring)
 	return true;
 }
 
-void Refinement::colorByDegreeAndLabel(Coloring* coloring, Graph* aG1, Graph* aG2)
+bool Refinement::colorByDegreeAndLabel(Coloring* coloring, Graph* aG1, Graph* aG2)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -164,6 +165,8 @@ void Refinement::colorByDegreeAndLabel(Coloring* coloring, Graph* aG1, Graph* aG
 	for (long long i = 0; i < coloring->numNode; ++i)
 		coloring->inv[coloring->perm[i]] = i;
 
+	long long acc = (coloring->perm[0] < aG1->numNode) ? 1 : -1;
+
 	coloring->numCell = 1;
 	coloring->color[0] = 0;
 	coloring->cellSize[0] = 1;
@@ -178,16 +181,23 @@ void Refinement::colorByDegreeAndLabel(Coloring* coloring, Graph* aG1, Graph* aG
 		const long long lv = (v < aG1->numNode) ? aG1->l[v] : aG2->l[v - aG1->numNode];
 
 		if (du == dv && lu == lv) {
+			acc += (u < aG1->numNode) ? 1 : -1;
+
 			coloring->color[i] = coloring->color[i-1];
 			++coloring->cellSize[coloring->color[i-1]];
 		} else {
+			if (acc != 0)
+				return false;
+
+			acc = (u < aG1->numNode) ? 1 : -1;
+
 			++coloring->numCell;
 			coloring->color[i] = i;
 			coloring->cellSize[i] = 1;
 		}
 	}
 
-	return;
+	return true;
 }
 
 bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
