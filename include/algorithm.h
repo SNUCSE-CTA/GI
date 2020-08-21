@@ -1,12 +1,12 @@
 //***************************************************************************
-//// This file is part of the graph isomorphism algorithm.
-//// Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
-//// 
-//// Name: algorithm.h
-//// Author: Geonmo Gu, Yehyun Nam
-//// Version
-////     August 20, 2020: the first stable version. (version 1.0)
-////***************************************************************************
+// This file is part of the graph isomorphism algorithm.
+// Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
+//
+// Name: algorithm.h
+// Author: Geonmo Gu, Yehyun Nam
+// Version
+//     August 20, 2020: the first stable version. (version 1.0)
+//***************************************************************************
 
 #ifndef __ALGORITHM_H__
 #define __ALGORITHM_H__
@@ -25,14 +25,14 @@ public:
 	~Algorithm();
 
 	//parameters: [aG1], [aG2]
-	////VERIFY whether aG1 and aG2 are isomorphic
-	////RETURN true if aG1 and aG2 are isomorphic, false otherwise
+	//VERIFY whether aG1 and aG2 are isomorphic
+	//RETURN true if aG1 and aG2 are isomorphic, false otherwise
 	bool run(Graph*, Graph*);
 
 private:
 	//parameters: [aG1], [aG2]
-	////VERIFY whether aG1 and aG2 has same number of vertices for each degree and label
-	////RETURN true if the condition is satisfied, false otherwise
+	//VERIFY whether aG1 and aG2 has same number of vertices for each degree and label
+	//RETURN true if the condition is satisfied, false otherwise
 	bool checkSimpleInvariants(Graph*, Graph*);
 };
 

@@ -1,12 +1,12 @@
 //***************************************************************************
-//// This file is part of the graph isomorphism algorithm.
-//// Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
-////
-//// Name: refine.cpp
-//// Author: Geonmo Gu, Yehyun Nam
-//// Version
-////     August 20, 2020: the first stable version. (version 1.0)
-////***************************************************************************
+// This file is part of the graph isomorphism algorithm.
+// Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
+//
+// Name: refine.cpp
+// Author: Geonmo Gu, Yehyun Nam
+// Version
+//     August 20, 2020: the first stable version. (version 1.0)
+//***************************************************************************
 
 #include "refine.h"
 
