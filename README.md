@@ -7,7 +7,7 @@ Graph isomorphism is a core problem in graph analyses of various domains includi
 
 ## Installation
 To download and compile the project, use the following commands.
-```
+```console
 git clone https://github.com/SNUCSE-CTA/GI.git
 cd GI
 make
@@ -47,9 +47,20 @@ If you have any trouble with this project, please let us know via [GitHub issue 
 The main contributors to this project are:
 - [Geonmo Gu](https://github.com/gmgu)
 - [Yehyun Nam](https://github.com/NamYehyun)
-- [Kunsoo Park](http://theory.snu.ac.kr/?page_id=427)
+- [Kunsoo Park](http://theory.snu.ac.kr/?page_id=427) (mentor)
 
 ## Licensing
 This project is an open source software provided under the Apache License 2.0.
 
 ## Contribute
+
+### Decision Making Procedure
+1. raise an issue that you want to make a contribution via [GitHub issue tracking system](https://github.com/SNUCSE-CTA/GI/issues).
+2. communicate with the authors.
+3. fork this project.
+4. create a branch.
+5. work on the issue.
+6. create a pull request with a clear explanation of the changes.
+
+### Coding Convension
+Please see [Our Coding Convention](https://github.com/SNUCSE-CTA/GI/issues/6).
