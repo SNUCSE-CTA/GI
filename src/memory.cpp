@@ -1,3 +1,13 @@
+//***************************************************************************
+// This file is part of the graph isomorphism algorithm.
+// Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
+// 
+// Name: memory.cpp
+// Author: Geonmo Gu
+// Version
+//     August 20, 2020: the first stable version. (version 1.0)
+//***************************************************************************
+
 #include "memory.h"
 
 Memory::Memory()
@@ -13,6 +23,7 @@ Memory::~Memory()
 	llPool.clear();
 }
 
+//RETURN an array with the length
 int32_t* Memory::getLLArray(int32_t aSize)
 {
 	#ifdef DEBUG
@@ -61,6 +72,7 @@ int32_t* Memory::getLLArray(int32_t aSize)
 	return p;
 }
 
+//STORE array into llPool
 void Memory::returnLLArray(int32_t* aArray, int32_t aSize)
 {
 	#ifdef DEBUG

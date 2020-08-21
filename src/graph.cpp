@@ -1,3 +1,13 @@
+//***************************************************************************
+// This file is part of the graph isomorphism algorithm.
+// Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
+// 
+// Name: graph.cpp
+// Author: Geonmo Gu
+// Version
+//     August 20, 2020: the first stable version. (version 1.0)
+//***************************************************************************
+
 #include "graph.h"
 //////////////////////////GRAPH
 Graph::Graph(string aFileName)
@@ -10,14 +20,7 @@ Graph::~Graph()
 	clear();
 }
 
-//read graph from file (igraph format)
-//<igraph format example: a triangle>
-//t 0 3
-//v 0 10
-//v 1 5
-//v 2 10
-//e 0 1 0
-//e 0 2 0
+//READ graph from file (igraph format)
 //we assume that the input file contains simple undirected and connected graph.
 //Also, single label per vertex and label.
 void Graph::readGraph(string aFileName)
@@ -109,6 +112,7 @@ void Graph::readGraph(string aFileName)
 	infile.close();
 }
 
+//DEALLOCATE variables
 void Graph::clear()
 {
 	#ifdef DEBUG
@@ -142,6 +146,8 @@ void Graph::clear()
 	}
 }
 
+//parameters: [start pointer of array], [end pointer of array]
+//SORT the array be decsending order of degree (d)
 void Graph::sortByDegreeDec(int32_t* aStart, int32_t* aEnd)
 {
 	sort(aStart, aEnd, [this](int32_t a, int32_t b) {
@@ -149,11 +155,13 @@ void Graph::sortByDegreeDec(int32_t* aStart, int32_t* aEnd)
 	});
 }
 
+//RETURN true if readGraph failed, false otherwise
 bool Graph::fail() 
 {
 	return nofile;
 }
 
+//PRINT the example of iGraph format
 void Graph::printExample() 
 {
 	cout << "*******************************" << endl;
@@ -178,6 +186,7 @@ DAG::~DAG()
 	clear();
 }
 
+//DEALLOCATE variables
 void DAG::clear()
 {
 	#ifdef DEBUG

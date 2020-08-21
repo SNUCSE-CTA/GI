@@ -1,22 +1,33 @@
+//***************************************************************************
+// This file is part of the graph isomorphism algorithm.
+// Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
+// 
+// Name: coloring.cpp
+// Author: Geonmo Gu, Yehyun Nam
+// Version
+//     August 20, 2020: the first stable version. (version 1.0)
+//***************************************************************************
+
 #include "coloring.h"
 
 Coloring::Coloring() {}
 
-Coloring::Coloring(int32_t n) {
-	init(n);
+Coloring::Coloring(int32_t aNumNode) {
+	init(aNumNode);
 }
 
 Coloring::~Coloring() {
 	clear();
 }
 
-void Coloring::init(int32_t _numNode)
+//ALLOCATE memory of color, perm, inv, cellSize
+void Coloring::init(int32_t aNumNode)
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	numNode = _numNode;
+	numNode = aNumNode;
 	numCell = 1;
 
 	color = new int32_t[numNode];
@@ -34,6 +45,7 @@ void Coloring::init(int32_t _numNode)
 	return;
 }
 
+//DEALLOCATE memory of color, perm, inv, cellSize
 void Coloring::clear()
 {
 	#ifdef DEBUG

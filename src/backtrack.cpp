@@ -1,5 +1,14 @@
-#include "backtrack.h"
+//***************************************************************************
+// This file is part of the graph isomorphism algorithm.
+// Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
+// 
+// Name: backtrack.cpp
+// Author: Geonmo Gu
+// Version
+//     August 20, 2020: the first stable version. (version 1.0)
+//***************************************************************************
 
+#include "backtrack.h"
 #include "timer.h"
 
 extern double searchTime;
@@ -34,6 +43,8 @@ Backtrack::~Backtrack()
 	}
 }
 
+//SEARCH for an embedding of aG1 in aG2
+//RETURN true if there is an embedding, false otherwise
 bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, int32_t aNumTreeNode)
 {
 	#ifdef DEBUG
@@ -90,6 +101,7 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, int32_t aNumTre
 	return result;
 }
 
+//ALLOCATE memory for each workspace variables
 void Backtrack::initWorkspace()
 {
 	#ifdef DEBUG
@@ -107,6 +119,7 @@ void Backtrack::initWorkspace()
 	isBinary = (char*)global_memory.getLLArray(n);
 }
 
+//DEALLOCATE memory for each workspace variables
 void Backtrack::clearWorkspace()
 {
 	#ifdef DEBUG
@@ -143,6 +156,8 @@ void Backtrack::clearWorkspace()
 	}
 }
 
+//BUILD a DAG of g1
+//RETURN pointer of the DAG
 DAG* Backtrack::buildDAG()
 {
 	#ifdef DEBUG
@@ -249,6 +264,8 @@ DAG* Backtrack::buildDAG()
 	return bfsdag;
 }
 
+//SELECT a root for DAG of g1
+//RETURN the selected root
 int32_t Backtrack::selectRoot()
 {
 	#ifdef DEBUG
@@ -284,7 +301,8 @@ int32_t Backtrack::selectRoot()
 	return root;
 }
 
-
+//BUILD a CS of g1 and g2 regarding coloring.
+//RETURN the CS
 CS* Backtrack::buildCS()
 {
 	#ifdef DEBUG
@@ -393,6 +411,8 @@ CS* Backtrack::buildCS()
 	return cs;
 }
 
+//SEARCH for value in array
+//RETURN the index of the value, or -1 if value is not in array.
 int32_t Backtrack::binarySearch(int32_t* aArray, int32_t aSize, int32_t aValue)
 {
 	#ifdef DEBUG
@@ -425,7 +445,8 @@ int32_t Backtrack::binarySearch(int32_t* aArray, int32_t aSize, int32_t aValue)
 	return -1;
 }
 
-
+//MAP the vertices in binary cells of coloring.
+//RETURN the number of mapped vertices / 2
 int32_t Backtrack::mapBinaryCell()
 {
 	#ifdef DEBUG
@@ -494,6 +515,8 @@ int32_t Backtrack::mapBinaryCell()
 	return numMatching;
 }
 
+//SEARCH for an embedding of g1 in g2
+//RETURN true if there is an embedding, false otherwise
 bool Backtrack::backtrack(int32_t aNumMatching)
 {
 	#ifdef DEBUG
@@ -769,6 +792,7 @@ bool Backtrack::backtrack(int32_t aNumMatching)
 	return false;
 }
 
+//INSERT vertex with weight into the min heap
 void Backtrack::insertExtVertex(int32_t aVertex, int32_t aWeight)
 {
 	#ifdef DEBUG
@@ -779,6 +803,8 @@ void Backtrack::insertExtVertex(int32_t aVertex, int32_t aWeight)
 	heap->insert(weight, aVertex);
 }
 
+//REMOVE the vertex with minimum weight and
+//RETURN the vertex with minimum weight
 int32_t Backtrack::getMinExtVertex()
 {
 	#ifdef DEBUG
@@ -792,6 +818,7 @@ int32_t Backtrack::getMinExtVertex()
 	return heap->extractMin(weight);
 }
 
+//REMOVE the vertex from the min heap
 void Backtrack::deleteExtVertex(int32_t aVertex)
 {
 	#ifdef DEBUG
@@ -801,6 +828,8 @@ void Backtrack::deleteExtVertex(int32_t aVertex)
 	heap->erase(weight, aVertex);
 }
 
+//COMPUTE the weight of the vertex
+//RETURN the weight
 int32_t Backtrack::computeWeight(int32_t aVertex)
 {
 	#ifdef DEBUG
@@ -887,6 +916,7 @@ int32_t Backtrack::computeWeight(int32_t aVertex)
 	return w;
 }
 
+//COMPUTE the extendable candidates of vertex and store it to extCand[vertex]
 void Backtrack::computeExtCand(int32_t aVertex)
 {
 	#ifdef DEBUG
@@ -981,6 +1011,8 @@ void Backtrack::computeExtCand(int32_t aVertex)
 	global_memory.returnLLArray(mappedParent, n);
 }
 
+//SEARCH for value in vector
+//RETURN the index of the value, or -1 if value is not in vector
 int32_t Backtrack::binarySearch(vector<int32_t>& aVector, int32_t aValue)
 {
 	#ifdef DEBUG
@@ -1017,6 +1049,7 @@ int32_t Backtrack::binarySearch(vector<int32_t>& aVector, int32_t aValue)
 	return -1;
 }
 
+//MERGE vector1 and vector2 and store it to vector1
 void Backtrack::merge(vector<int32_t>& aTo, vector<int32_t>& aSource)
 {
 	#ifdef DEBUG
@@ -1076,6 +1109,7 @@ void Backtrack::merge(vector<int32_t>& aTo, vector<int32_t>& aSource)
 	global_memory.returnLLArray(mergeSet, n);
 }
 
+//MERGE vector and array and store it to vector
 void Backtrack::merge(vector<int32_t>& aTo, int32_t* aSource, int32_t aSize)
 {
 	#ifdef DEBUG

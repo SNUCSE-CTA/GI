@@ -1,3 +1,13 @@
+//***************************************************************************
+// This file is part of the graph isomorphism algorithm.
+// Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
+// 
+// Name: heap.cpp
+// Author: Geonmo Gu
+// Version
+//     August 20, 2020: the first stable version. (version 1.0)
+//***************************************************************************
+
 #include "heap.h"
 
 Heap::Heap(int32_t aSize)
@@ -23,6 +33,7 @@ Heap::~Heap()
 	}
 }
 
+//Min Heapify heap using the value array
 void Heap::minHeapify(int32_t* aValue, int32_t aIndex)
 {
 	#ifdef DEBUG
@@ -56,6 +67,7 @@ void Heap::minHeapify(int32_t* aValue, int32_t aIndex)
 	} //while(true)
 }
 
+//BUILD min heap 
 void Heap::buildMinHeap(int32_t* aValue)
 {
 	#ifdef DEBUG
@@ -67,6 +79,7 @@ void Heap::buildMinHeap(int32_t* aValue)
 		minHeapify(aValue, i);
 }
 
+//INSERT vertex into heap
 void Heap::insert(int32_t* aValue, int32_t aVertex)
 {
 	#ifdef DEBUG
@@ -96,6 +109,7 @@ void Heap::insert(int32_t* aValue, int32_t aVertex)
 	}
 }
 
+//REMOVE vertex from heap
 void Heap::erase(int32_t* aValue, int32_t aVertex)
 {
 	#ifdef DEBUG
@@ -114,6 +128,8 @@ void Heap::erase(int32_t* aValue, int32_t aVertex)
 		minHeapify(aValue, i);
 }
 
+//REMOVE the minimum valued vertex from heap
+//RETURN the minimum valued vertex
 int32_t Heap::extractMin(int32_t* aValue)
 {
 	#ifdef DEBUG
