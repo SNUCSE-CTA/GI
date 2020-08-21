@@ -1,3 +1,13 @@
+//***************************************************************************
+// This file is part of the graph isomorphism algorithm.
+// Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
+// 
+// Name: algorithm.cpp
+// Author: Geonmo Gu, Yehyun Nam
+// Version
+//     August 20, 2020: the first stable version. (version 1.0)
+//***************************************************************************
+
 #include "algorithm.h"
 
 #include <algorithm>
@@ -6,6 +16,8 @@ Algorithm::Algorithm() {}
 
 Algorithm::~Algorithm() {}
 
+//VERIFY whether aG1 and aG2 are isomorphic
+//RETURN true if aG1 and aG2 are isomorphic, false otherwise
 bool Algorithm::run(Graph* aG1, Graph* aG2)
 {
 	#ifdef DEBUG
@@ -35,6 +47,8 @@ bool Algorithm::run(Graph* aG1, Graph* aG2)
 	return result;
 }
 
+//VERIFY whether aG1 and aG2 has same number of vertices for each degree and label
+//RETURN true if the condition is satisfied, false otherwise
 bool Algorithm::checkSimpleInvariants(Graph* aG1, Graph* aG2)
 {
 	#ifdef DEBUG

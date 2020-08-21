@@ -1,3 +1,13 @@
+//***************************************************************************
+// This file is part of the graph isomorphism algorithm.
+// Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
+//
+// Name: refine.h
+// Author: Geonmo Gu, Yehyun Nam
+// Version
+//     August 20, 2020: the first stable version. (version 1.0)
+//***************************************************************************
+
 #ifndef __REFINE_H__
 #define __REFINE_H__
 
@@ -54,27 +64,57 @@ class Refinement
 	int32_t* splitPos = NULL;
 
 
+	//ALLOCATE memory for each workspace variables
 	void initWorkspace();
+
+	//DEALLOCATE memory for each workspace variables
 	void clearWorkspace();
+
+	//parameters: [coloring]
+	//RETURN true if each cell contains the same number of vertices from aG1 and aG2, false otherwise
 	bool checkColoring(Coloring*);
 
-	//color refinement
+	//parameters: [coloring], [aG1], [aG2]
+	//PARTITION the vertices of aG1 and aG2 so that any two vertices belong to the same cell if and only if their degree and label are same.
+	//RETURN true if each cell contains the same number of vertices from aG1 and aG2, false otherwise
 	bool colorByDegreeAndLabel(Coloring*, Graph*, Graph*);
+
+	//parameters: [coloring], [aG1], [aG2]
+	//PARTITION the vertices of aG1 and aG2 so that any two vertices belong to the same cell if and only if for any cell, the two vertices have the same number of neighbors in the cell
+	//RETURN true if each cell contains the same number of vertices from aG1 and aG2, false otherwise
 	bool refine(Coloring*, Graph*, Graph*);
+
 	// void sortArray(int32_t*, int32_t);
 	// void sortTwoArrays(int32_t*, int32_t*, int32_t);
+
+	//parameters: [coloring]
+	//RETURN the index of the smallest (among the last cells) cell in the stack
 	int32_t selectFromStack(Coloring*);
 
-	//preprocessing coreness-1 nodes
+	//parameters: [coloring], [aG1], [aG2]
+	//REMOVE vertices in aG1 and aG2 if its coreness is 1, and
+	//PARTITION their neighbors so that any two vertices belong to the same cell if and only is they were previously in the same cell and they had equal number of neighbors of coreness-1
+	//RETURN the number of removed vertices
 	int32_t prepCoreOne(Coloring*, Graph*, Graph*);
+
+	//parameters: [aVertex], [aNumDegOne], [aG1], [aG2]
+	//REMOVE the coreness-1 neighbors of aVertex
 	void deleteEdge(int32_t, int32_t, Graph*, Graph*);
 
 public:
 	Refinement();
 	~Refinement();
 
+	//parameters: [aG1], [aG2]
+	//PROCESS coreness-1 vertices, and
+	//REFINE the coloring
+	//RETURN true if each cell contains the same number of vertices from aG1 and aG2, false otherwise
 	bool run(Graph*, Graph*);
+
+	//RETURN the current coloring
 	Coloring* getStableColoring();
+
+	//RETURN the number of tree nodes in aG1
 	int32_t getNumTreeNode();
 };
 

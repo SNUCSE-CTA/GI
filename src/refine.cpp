@@ -1,3 +1,13 @@
+//***************************************************************************
+// This file is part of the graph isomorphism algorithm.
+// Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
+//
+// Name: refine.cpp
+// Author: Geonmo Gu, Yehyun Nam
+// Version
+//     August 20, 2020: the first stable version. (version 1.0)
+//***************************************************************************
+
 #include "refine.h"
 
 #include <cassert>
@@ -13,6 +23,9 @@ Refinement::~Refinement()
 	clearWorkspace();
 }
 
+//PROCESS coreness-1 vertices, and
+//REFINE the coloring
+//RETURN true if each cell contains the same number of vertices from aG1 and aG2, false otherwise
 bool Refinement::run(Graph* aG1, Graph* aG2)
 {
 	#ifdef DEBUG
@@ -48,6 +61,7 @@ bool Refinement::run(Graph* aG1, Graph* aG2)
 	return ret;
 }
 
+//RETURN the current coloring
 Coloring* Refinement::getStableColoring()
 {
 	#ifdef DEBUG
@@ -57,7 +71,7 @@ Coloring* Refinement::getStableColoring()
 	return stableColoring;
 }
 
-//NOTE: return the number of tree nodes in g1
+//RETURN the number of tree nodes in aG1
 int32_t Refinement::getNumTreeNode()
 {
 	#ifdef DEBUG
@@ -67,6 +81,7 @@ int32_t Refinement::getNumTreeNode()
 	return numTreeNode/2;
 }
 
+//ALLOCATE memory for each workspace variables
 void Refinement::initWorkspace()
 {
 	#ifdef DEBUG
@@ -86,6 +101,7 @@ void Refinement::initWorkspace()
 	splitPos = global_memory.getLLArray(n2);
 }
 
+//DEALLOCATE memory for each workspace variables
 void Refinement::clearWorkspace()
 {
 	#ifdef DEBUG
@@ -126,6 +142,7 @@ void Refinement::clearWorkspace()
 	}
 }
 
+//RETURN true if each cell contains the same number of vertices from aG1 and aG2, false otherwise
 bool Refinement::checkColoring(Coloring* coloring)
 {
 	#ifdef DEBUG
@@ -144,6 +161,8 @@ bool Refinement::checkColoring(Coloring* coloring)
 	return true;
 }
 
+//PARTITION the vertices of aG1 and aG2 so that any two vertices belong to the same cell if and only if their degree and label are same.
+//RETURN true if each cell contains the same number of vertices from aG1 and aG2, false otherwise
 bool Refinement::colorByDegreeAndLabel(Coloring* coloring, Graph* aG1, Graph* aG2)
 {
 	#ifdef DEBUG
@@ -200,6 +219,8 @@ bool Refinement::colorByDegreeAndLabel(Coloring* coloring, Graph* aG1, Graph* aG
 	return (acc == 0);
 }
 
+//PARTITION the vertices of aG1 and aG2 so that any two vertices belong to the same cell if and only if for any cell, the two vertices have the same number of neighbors in the cell
+//RETURN true if each cell contains the same number of vertices from aG1 and aG2, false otherwise
 bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 {
 	#ifdef DEBUG
@@ -515,6 +536,7 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 // 	cout << __PRETTY_FUNCTION__ << endl;
 // }
 
+//RETURN the index of the smallest (among the last 13 cells) cell in the stack
 int32_t Refinement::selectFromStack(Coloring* coloring)
 {
 	int32_t ret = stackSize - 1;
@@ -534,6 +556,9 @@ int32_t Refinement::selectFromStack(Coloring* coloring)
 	return ret;
 }
 
+//REMOVE vertices in aG1 and aG2 if its coreness is 1, and
+//PARTITION their neighbors so that any two vertices belong to the same cell if and only is they were previously in the same cell and they had equal number of neighbors of coreness-1
+//RETURN the number of removed vertices
 int32_t Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 {
 	#ifdef DEBUG
@@ -788,6 +813,7 @@ int32_t Refinement::prepCoreOne(Coloring* aColoring, Graph* aG1, Graph* aG2)
 	return numDeleted;
 }
 
+//REMOVE the coreness-1 neighbors of aVertex
 void Refinement::deleteEdge(int32_t aVertex, int32_t aNumDegOne, Graph* aG1, Graph* aG2)
 {
 	Graph* g1 = aG1;
