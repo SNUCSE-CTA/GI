@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 	else
 		cout << "false: " << file1 << " and " << file2 << " are not isomorphic" << endl;
 
-	cout << fixed << setprecision(6) << totalTime - searchTime << ' ' << searchTime << ' ' << totalTime << ' ' << numRecur << endl;
+	//cout << fixed << setprecision(6) << totalTime - searchTime << ' ' << searchTime << ' ' << totalTime << ' ' << numRecur << endl;
 
 	//4. deallocate input graphs from memory
 	delete g1;
