@@ -1101,9 +1101,15 @@ void Backtrack::merge(vector<int32_t>& aTo, vector<int32_t>& aSource)
 		++ind2;
 	}
 
-	aTo.resize(setSize);
-	for(int32_t i = 0; i < setSize; ++i) {
-		aTo[i] = mergeSet[i];
+	aTo.clear();
+	if( aTo.capacity() < setSize ) { //need resize
+		if( setSize < INIT_FSIZE )
+			aTo.reserve(INIT_FSIZE);
+		else
+			aTo.reserve(setSize);
+	}
+	for(int i = 0; i < setSize; ++i) {
+		aTo.push_back( mergeSet[i] );
 	}
 
 	global_memory.returnLLArray(mergeSet, n);
@@ -1162,9 +1168,15 @@ void Backtrack::merge(vector<int32_t>& aTo, int32_t* aSource, int32_t aSize)
 		++ind2;
 	}
 
-	aTo.resize(setSize);
-	for(int32_t i = 0; i < setSize; ++i) {
-		aTo[i] = mergeSet[i];
+	aTo.clear();
+	if( aTo.capacity() < setSize ) { //need resize
+		if( setSize < INIT_FSIZE )
+			aTo.reserve(INIT_FSIZE);
+		else
+			aTo.reserve(setSize);
+	}
+	for(int i = 0; i < setSize; ++i) {
+		aTo.push_back( mergeSet[i] );
 	}
 
 	global_memory.returnLLArray(mergeSet, n);

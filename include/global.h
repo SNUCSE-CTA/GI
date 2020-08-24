@@ -18,6 +18,7 @@
 using namespace std;
 
 #define INFINITY 2000000000
+#define INIT_FSIZE 8
 
 //parameter: [the number of vertices in g1]
 //ALLOCATE global variables
