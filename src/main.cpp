@@ -44,12 +44,13 @@ int main(int argc, char* argv[])
 	totalTime = t.end();
 
 	//3. print results
+	//cout << fixed << setprecision(6) << totalTime - searchTime << ' ' << searchTime << ' ' << totalTime << ' ' << numRecur << endl;
+	cout << fixed << setprecision(6) << "Elapsed Time: " << totalTime << " ms" << endl;
+
 	if( isomorphic )
 		cout << "true: " << file1 << " and " << file2 << " are isomorphic" << endl;
 	else
 		cout << "false: " << file1 << " and " << file2 << " are not isomorphic" << endl;
-
-	//cout << fixed << setprecision(6) << totalTime - searchTime << ' ' << searchTime << ' ' << totalTime << ' ' << numRecur << endl;
 
 	//4. deallocate input graphs from memory
 	delete g1;
