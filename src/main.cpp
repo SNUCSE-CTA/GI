@@ -48,9 +48,9 @@ int main(int argc, char* argv[])
 	cout << fixed << setprecision(6) << "Elapsed Time: " << totalTime << " ms" << endl;
 
 	if( isomorphic )
-		cout << "true: " << file1 << " and " << file2 << " are isomorphic" << endl;
+		cout << "True: " << file1 << " and " << file2 << " are isomorphic" << endl;
 	else
-		cout << "false: " << file1 << " and " << file2 << " are not isomorphic" << endl;
+		cout << "False: " << file1 << " and " << file2 << " are not isomorphic" << endl;
 
 	//4. deallocate input graphs from memory
 	delete g1;
