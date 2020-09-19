@@ -423,7 +423,7 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 
 						int32_t scEnd = sc + coloring->cellSize[sc];
 						numSplitCount = 0;
-						if (numVisitNode[sc] < scEnd) {
+						if (numVisitNode[sc] < coloring->cellSize[sc]) {
 							splitCount[numSplitCount] = 0;
 							++numSplitCount;
 							splitPos[0] = coloring->cellSize[sc] - numVisitNode[sc];
