@@ -1,3 +1,6 @@
 trash
 obj
 program
+test_run
+**/*.o
+**/*.a

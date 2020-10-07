@@ -30,6 +30,9 @@ extern int32_t global_mark;
 
 class Backtrack
 {
+    double searchTime;
+    int32_t numRecur;
+
 	//input (do not free)
 	Graph* g1 = NULL;
 	Graph* g2 = NULL;
@@ -135,6 +138,10 @@ class Backtrack
 public:
 	Backtrack();
 	~Backtrack();
+
+    double getSearchTime();
+    int32_t getNumRecur();
+
 
 	//parameters: [stable coloring of aG1], [aG1], [aG2], [the number of tree nodes in aG1]
 	//SEARCH for an embedding of aG1 in aG2
