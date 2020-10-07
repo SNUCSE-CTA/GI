@@ -11,11 +11,10 @@
 #include "backtrack.h"
 #include "timer.h"
 
-extern double searchTime;
-extern int32_t numRecur;
-
 Backtrack::Backtrack()
 {
+    searchTime = 0.0;
+    numRecur = 0;
 }
 
 Backtrack::~Backtrack()
@@ -41,6 +40,14 @@ Backtrack::~Backtrack()
 		delete[] failingset;
 		failingset = NULL;
 	}
+}
+
+double Backtrack::getSearchTime() {
+    return searchTime;
+}
+
+int Backtrack::getNumRecur() {
+    return numRecur;
 }
 
 //SEARCH for an embedding of aG1 in aG2
@@ -90,7 +97,7 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, int32_t aNumTre
 	Timer t;
 	t.start();
 	bool result = backtrack(numMatching + numTreeNode);
-	searchTime = t.end();
+	t.end();
 	
 	clearWorkspace();
 	if( failingset != NULL ) {
