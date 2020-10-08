@@ -27,7 +27,7 @@ INPUT2 := ./input/sfl_lcc_$(GRAPH).igraph
 
 .PHONY: all clean run
 
-all: $(TARGET) $(TESTP) $(GTEST)
+all: $(TARGET)
 
 $(TARGET):	$(OBJS)
 	$(AR) rc $(TARGET) $(OBJS)
