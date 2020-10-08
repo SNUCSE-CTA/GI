@@ -50,6 +50,15 @@ int Backtrack::getNumRecur() {
     return numRecur;
 }
 
+void Backtrack::setSearchTime(double searchTime) {
+    this->searchTime = searchTime;
+}
+
+void Backtrack::increaseNumRecur() {
+    numRecur++;
+}
+
+
 //SEARCH for an embedding of aG1 in aG2
 //RETURN true if there is an embedding, false otherwise
 bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, int32_t aNumTreeNode)
@@ -97,7 +106,7 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, int32_t aNumTre
 	Timer t;
 	t.start();
 	bool result = backtrack(numMatching + numTreeNode);
-	t.end();
+	setSearchTime(t.end());
 	
 	clearWorkspace();
 	if( failingset != NULL ) {
@@ -556,7 +565,7 @@ bool Backtrack::backtrack(int32_t aNumMatching)
 				return true;
 			}
 
-			++numRecur;
+            increaseNumRecur();
 
 			curr = getMinExtVertex(); //get a node with the min-weight and delete it from the extendable vertex array.
 			computeExtCand(curr);	//compute the extendable candidates by intersection and store it in extCand[curr].

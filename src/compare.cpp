@@ -28,7 +28,7 @@ int compare(const char *fname1, const char *fname2, bool *isomorphic, double *pr
 
 	//check if input files exist.
 	if(g1->fail() || g2->fail() ) {
-		return -1;
+		return 0;
 	}
 
 	//2. GI algorithm
@@ -41,7 +41,7 @@ int compare(const char *fname1, const char *fname2, bool *isomorphic, double *pr
        *processedTime = totalTime; 
     }
 
-    return *isomorphic ? 1 : 0;
+    return 1;
 }
 
 }
