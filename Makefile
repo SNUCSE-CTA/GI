@@ -1,15 +1,25 @@
 CXX := g++
+AR	:= ar
 
 CXXFLAGS := -std=c++0x -O3 -w #-DDEBUG
 CPPFLAGS := -Iinclude
+#CPPTESTFLAGS := -Ideps/googletest/googletest/include
+CPPTESTFLAGS :=
+#TEST_LIBS := deps/googletest/lib/libgtest.a -lpthread
+TEST_LIBS := -lgtest -lpthread
 
 SRC := src
-OBJ := obj
+TEST_SRC := tests
 
-SOURCES := $(wildcard $(SRC)/*.cpp)
-OBJECTS := $(SOURCES:$(SRC)/%.cpp=$(OBJ)/%.o)
+SRCS=$(wildcard $(SRC)/*.cpp)
+OBJS=$(SRCS:$(SRC)/%.cpp=$(SRC)/%.o)
 
-TARGET := program
+TEST_SRCS=$(wildcard $(TEST_SRC)/*.cpp)
+TEST_OBJS=$(TEST_SRCS:$(TEST_SRC)/%.cpp=$(TEST_SRC)/%.o)
+
+EXAMPLE := program
+TARGET := libgi.a
+TESTP := test_run
 
 GRAPH  := yeast
 INPUT1 := ./input/lcc_$(GRAPH).igraph
@@ -19,18 +29,24 @@ INPUT2 := ./input/sfl_lcc_$(GRAPH).igraph
 
 all: $(TARGET)
 
-$(TARGET): $(OBJECTS)
-	$(CXX) $^ -o $@
+$(TARGET):	$(OBJS)
+	$(AR) rc $(TARGET) $(OBJS)
 
-$(OBJ)/%.o: $(SRC)/%.cpp | $(OBJ)
+$(SRC)/%.o:	$(SRC)/%.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
-$(OBJ):
-	mkdir -p $(OBJ)
+$(TESTP):	$(TARGET) $(TEST_OBJS)
+	$(CXX) -o $(TESTP) $(TEST_OBJS) $(TARGET) $(TEST_LIBS) 
+
+$(TEST_SRC)/%.o:	$(TEST_SRC)/%.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(CPPTESTFLAGS) -c $< -o $@
 
 clean:
-	@$(RM) -rv $(TARGET) $(OBJ)
+	$(RM) -rv $(TARGET) $(OBJ)
+	$(RM) -rv $(TEST_OBJS) $(TESTP)
 
 run: $(TARGET)
 	./$(TARGET) $(INPUT1) $(INPUT2)
 
+test:	$(TESTP)
+	./$(TESTP)

@@ -1,0 +1,23 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: install gtest
+      run: sudo apt-get install -y libgtest-dev
+    - name: show gtest
+      run: ls -al /usr/lib/x86_64-linux-gnu/libgte*
+    - name: make
+      run: make
+    - name: make test
+      run: make test
