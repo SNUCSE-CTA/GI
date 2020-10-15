@@ -33,7 +33,7 @@ void initGlobal(int32_t aNumNode)
 	markNode = new int32_t[n2];
 
 	memset(markCell, 0, sizeof(int32_t) * n2);
-	memset(markCell, 0, sizeof(int32_t) * n2);
+	memset(markNode, 0, sizeof(int32_t) * n2);
 
 	global_mark = 1;
 }
