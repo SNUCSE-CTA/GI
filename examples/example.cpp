@@ -12,21 +12,21 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-    double totalTime;
-    bool isomorphic;
-    int ret = compare(argv[1], argv[2], &isomorphic, &totalTime);
-    if (ret == -1) {
-        cout << "There is no file" << endl;
-        return 0;
-    } 
+	double totalTime;
+	bool isomorphic;
+	int ret = compare(argv[1], argv[2], &isomorphic, &totalTime);
+	if (ret == -1) {
+		cout << "There is no file" << endl;
+		return 0;
+	}
 
-    cout << "Elasped Time: " << totalTime << endl;
-    if (isomorphic) {
+	cout << "Elasped Time: " << totalTime << endl;
+	if (isomorphic) {
 		cout << "True: " << argv[1] << " and " << argv[2] << " are isomorphic" << endl;
-    } else {
+	} else {
 		cout << "False: " << argv[1] << " and " << argv[2] << " are not isomorphic" << endl;
-    }
-    
+	}
+
 	return 0;
 }
 
