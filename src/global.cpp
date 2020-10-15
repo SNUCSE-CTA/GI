@@ -7,6 +7,8 @@
 // Version
 //     August 20, 2020: the first stable version. (version 1.0)
 //***************************************************************************
+#include <cstring>
+
 #include "global.h"
 
 vector<int32_t> global_temp_vector;
@@ -29,7 +31,11 @@ void initGlobal(int32_t aNumNode)
 
 	markCell = new int32_t[n2];
 	markNode = new int32_t[n2];
-	global_mark = 0;
+
+	memset(markCell, 0, sizeof(int32_t) * n2);
+	memset(markCell, 0, sizeof(int32_t) * n2);
+
+	global_mark = 1;
 }
 
 //DEALLOCATE global variables
