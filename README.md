@@ -16,13 +16,13 @@ make
 ## Usage
 To run the proram:
 ``` console
-./program [file 1] [file 2]
+./GI [file 1] [file 2]
 ```
 
 
 ## Running Example
 ``` console
-./program input/lcc_yeast.igraph input/sfl_lcc_yeast.igraph
+./GI input/lcc_yeast.igraph input/sfl_lcc_yeast.igraph
 ```
 
 ## Input File Format
