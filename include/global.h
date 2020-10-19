@@ -6,6 +6,8 @@
 // Author: Geonmo Gu
 // Version
 //     August 20, 2020: the first stable version. (version 1.0)
+//     October 19, 2020: added 'context' class that contains variables used in global
+//     					(naive global variables should not be used when we publish libraries)
 //***************************************************************************
 
 #ifndef __GLOBAL_H__
@@ -26,5 +28,19 @@ void initGlobal(int32_t);
 
 //DEALLOCATE global variables
 void clearGlobal();
+
+class Context{
+public:
+	int32_t* markCell = NULL;
+	int32_t* markNode = NULL;
+	int32_t global_mark = 0;
+	Memory global_memory;
+	vector<int32_t> global_temp_vector;
+
+
+	Context();
+	void init(int32_t);
+	void clear();
+};
 
 #endif
