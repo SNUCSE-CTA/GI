@@ -6,6 +6,7 @@
 // Author: Geonmo Gu
 // Version
 //     August 20, 2020: the first stable version. (version 1.0)
+//     October 20, 2020: use Context class
 //***************************************************************************
 
 #ifndef __BACKTRACK_H__
@@ -19,14 +20,9 @@
 #include "cs.h"
 #include "heap.h"
 #include "memory.h"
-#include "global.h"
+#include "global.h" //context
 
 using namespace std;
-
-extern vector<int32_t> global_temp_vector;
-extern int32_t* markNode;
-extern int32_t* markCell;
-extern int32_t global_mark;
 
 class Backtrack
 {
@@ -62,6 +58,14 @@ class Backtrack
 	int32_t* candPos = NULL;
 	int32_t* matchingOrder = NULL;
 	char* isBinary = NULL;
+	vector<int32_t> global_temp_vector;
+
+	//context variables (do not free)
+	Memory* global_memory = NULL;
+	int32_t* markNode = NULL;
+	int32_t* markCell = NULL;
+	int32_t global_mark = 0;
+	
 	
 	//ALLOCATE memory for each workspace variables
 	void initWorkspace();
@@ -138,7 +142,7 @@ class Backtrack
     void setSearchTime(double);
     void increaseNumRecur();
 public:
-	Backtrack();
+	Backtrack(Context&);
 	~Backtrack();
 
     double getSearchTime();

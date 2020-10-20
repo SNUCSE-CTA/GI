@@ -6,15 +6,20 @@
 // Author: Geonmo Gu
 // Version
 //     August 20, 2020: the first stable version. (version 1.0)
+//     October 20, 2020: use Context class
 //***************************************************************************
 
 #include "backtrack.h"
 #include "timer.h"
 
-Backtrack::Backtrack()
+Backtrack::Backtrack(Context& aContext)
 {
     searchTime = 0.0;
     numRecur = 0;
+	global_memory = &(aContext.global_memory);
+	markNode = aContext.markNode;
+	markCell = aContext.markCell;
+	global_mark = aContext.global_mark;
 }
 
 Backtrack::~Backtrack()
@@ -30,7 +35,7 @@ Backtrack::~Backtrack()
 	}
 
 	if( mapping != NULL ) {
-		global_memory.returnLLArray(mapping, n2);
+		global_memory->returnLLArray(mapping, n2);
 		mapping = NULL;
 	}
 
@@ -78,10 +83,10 @@ bool Backtrack::run(Coloring* aColoring, Graph* aG1, Graph* aG2, int32_t aNumTre
 	e2 = e * 2;
 
 	if( mapping != NULL ) {
-		global_memory.returnLLArray(mapping, n2);
+		global_memory->returnLLArray(mapping, n2);
 		mapping = NULL;
 	}
-	mapping = global_memory.getLLArray(n2);
+	mapping = global_memory->getLLArray(n2);
 	initWorkspace();
 
 	if( dag != NULL ) {
@@ -128,11 +133,11 @@ void Backtrack::initWorkspace()
 
 	extCand = new vector<int32_t>[n];
 	heap = new Heap(n);
-	weight = global_memory.getLLArray(n);
-	numMappedParent = global_memory.getLLArray(n);
-	candPos = global_memory.getLLArray(n);
-	matchingOrder = global_memory.getLLArray(n);
-	isBinary = (char*)global_memory.getLLArray(n);
+	weight = global_memory->getLLArray(n);
+	numMappedParent = global_memory->getLLArray(n);
+	candPos = global_memory->getLLArray(n);
+	matchingOrder = global_memory->getLLArray(n);
+	isBinary = (char*)global_memory->getLLArray(n);
 }
 
 //DEALLOCATE memory for each workspace variables
@@ -151,23 +156,23 @@ void Backtrack::clearWorkspace()
 		heap = NULL;
 	}
 	if( weight != NULL ) {
-		global_memory.returnLLArray(weight, n);
+		global_memory->returnLLArray(weight, n);
 		weight = NULL;
 	}
 	if( numMappedParent != NULL ) {
-		global_memory.returnLLArray(numMappedParent, n);
+		global_memory->returnLLArray(numMappedParent, n);
 		numMappedParent = NULL;
 	}
 	if( candPos != NULL ) {
-		global_memory.returnLLArray(candPos, n);
+		global_memory->returnLLArray(candPos, n);
 		candPos = NULL;
 	}
 	if( matchingOrder != NULL ) {
-		global_memory.returnLLArray(matchingOrder, n);
+		global_memory->returnLLArray(matchingOrder, n);
 		matchingOrder = NULL;
 	}
 	if( isBinary != NULL ) {
-		global_memory.returnLLArray((int32_t*)isBinary, n);
+		global_memory->returnLLArray((int32_t*)isBinary, n);
 		isBinary = NULL;
 	}
 }
@@ -196,11 +201,11 @@ DAG* Backtrack::buildDAG()
 	char* one1 = g1->one;
 
 	int32_t i, curr, child;
-	char* popped = (char*)global_memory.getLLArray(n); 
+	char* popped = (char*)global_memory->getLLArray(n); 
 	memset(popped, 0, sizeof(char) * n);
-	char* visited = (char*)global_memory.getLLArray(n); 
+	char* visited = (char*)global_memory->getLLArray(n); 
 	memset(visited, 0, sizeof(char) * n);
-	int32_t* bfsQueue = global_memory.getLLArray(n);
+	int32_t* bfsQueue = global_memory->getLLArray(n);
 
 	int32_t queueStart = 0;
 	int32_t queueEnd = 0;
@@ -273,9 +278,9 @@ DAG* Backtrack::buildDAG()
 		}
 	}
 
-	global_memory.returnLLArray((int32_t*)popped, n);
-	global_memory.returnLLArray((int32_t*)visited, n);
-	global_memory.returnLLArray(bfsQueue, n);
+	global_memory->returnLLArray((int32_t*)popped, n);
+	global_memory->returnLLArray((int32_t*)visited, n);
+	global_memory->returnLLArray(bfsQueue, n);
 
 	return bfsdag;
 }
@@ -361,8 +366,8 @@ CS* Backtrack::buildCS()
 	//B. build edges
 	
 	//Step B-1. sort adjacency list of aG2
-	int32_t* NC = global_memory.getLLArray(e2);
-	int32_t* NCSize = global_memory.getLLArray(n);
+	int32_t* NC = global_memory->getLLArray(e2);
+	int32_t* NCSize = global_memory->getLLArray(n);
 	for(i = 0; i < n; ++i) {
 		if( one2[i] == 1 || d2[i] == 0 ) //nodes of coreness-1
 			continue;
@@ -421,8 +426,8 @@ CS* Backtrack::buildCS()
 		}
 	}
 
-	global_memory.returnLLArray(NC, e2);
-	global_memory.returnLLArray(NCSize, n);
+	global_memory->returnLLArray(NC, e2);
+	global_memory->returnLLArray(NCSize, n);
 
 	return cs;
 }
@@ -545,7 +550,7 @@ bool Backtrack::backtrack(int32_t aNumMatching)
 	bool backtrack = false;
 	bool mappingFailed, needBacktrack;
 	int32_t confSize = 0; //for the partial failing set
-	int32_t* confArray = global_memory.getLLArray(n);
+	int32_t* confArray = global_memory->getLLArray(n);
 
 	int32_t* childSize = dag->childSize;
 	int32_t* parentSize = dag->parentSize;
@@ -561,7 +566,7 @@ bool Backtrack::backtrack(int32_t aNumMatching)
 		if( backtrack == false ) {
 			// Case A. beginning
 			if( depth == n ) { //we found an isomorphism
-				global_memory.returnLLArray(confArray, n);
+				global_memory->returnLLArray(confArray, n);
 				return true;
 			}
 
@@ -603,7 +608,7 @@ bool Backtrack::backtrack(int32_t aNumMatching)
 				backtrack = true;
 				--depth;
 				if( depth == aNumMatching - 1 ) {
-					global_memory.returnLLArray(confArray, n);
+					global_memory->returnLLArray(confArray, n);
 					return false;
 				}
 				insertExtVertex(curr, weight[curr]);
@@ -635,7 +640,7 @@ bool Backtrack::backtrack(int32_t aNumMatching)
 				backtrack = true;
 				--depth;
 				if( depth == aNumMatching - 1 ) {
-					global_memory.returnLLArray(confArray, n);
+					global_memory->returnLLArray(confArray, n);
 					return false;
 				}
 				insertExtVertex(curr, weight[curr]);
@@ -795,7 +800,7 @@ bool Backtrack::backtrack(int32_t aNumMatching)
 				backtrack = true;
 				--depth;
 				if( depth == aNumMatching - 1 ) {
-					global_memory.returnLLArray(confArray, n);
+					global_memory->returnLLArray(confArray, n);
 					return false;
 				}
 				insertExtVertex(curr, weight[curr]);
@@ -804,7 +809,7 @@ bool Backtrack::backtrack(int32_t aNumMatching)
 		} //while(true) of inner loop.
 	} //while(true) of outer loop.
 
-	global_memory.returnLLArray(confArray, n);
+	global_memory->returnLLArray(confArray, n);
 	return false;
 }
 
@@ -861,7 +866,7 @@ int32_t Backtrack::computeWeight(int32_t aVertex)
 	
 	//compute the number of mapped parent
 	int32_t numMapped = 0;
-	int32_t* mappedParent = global_memory.getLLArray(n);
+	int32_t* mappedParent = global_memory->getLLArray(n);
 	for(i = 0; i < parentSize[aVertex]; ++i) {
 		if( mapping[ dagArr[adjPos1[aVertex] + i] ] != -1 ) {
 			mappedParent[numMapped] = i; //keep the index of the parent
@@ -927,7 +932,7 @@ int32_t Backtrack::computeWeight(int32_t aVertex)
 		} //else of (if numMapped == 1)
 	} //else of (if numMapped == 0)
 
-	global_memory.returnLLArray(mappedParent, n);
+	global_memory->returnLLArray(mappedParent, n);
 
 	return w;
 }
@@ -951,7 +956,7 @@ void Backtrack::computeExtCand(int32_t aVertex)
 	
 	//compute the number of mapped parent
 	int32_t numMapped = 0;
-	int32_t* mappedParent = global_memory.getLLArray(n);
+	int32_t* mappedParent = global_memory->getLLArray(n);
 	for(i = 0; i < parentSize[aVertex]; ++i) {
 		if( mapping[ dagArr[adjPos1[aVertex] + i] ] != -1 ) {
 			mappedParent[numMapped] = i; //keep the index of the parent
@@ -1024,7 +1029,7 @@ void Backtrack::computeExtCand(int32_t aVertex)
 		} //else of (if numMapped == 1)
 	} //else of (if numMapped == 0)
 
-	global_memory.returnLLArray(mappedParent, n);
+	global_memory->returnLLArray(mappedParent, n);
 }
 
 //SEARCH for value in vector
@@ -1084,7 +1089,7 @@ void Backtrack::merge(vector<int32_t>& aTo, vector<int32_t>& aSource)
 	int32_t ind2 = 0;
 	int32_t size1 = aTo.size();
 	int32_t size2 = aSource.size();
-	int32_t* mergeSet = global_memory.getLLArray(n);
+	int32_t* mergeSet = global_memory->getLLArray(n);
 	int32_t setSize = 0;
 
 	while( ind1 < size1 && ind2 < size2 ) {
@@ -1128,7 +1133,7 @@ void Backtrack::merge(vector<int32_t>& aTo, vector<int32_t>& aSource)
 		aTo.push_back( mergeSet[i] );
 	}
 
-	global_memory.returnLLArray(mergeSet, n);
+	global_memory->returnLLArray(mergeSet, n);
 }
 
 //MERGE vector and array and store it to vector
@@ -1151,7 +1156,7 @@ void Backtrack::merge(vector<int32_t>& aTo, int32_t* aSource, int32_t aSize)
 	int32_t ind2 = 0;
 	int32_t size1 = aTo.size();
 	int32_t size2 = aSize;
-	int32_t* mergeSet = global_memory.getLLArray(n);
+	int32_t* mergeSet = global_memory->getLLArray(n);
 	int32_t setSize = 0;
 
 	while( ind1 < size1 && ind2 < size2 ) {
@@ -1195,5 +1200,5 @@ void Backtrack::merge(vector<int32_t>& aTo, int32_t* aSource, int32_t aSize)
 		aTo.push_back( mergeSet[i] );
 	}
 
-	global_memory.returnLLArray(mergeSet, n);
+	global_memory->returnLLArray(mergeSet, n);
 }
