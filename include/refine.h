@@ -39,11 +39,6 @@
 
 using namespace std;
 
-//extern Memory global_memory;
-//extern int32_t* markCell;
-//extern int32_t* markNode;
-//extern int32_t global_mark;
-
 class Refinement
 {
 	Coloring* stableColoring = NULL;

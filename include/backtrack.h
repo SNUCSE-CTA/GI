@@ -24,11 +24,6 @@
 
 using namespace std;
 
-//extern vector<int32_t> global_temp_vector;
-//extern int32_t* markNode;
-//extern int32_t* markCell;
-//extern int32_t global_mark;
-
 class Backtrack
 {
     double searchTime;
