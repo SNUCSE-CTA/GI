@@ -6,13 +6,20 @@
 // Author: Geonmo Gu, Yehyun Nam
 // Version
 //     August 20, 2020: the first stable version. (version 1.0)
+//     October 20, 2020: use Context class
 //***************************************************************************
 
 #include "refine.h"
 
 #include <cassert>
 
-Refinement::Refinement() {}
+Refinement::Refinement(Context& aContext) 
+{
+	global_memory = &(aContext.global_memory);
+	markCell = aContext.markCell;
+	markNode = aContext.markNode;
+	global_mark = aContext.global_mark;
+}
 
 Refinement::~Refinement()
 {
@@ -90,15 +97,15 @@ void Refinement::initWorkspace()
 
 	clearWorkspace(); //avoid double allocation
 
-	cellStack = global_memory.getLLArray(n2);
+	cellStack = global_memory->getLLArray(n2);
 	stackSize = 0;
-	neighCount = global_memory.getLLArray(n2);
-	visitCell = global_memory.getLLArray(n2);
-	visitNode = global_memory.getLLArray(n2);
-	numVisitNode = global_memory.getLLArray(n2);
-	splitCell = global_memory.getLLArray(n2);
-	splitCount = global_memory.getLLArray(n2);
-	splitPos = global_memory.getLLArray(n2);
+	neighCount = global_memory->getLLArray(n2);
+	visitCell = global_memory->getLLArray(n2);
+	visitNode = global_memory->getLLArray(n2);
+	numVisitNode = global_memory->getLLArray(n2);
+	splitCell = global_memory->getLLArray(n2);
+	splitCount = global_memory->getLLArray(n2);
+	splitPos = global_memory->getLLArray(n2);
 }
 
 //DEALLOCATE memory for each workspace variables
@@ -109,35 +116,35 @@ void Refinement::clearWorkspace()
 	#endif
 
 	if (cellStack != NULL) {
-		global_memory.returnLLArray(cellStack, n2);
+		global_memory->returnLLArray(cellStack, n2);
 		cellStack = NULL;
 	}
 	if (neighCount != NULL) {
-		global_memory.returnLLArray(neighCount, n2);
+		global_memory->returnLLArray(neighCount, n2);
 		neighCount = NULL;
 	}
 	if (visitCell != NULL) {
-		global_memory.returnLLArray(visitCell, n2);
+		global_memory->returnLLArray(visitCell, n2);
 		visitCell = NULL;
 	}
 	if (visitNode != NULL) {
-		global_memory.returnLLArray(visitNode, n2);
+		global_memory->returnLLArray(visitNode, n2);
 		visitNode = NULL;
 	}
 	if (numVisitNode != NULL) {
-		global_memory.returnLLArray(numVisitNode, n2);
+		global_memory->returnLLArray(numVisitNode, n2);
 		numVisitNode = NULL;
 	}
 	if (splitCell != NULL) {
-		global_memory.returnLLArray(splitCell, n2);
+		global_memory->returnLLArray(splitCell, n2);
 		splitCell = NULL;
 	}
 	if (splitCount != NULL) {
-		global_memory.returnLLArray(splitCount, n2);
+		global_memory->returnLLArray(splitCount, n2);
 		splitCount = NULL;
 	}
 	if (splitPos != NULL) {
-		global_memory.returnLLArray(splitPos, n2);
+		global_memory->returnLLArray(splitPos, n2);
 		splitPos = NULL;
 	}
 }
@@ -237,8 +244,8 @@ bool Refinement::refine(Coloring* coloring, Graph* aG1, Graph* aG2)
 
 	const int32_t numNode = aG1->numNode + aG2->numNode;
 
-	int32_t* inStack = global_memory.getLLArray(numNode);
-	int32_t* stackCand = global_memory.getLLArray(numNode);
+	int32_t* inStack = global_memory->getLLArray(numNode);
+	int32_t* stackCand = global_memory->getLLArray(numNode);
 
 	memset(inStack, 0, sizeof(int32_t) * numNode);
 	memset(stackCand, 0, sizeof(int32_t) * numNode);

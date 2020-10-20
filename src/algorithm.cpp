@@ -6,6 +6,7 @@
 // Author: Geonmo Gu, Yehyun Nam
 // Version
 //     August 20, 2020: the first stable version. (version 1.0)
+//     October 20, 2020: use Context class
 //***************************************************************************
 
 #include "algorithm.h"
@@ -41,14 +42,16 @@ bool Algorithm::run(Graph* aG1, Graph* aG2)
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	initGlobal(aG1->numNode);
+	Context cont;
+	cont.init(aG1->numNode);
+	//initGlobal(aG1->numNode);
 
 	// bool result = checkSimpleInvariants(aG1, aG2);
 	// if (result == false) {
 	// 	return false;
 	// }
 
-	Refinement cr;
+	Refinement cr(cont);
 	bool result = cr.run(aG1, aG2);
 	if (result == false) {
 		return false;
@@ -56,16 +59,17 @@ bool Algorithm::run(Graph* aG1, Graph* aG2)
 
 	Coloring* coloring = cr.getStableColoring();
 
-	Backtrack bt;
+	Backtrack bt(cont);
 	result = bt.run(coloring, aG1, aG2, cr.getNumTreeNode());
     setSearchTime(bt.getSearchTime());
     setNumRecur(bt.getNumRecur());
 
-	clearGlobal();
+	cont.clear();
+	//clearGlobal();
 
 	return result;
 }
-
+/*
 //VERIFY whether aG1 and aG2 has same number of vertices for each degree and label
 //RETURN true if the condition is satisfied, false otherwise
 bool Algorithm::checkSimpleInvariants(Graph* aG1, Graph* aG2)
@@ -115,4 +119,4 @@ bool Algorithm::checkSimpleInvariants(Graph* aG1, Graph* aG2)
 
 	return true;
 }
-
+*/

@@ -6,6 +6,7 @@
 // Author: Geonmo Gu, Yehyun Nam
 // Version
 //     August 20, 2020: the first stable version. (version 1.0)
+//     October 20, 2020: use Context class
 //***************************************************************************
 
 #ifndef __REFINE_H__
@@ -38,10 +39,10 @@
 
 using namespace std;
 
-extern Memory global_memory;
-extern int32_t* markCell;
-extern int32_t* markNode;
-extern int32_t global_mark;
+//extern Memory global_memory;
+//extern int32_t* markCell;
+//extern int32_t* markNode;
+//extern int32_t global_mark;
 
 class Refinement
 {
@@ -63,6 +64,12 @@ class Refinement
 	int32_t* splitCount = NULL;
 	int32_t* splitPos = NULL;
 
+	//Context variables
+	Memory* global_memory = NULL;
+	int32_t* markCell = NULL;
+	int32_t* markNode = NULL;
+	int32_t global_mark = 0;
+	
 
 	//ALLOCATE memory for each workspace variables
 	void initWorkspace();
@@ -102,7 +109,7 @@ class Refinement
 	void deleteEdge(int32_t, int32_t, Graph*, Graph*);
 
 public:
-	Refinement();
+	Refinement(Context&);
 	~Refinement();
 
 	//parameters: [aG1], [aG2]

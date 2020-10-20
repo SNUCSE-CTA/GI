@@ -42,7 +42,7 @@ private:
 	//parameters: [aG1], [aG2]
 	//VERIFY whether aG1 and aG2 has same number of vertices for each degree and label
 	//RETURN true if the condition is satisfied, false otherwise
-	bool checkSimpleInvariants(Graph*, Graph*);
+	//bool checkSimpleInvariants(Graph*, Graph*);
 };
 
 #endif

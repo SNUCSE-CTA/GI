@@ -12,7 +12,7 @@
 #include <cstring>
 
 #include "global.h"
-
+/*
 vector<int32_t> global_temp_vector;
 int32_t* markCell = NULL;
 int32_t* markNode = NULL;
@@ -55,7 +55,7 @@ void clearGlobal()
 		delete[] markNode;
 		markNode = NULL;
 	}
-}
+}*/
 
 Context::Context()
 {
@@ -100,5 +100,5 @@ void Context::clear()
 		markNode = NULL;
 	}
 
-	global_temp_vector.clear();
+	//global_temp_vector.clear();
 }
