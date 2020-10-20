@@ -25,7 +25,7 @@ int compare(const char *fname1, const char *fname2, bool *isomorphic, double *pr
 	std::shared_ptr<Graph> upg2(g2);
 
 	//check if input files exist.
-	if(g1->fail() || g2->fail() ) {
+	if (g1->fail() || g2->fail()) {
 		return 0;
 	}
 

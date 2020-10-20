@@ -21,6 +21,7 @@ using namespace std;
 class Graph
 {
 	bool nofile = false;
+	bool errfile = false;
 public:
 	int32_t numNode = 0;
 	int32_t numEdge = 0;

@@ -44,22 +44,66 @@ void Graph::readGraph(string aFileName)
 	char tag;
 	int32_t vid, vlabel, left, right, elabel, gid;
 	string line;
-	numNode = 0;
+	numNode = -1;
 	numEdge = 0;
+
+	string token;
+	auto read_integer = [&infile, &token](void) -> int32_t {
+		try {
+			infile >> token;
+			return stoi(token);
+		} catch (...) {
+			return -1;
+		}
+	};
 
 	//first read: read vertices and count degree for each vertex
 	while( infile >> tag ) {
 		if( tag == 't' ) {
-			infile >> gid >> numNode;
+			// infile >> gid >> numNode;
+			if ((gid = read_integer()) < 0) {
+				cerr << "Error: Graph id must be a nonnegative integer." << endl;
+				errfile = true;
+				return;
+			}
+
+			if ((numNode = read_integer()) < 0) {
+				cerr << "Error: The number of vertices must be a nonnegative integer." << endl;
+				errfile = true;
+				return;
+			}
+
 			//allocate memory for vertices
 			d = new int32_t[numNode];
 			l = new int32_t[numNode];
 			one = new char[numNode];
 		}
 		else if( tag == 'v' ) {
-			infile >> vid >> vlabel;
-			if( numNode <= vid )
-				cout << "ERROR in " << __FUNCTION__ << "(): vid >= #nodes" << endl;
+			if (numNode < -1) {
+				cerr << "Error: Graph description is not given." << endl;
+				errfile = true;
+				return;
+			}
+
+			// infile >> vid >> vlabel;
+			if ((vid = read_integer()) < 0) {
+				cerr << "Error: Vertex id must be a nonnegative integer." << endl;
+				errfile = true;
+				return;
+			}
+
+			if ((vlabel = read_integer()) < 0) {
+				cerr << "Error: Vertex label must be a nonnegative integer." << endl;
+				errfile = true;
+				return;
+			}
+
+			if( numNode <= vid ) {
+				cerr << "Error: Vertex id must be less than the number of vertices" << endl;
+				errfile = true;
+				return;
+			}
+
 			d[vid] = 0;
 			l[vid] = vlabel;
 			one[vid] = 0;
@@ -67,11 +111,30 @@ void Graph::readGraph(string aFileName)
 			edgePos = infile.tellg(); //record the last line that tag 'v' appears.
 		}
 		else if( tag == 'e' ) {
-			infile >> left >> right >> elabel;
-			if( numNode <= left )
-				cout << "ERROR in " << __FUNCTION__ << "(): left >= #nodes" << endl;
-			if( numNode <= right )
-				cout << "ERROR in " << __FUNCTION__ << "(): right >= #nodes" << endl;
+			// infile >> left >> right >> elabel;
+			if ((left = read_integer()) < 0) {
+				cerr << "Error: Vertex id must be a nonnegative integer." << endl;
+				errfile = true;
+				return;
+			}
+
+			if ((right = read_integer()) < 0) {
+				cerr << "Error: Vertex id must be a nonnegative integer." << endl;
+				errfile = true;
+				return;
+			}
+
+			if ((elabel = read_integer()) < 0) {
+				cerr << "Error: Edge label must be a nonnegative integer." << endl;
+				errfile = true;
+				return;
+			}
+
+			if( numNode <= left || numNode <= right) {
+				cerr << "Error: vertex id must be less than the number of vertices" << endl;
+				errfile = true;
+				return;
+			}
 			++(d[left]);
 			++(d[right]);
 			++numEdge;
@@ -158,7 +221,7 @@ void Graph::sortByDegreeDec(int32_t* aStart, int32_t* aEnd)
 //RETURN true if readGraph failed, false otherwise
 bool Graph::fail() 
 {
-	return nofile;
+	return nofile || errfile;
 }
 
 //PRINT the example of iGraph format
