@@ -3,9 +3,10 @@
 // Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
 // 
 // Name: graph.cpp
-// Author: Geonmo Gu
+// Author: Geonmo Gu, Yehyun Nam
 // Version
 //     August 20, 2020: the first stable version. (version 1.0)
+//     October 20, 2020: add sanity check.
 //***************************************************************************
 
 #include "graph.h"
