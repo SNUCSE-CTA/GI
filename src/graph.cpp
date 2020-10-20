@@ -9,6 +9,9 @@
 //***************************************************************************
 
 #include "graph.h"
+
+#include <queue>
+
 //////////////////////////GRAPH
 Graph::Graph(string aFileName)
 {
@@ -33,6 +36,7 @@ void Graph::readGraph(string aFileName)
 
 	ifstream infile(aFileName);
 	if(infile.fail()) {
+		cerr << "Error: Input file does not exist." << endl;
 		nofile = true;
 		return;
 	}
@@ -77,9 +81,13 @@ void Graph::readGraph(string aFileName)
 			d = new int32_t[numNode];
 			l = new int32_t[numNode];
 			one = new char[numNode];
+
+			for (int i = 0; i < numNode; ++i) {
+				d[i] = -1;
+			}
 		}
 		else if( tag == 'v' ) {
-			if (numNode < -1) {
+			if (numNode < 0) {
 				cerr << "Error: Graph description is not given." << endl;
 				errfile = true;
 				return;
@@ -100,6 +108,12 @@ void Graph::readGraph(string aFileName)
 
 			if( numNode <= vid ) {
 				cerr << "Error: Vertex id must be less than the number of vertices" << endl;
+				errfile = true;
+				return;
+			}
+
+			if (d[vid] != -1) {
+				cerr << "Error: A vertex is defined multiple times." << endl;
 				errfile = true;
 				return;
 			}
@@ -163,6 +177,60 @@ void Graph::readGraph(string aFileName)
 		else {
 			cout << "ERROR in " << __FUNCTION__ << "(): invalid file format" << endl;
 			break;
+		}
+	}
+
+	// Make sure there are no loops.
+	for (int32_t v = 0; v < numNode; ++v) {
+		for (int i = 0; i < d[v]; ++i) {
+			if (v == e[v][i]) {
+				cerr << "Error: No loops are allowed." << endl;
+				errfile = true;
+				return;
+			}
+		}
+	}
+
+	// Make sure there are no parallel edges.
+	int32_t* tmp = new int32_t[numNode];
+	for (int v = 0; v < numNode; ++v) {
+		copy(e[v], e[v] + d[v], tmp);
+		sort(tmp, tmp + d[v]);
+		for (int i = 1; i < d[v]; ++i) {
+			if (tmp[i] == tmp[i-1]) {
+				cerr << "Error: No parallel edges are allowed." << endl;
+				errfile = true;
+				return;
+			}
+		}
+	}
+	delete[] tmp;
+	tmp = nullptr;
+
+	// Make sure the graph is connected.
+	queue<int32_t> q;
+	vector<int32_t> pushed(numNode, false);
+
+	q.push(0);
+	pushed[0] = true;
+	while (!q.empty()) {
+		int32_t curr = q.front();
+		q.pop();
+
+		for (int i = 0; i < d[curr]; ++i) {
+			int32_t next = e[curr][i];
+			if (!pushed[next]) {
+				q.push(next);
+				pushed[next] = true;
+			}
+		}
+	}
+
+	for (int32_t v = 0; v < numNode; ++v) {
+		if (!pushed[v]) {
+			cerr << "Error: The graph is not connected." << endl;
+			errfile = true;
+			return;
 		}
 	}
 
