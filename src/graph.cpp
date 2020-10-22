@@ -252,17 +252,18 @@ void Graph::readGraph(string aFileName)
 	memset(pushed, 0, sizeof(int32_t) * numNode);
 
 	// Perform a BFS on the graph, starting from vertex 0.
+	// Enqueue vertex 0.
 	q_push(0);
 	pushed[0] = true;
 	while (!q_empty()) {
-		// Pop a vertex from the queue.
+		// Pop a vertex from the queue, and call it u.
 		int32_t u = q_pop();
 
 		// For each neighbor v of u (the current vertex),
 		for (int i = 0; i < d[u]; ++i) {
 			int32_t v = e[u][i];
 
-			// if v is not visited, enqueue v.
+			// if v is not visited, mark v as visited and enqueue v.
 			if (!pushed[v]) {
 				q_push(v);
 				pushed[v] = true;
