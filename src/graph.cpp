@@ -188,28 +188,44 @@ void Graph::readGraph(string aFileName)
 	}
 
 	// Make sure there are no parallel edges.
+	int32_t* s = cont.global_memory.getLLArray(numNode);
+	int32_t s_top = -1;
+	auto s_push = [&s, &s_top](const int32_t x) {
+		s[++s_top] = x;
+	};
+	auto s_pop = [&s, &s_top](void) -> int32_t {
+		return s[s_top--];
+	};
+	auto s_empty = [&s_top](void) -> bool {
+		return (s_top < 0);
+	};
+
 	int32_t* adj = cont.global_memory.getLLArray(numNode);
-
+	memset(adj, 0, sizeof(int32_t) * numNode);
 	for (int32_t u = 0; u < numNode && !errfile; ++u) {
-		memset(adj, 0, sizeof(int32_t) * numNode);
-
 		for (int32_t i = 0; i < d[u] && !errfile; ++i) {
 			int32_t v = e[u][i];
 			if (adj[v]) {
 				errfile = true;
 			} else {
+				s_push(v);
 				adj[v] = 1;
 			}
+		}
+
+		while (!s_empty()) {
+			int32_t v = s_pop();
+			adj[v] = 0;
 		}
 	}
 
 	cont.global_memory.returnLLArray(adj, numNode);
+	cont.global_memory.returnLLArray(s, numNode);
 
 	if (errfile) {
 		cerr << "Error: No parallel edges are allowed." << endl;
 		return;
 	}
-
 
 	// Make sure the graph is connected
 	int32_t* q = cont.global_memory.getLLArray(numNode);
