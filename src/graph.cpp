@@ -11,10 +11,10 @@
 
 #include "graph.h"
 
-#include <queue>
+#include <cstring>
 
 //////////////////////////GRAPH
-Graph::Graph(string aFileName)
+Graph::Graph(string aFileName, Context& _cont): cont(_cont)
 {
 	readGraph(aFileName);
 }
@@ -139,6 +139,12 @@ void Graph::readGraph(string aFileName)
 				return;
 			}
 
+			if (left == right) {
+				cerr << "Error: No loops are allowed." << endl;
+				errfile = true;
+				return;
+			}
+
 			if ((elabel = read_integer()) < 0) {
 				cerr << "Error: Edge label must be a nonnegative integer." << endl;
 				errfile = true;
@@ -181,58 +187,73 @@ void Graph::readGraph(string aFileName)
 		}
 	}
 
-	// Make sure there are no loops.
-	for (int32_t v = 0; v < numNode; ++v) {
-		for (int i = 0; i < d[v]; ++i) {
-			if (v == e[v][i]) {
-				cerr << "Error: No loops are allowed." << endl;
-				errfile = true;
-				return;
-			}
-		}
-	}
-
 	// Make sure there are no parallel edges.
-	int32_t* tmp = new int32_t[numNode];
-	for (int v = 0; v < numNode; ++v) {
-		copy(e[v], e[v] + d[v], tmp);
-		sort(tmp, tmp + d[v]);
-		for (int i = 1; i < d[v]; ++i) {
-			if (tmp[i] == tmp[i-1]) {
-				cerr << "Error: No parallel edges are allowed." << endl;
+	int32_t* adj = cont.global_memory.getLLArray(numNode);
+
+	for (int32_t u = 0; u < numNode && !errfile; ++u) {
+		memset(adj, 0, sizeof(int32_t) * numNode);
+
+		for (int32_t i = 0; i < d[u] && !errfile; ++i) {
+			int32_t v = e[u][i];
+			if (adj[v]) {
 				errfile = true;
-				return;
+			} else {
+				adj[v] = 1;
 			}
 		}
 	}
-	delete[] tmp;
-	tmp = nullptr;
 
-	// Make sure the graph is connected.
-	queue<int32_t> q;
-	vector<int32_t> pushed(numNode, false);
+	cont.global_memory.returnLLArray(adj, numNode);
 
-	q.push(0);
+	if (errfile) {
+		cerr << "Error: No parallel edges are allowed." << endl;
+		return;
+	}
+
+
+	// Make sure the graph is connected
+	int32_t* q = cont.global_memory.getLLArray(numNode);
+	int32_t q_front = 0;
+	int32_t q_rear = -1;
+	auto q_push = [&q, &q_rear](const int32_t x) {
+		q[++q_rear] = x;
+	};
+	auto q_pop = [&q, &q_front](void) -> int32_t {
+		return q[q_front++];
+	};
+	auto q_empty = [&q_front, &q_rear](void) -> bool {
+		return (q_front > q_rear);
+	};
+
+	int32_t* pushed = cont.global_memory.getLLArray(numNode);
+	memset(pushed, 0, sizeof(int32_t) * numNode);
+
+	q_push(0);
 	pushed[0] = true;
-	while (!q.empty()) {
-		int32_t curr = q.front();
-		q.pop();
+	while (!q_empty()) {
+		int32_t curr = q_pop();
 
 		for (int i = 0; i < d[curr]; ++i) {
 			int32_t next = e[curr][i];
 			if (!pushed[next]) {
-				q.push(next);
+				q_push(next);
 				pushed[next] = true;
 			}
 		}
 	}
 
-	for (int32_t v = 0; v < numNode; ++v) {
+	for (int32_t v = 0; v < numNode && !errfile; ++v) {
 		if (!pushed[v]) {
-			cerr << "Error: The graph is not connected." << endl;
 			errfile = true;
-			return;
 		}
+	}
+
+	cont.global_memory.returnLLArray(q, numNode);
+	cont.global_memory.returnLLArray(pushed, numNode);
+
+	if (errfile) {
+		cerr << "Error: The graph is not connected." << endl;
+		return;
 	}
 
 	//calculate the start position of edge list for each vertex

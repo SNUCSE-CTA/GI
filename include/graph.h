@@ -17,10 +17,13 @@
 #include <string>
 #include <algorithm> //sort
 
+#include "global.h"
+
 using namespace std;
 
 class Graph
 {
+	Context& cont;
 	bool nofile = false;
 	bool errfile = false;
 public:
@@ -33,7 +36,7 @@ public:
 	int32_t* adjPos = NULL; //adjPos[i] = adjPos[i-1] + degree[i-1]
 
 
-	Graph(string);
+	Graph(string, Context&);
 	~Graph();
 
 	//DEALLOCATE variables

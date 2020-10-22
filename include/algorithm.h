@@ -21,7 +21,7 @@
 class Algorithm
 {
 public:
-	Algorithm();
+	Algorithm(Context&);
 	~Algorithm();
 
 	//parameters: [aG1], [aG2]
@@ -33,6 +33,7 @@ public:
     int getNumRecur();
 
 private:
+	Context& cont;
     double searchTime;
     int numRecur;
 
