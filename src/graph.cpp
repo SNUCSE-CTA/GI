@@ -190,15 +190,6 @@ void Graph::readGraph(string aFileName)
 	// Make sure there are no parallel edges.
 	int32_t* s = cont.global_memory.getLLArray(numNode);
 	int32_t s_top = -1;
-	auto s_push = [&s, &s_top](const int32_t x) {
-		s[++s_top] = x;
-	};
-	auto s_pop = [&s, &s_top](void) -> int32_t {
-		return s[s_top--];
-	};
-	auto s_empty = [&s_top](void) -> bool {
-		return (s_top < 0);
-	};
 
 	int32_t* adj = cont.global_memory.getLLArray(numNode);
 	memset(adj, 0, sizeof(int32_t) * numNode);
@@ -212,16 +203,20 @@ void Graph::readGraph(string aFileName)
 			// mark v as adjacent.
 			// If v was already marked as adjacent, then there exists a parallel edge.
 			if (!adj[v]) {
-				s_push(v);
 				adj[v] = 1;
+
+				++s_top;
+				s[s_top] = v;
 			} else {
 				errfile = true;
 			}
 		}
 
 		// Clean marks for the next iteration.
-		while (!s_empty()) {
-			int32_t v = s_pop();
+		while (!(s_top < 0)) {
+			int32_t v = s[s_top];
+			--s_top;
+
 			adj[v] = 0;
 		}
 	}
@@ -238,26 +233,19 @@ void Graph::readGraph(string aFileName)
 	int32_t* q = cont.global_memory.getLLArray(numNode);
 	int32_t q_front = 0;
 	int32_t q_rear = -1;
-	auto q_push = [&q, &q_rear](const int32_t x) {
-		q[++q_rear] = x;
-	};
-	auto q_pop = [&q, &q_front](void) -> int32_t {
-		return q[q_front++];
-	};
-	auto q_empty = [&q_front, &q_rear](void) -> bool {
-		return (q_front > q_rear);
-	};
 
 	int32_t* pushed = cont.global_memory.getLLArray(numNode);
 	memset(pushed, 0, sizeof(int32_t) * numNode);
 
 	// Perform a BFS on the graph, starting from vertex 0.
 	// Enqueue vertex 0.
-	q_push(0);
+	++q_rear;
+	q[q_rear] = 0;
 	pushed[0] = true;
-	while (!q_empty()) {
+	while (!(q_front > q_rear)) {
 		// Pop a vertex from the queue, and call it u.
-		int32_t u = q_pop();
+		int32_t u = q[q_front];
+		++q_front;
 
 		// For each neighbor v of u (the current vertex),
 		for (int i = 0; i < d[u]; ++i) {
@@ -265,7 +253,8 @@ void Graph::readGraph(string aFileName)
 
 			// if v is not visited, mark v as visited and enqueue v.
 			if (!pushed[v]) {
-				q_push(v);
+				++q_rear;
+				q[q_rear] = v;
 				pushed[v] = true;
 			}
 		}
