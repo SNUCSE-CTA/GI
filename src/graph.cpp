@@ -202,17 +202,24 @@ void Graph::readGraph(string aFileName)
 
 	int32_t* adj = cont.global_memory.getLLArray(numNode);
 	memset(adj, 0, sizeof(int32_t) * numNode);
+
+	// For each node u in the graph,
 	for (int32_t u = 0; u < numNode && !errfile; ++u) {
+		// and for each neighbor v of u,
 		for (int32_t i = 0; i < d[u] && !errfile; ++i) {
 			int32_t v = e[u][i];
-			if (adj[v]) {
-				errfile = true;
-			} else {
+
+			// mark v as adjacent.
+			// If v was already marked as adjacent, then there exists a parallel edge.
+			if (!adj[v]) {
 				s_push(v);
 				adj[v] = 1;
+			} else {
+				errfile = true;
 			}
 		}
 
+		// Clean marks for next iteration.
 		while (!s_empty()) {
 			int32_t v = s_pop();
 			adj[v] = 0;
@@ -244,22 +251,28 @@ void Graph::readGraph(string aFileName)
 	int32_t* pushed = cont.global_memory.getLLArray(numNode);
 	memset(pushed, 0, sizeof(int32_t) * numNode);
 
+	// Perform a BFS on the graph, starting from vertex 0.
 	q_push(0);
 	pushed[0] = true;
 	while (!q_empty()) {
-		int32_t curr = q_pop();
+		// Pop a vertex from the queue.
+		int32_t u = q_pop();
 
-		for (int i = 0; i < d[curr]; ++i) {
-			int32_t next = e[curr][i];
-			if (!pushed[next]) {
-				q_push(next);
-				pushed[next] = true;
+		// For each neighbor v of u (the current vertex),
+		for (int i = 0; i < d[u]; ++i) {
+			int32_t v = e[u][i];
+
+			// if v is not visited, enqueue v.
+			if (!pushed[v]) {
+				q_push(v);
+				pushed[v] = true;
 			}
 		}
 	}
 
-	for (int32_t v = 0; v < numNode && !errfile; ++v) {
-		if (!pushed[v]) {
+	// If any vertex is not visited, then the graph is not connected.
+	for (int32_t u = 0; u < numNode && !errfile; ++u) {
+		if (!pushed[u]) {
 			errfile = true;
 		}
 	}
