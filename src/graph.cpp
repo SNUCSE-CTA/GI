@@ -219,7 +219,7 @@ void Graph::readGraph(string aFileName)
 			}
 		}
 
-		// Clean marks for next iteration.
+		// Clean marks for the next iteration.
 		while (!s_empty()) {
 			int32_t v = s_pop();
 			adj[v] = 0;
