@@ -13,7 +13,7 @@
 
 #include <algorithm>
 
-Algorithm::Algorithm() : searchTime(0.0), numRecur(0) {
+Algorithm::Algorithm(Context& _cont) : cont(_cont), searchTime(0.0), numRecur(0) {
 }
 
 Algorithm::~Algorithm() {}
@@ -42,7 +42,7 @@ bool Algorithm::run(Graph* aG1, Graph* aG2)
 	cout << __PRETTY_FUNCTION__ << endl;
 	#endif
 
-	Context cont;
+	// Context cont;
 	cont.init(aG1->numNode);
 
 	Refinement cr(cont);

@@ -3,9 +3,10 @@
 // Copyright by Geonmo Gu, Yehyun Nam, and Kunsoo Park
 // 
 // Name: graph.h
-// Author: Geonmo Gu
+// Author: Geonmo Gu, Yehyun Nam
 // Version
 //     August 20, 2020: the first stable version. (version 1.0)
+//     October 20, 2020: add sanity check.
 //***************************************************************************
 
 #ifndef __GRAPH_H_
@@ -16,11 +17,15 @@
 #include <string>
 #include <algorithm> //sort
 
+#include "global.h"
+
 using namespace std;
 
 class Graph
 {
+	Context& cont;
 	bool nofile = false;
+	bool errfile = false;
 public:
 	int32_t numNode = 0;
 	int32_t numEdge = 0;
@@ -31,7 +36,7 @@ public:
 	int32_t* adjPos = NULL; //adjPos[i] = adjPos[i-1] + degree[i-1]
 
 
-	Graph(string);
+	Graph(string, Context&);
 	~Graph();
 
 	//DEALLOCATE variables
