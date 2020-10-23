@@ -333,20 +333,6 @@ bool Graph::fail()
 	return nofile || errfile;
 }
 
-//PRINT the example of iGraph format
-void Graph::printExample() 
-{
-	cout << "*******************************" << endl;
-	cout << "iGraph format example: Triangle" << endl;
-	cout << "*******************************" << endl;
-	cout << "t 0 3" << endl;
-	cout << "v 0 20" << endl;
-	cout << "v 0 10" << endl;
-	cout << "v 0 14" << endl;
-	cout << "e 0 1 0" << endl;
-	cout << "e 0 2 0" << endl;
-	cout << "e 1 2 0" << endl;
-}
 
 //////////////////////////DAG
 DAG::DAG()

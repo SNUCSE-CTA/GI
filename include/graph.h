@@ -52,9 +52,6 @@ public:
 
 	//RETURN true if readGraph failed, false otherwise
 	bool fail();
-
-	//PRINT the example of iGraph format
-	void printExample();
 };
 
 class DAG

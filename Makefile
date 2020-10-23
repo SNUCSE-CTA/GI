@@ -7,6 +7,7 @@ CPPTESTFLAGS :=
 TEST_LIBS := -lgtest -lpthread
 
 SRC := src
+OBJ := obj
 TEST_SRC := tests
 
 SRCS=$(wildcard $(SRC)/*.cpp)
@@ -27,9 +28,9 @@ INPUT2 := ./input/sfl_lcc_$(GRAPH).igraph
 
 all: $(GI)
 
-$(GI): examples/example.cpp $(LIBGI)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c examples/example.cpp -o examples/example.o
-	$(CXX) $(CXXFLAGS) examples/example.o libgi.a -o $@
+$(GI): $(SRC)/program.cpp $(LIBGI)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(SRC)/program.cpp -o $(SRC)/program.o
+	$(CXX) $(CXXFLAGS) $(SRC)/program.o libgi.a -o $@
 
 $(LIBGI): $(OBJS)
 	$(AR) rc $(LIBGI) $(OBJS)
