@@ -31,9 +31,15 @@ int compare(const char *fname1, const char *fname2, bool *isomorphic, double *pr
 	}
 
 	//2. GI algorithm
-	Algorithm alg(cont);
 	t.start();
-	*isomorphic = alg.run(g1, g2);
+	if(g1->numNode != g2->numNode || g1->numEdge != g2->numEdge) {
+		//trivially false
+		*isomorphic = false;
+	}
+	else {
+		Algorithm alg(cont);
+		*isomorphic = alg.run(g1, g2);
+	}
 	totalTime = t.end();
 
 	if (processedTime != nullptr) {
@@ -41,6 +47,6 @@ int compare(const char *fname1, const char *fname2, bool *isomorphic, double *pr
 	}
 
 	return 1;
-}
+} //compare()
 
-}
+} //extern
