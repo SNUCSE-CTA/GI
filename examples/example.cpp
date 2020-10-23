@@ -15,9 +15,9 @@ int main(int argc, char* argv[])
 	double totalTime;
 	bool isomorphic;
 	int ret = compare(argv[1], argv[2], &isomorphic, &totalTime);
-	if (ret == -1) {
-		cout << "There is no file" << endl;
-		return 0;
+	if (ret == 0) {
+		//cout << "There is no file" << endl;
+		return -1;
 	}
 
 	cout << "Elasped Time: " << totalTime << endl;
