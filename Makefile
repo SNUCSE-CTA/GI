@@ -44,6 +44,10 @@ $(TESTP): $(LIBGI) $(TEST_OBJS)
 $(TEST_SRC)/%.o: $(TEST_SRC)/%.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(CPPTESTFLAGS) -c $< -o $@
 
+example: examples/example.cpp $(LIBGI)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c examples/example.cpp -o examples/example.o
+	$(CXX) $(CXXFLAGS) examples/example.o libgi.a -o $@
+
 clean:
 	$(RM) -rv $(GI)
 	$(RM) -rv $(LIBGI) $(OBJS)

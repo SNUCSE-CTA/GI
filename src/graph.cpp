@@ -12,16 +12,144 @@
 #include "graph.h"
 
 #include <cstring>
+#include <sstream> //istringstream
 
 //////////////////////////GRAPH
 Graph::Graph(string aFileName, Context& _cont): cont(_cont)
 {
+	checkFormat(aFileName);
 	readGraph(aFileName);
 }
 
 Graph::~Graph()
 {
 	clear();
+}
+
+//CHECK graph file format (igraph format)
+//RETURN 0 if OK
+//RETURN -1 if file does not follow the igraph format.
+int32_t Graph::checkFormat(string aFileName)
+{
+	ifstream infile(aFileName);
+	if(infile.fail()) {
+		cerr << "Error: Input file does not exist." << endl;
+		nofile = true;
+		return -1;
+	}
+	else {
+		nofile = false;
+	}
+
+	char tag;
+	int32_t vid, vlabel, left, right, elabel, gid;
+	int32_t numNode = -1;
+
+	bool flag_error = false; //turns true when file format is wrong
+	bool flag_t = false; //turns true when 't' appears in the file
+	bool flag_v = false; //turns true when 'v' appears in the file
+	bool flag_e = false; //turns true when 'e' appears in the file
+
+	string line;
+	int32_t lineNumber = 0;
+	//1. check the first line (t ID #nodes)
+	if( getline(infile, line) ) {
+		++lineNumber; //add 1 after getline
+		istringstream ss(line);
+		tag = -1;
+		gid = -1;
+		numNode = -1;
+	
+		ss >> tag >> gid >> numNode;
+		if( ss.eof() == 0 || tag == -1 || gid == -1 || numNode == -1) {
+			//line does not consist of exactly 3 values
+			cerr << "Error: file format error in line " << lineNumber << endl;
+			flag_error = true;
+		}
+
+		if(flag_error == false) {
+			if( tag != 't' || numNode < 1 ) {
+				cerr << "Error: file format error in line " << lineNumber << endl;
+				flag_error = true;
+			}
+			//TODO: input #nodes should be less than 32bit
+		}
+	}
+	else { //empty file!
+		cerr << "Error: File is empty" << endl;
+		flag_error = true;
+	}
+	
+	//2. check the vertices line (v ID label)
+	//	 vertex ID should be in the range of [0, #nodes)
+	//	 vertices should appear in the increasing order of vertex ID
+	if(flag_error == false) {
+		for(int32_t i = 0; i < numNode; ++i) {
+			if( getline(infile, line) ) {
+				++lineNumber; //add 1 after getline
+				istringstream ss(line);
+				tag = -1;
+				vid = -1;
+				vlabel = -1;
+				ss >> tag >> vid >> vlabel;
+				//TODO: input vertex label can be -1
+				if( ss.eof() == 0 || tag == -1 || vid == -1 || vlabel == -1) {
+					//line does not consist of exactly 3 values
+					cerr << "Error: file format error in line " << lineNumber << endl;
+					flag_error = true;
+					break;
+				}
+
+				//TODO: input vertex label should be less than 32bit
+				if( tag != 'v' || vid != i ) {
+					cerr << "Error: file format error in line " << lineNumber << endl;
+					flag_error = true;
+					break;
+				}
+			}
+			else {
+				cerr << "Error: Not enough vertices" << endl;
+				flag_error = true;
+				break;
+			}
+		}
+	}
+	
+	//3. check the edges line (e ID ID label)
+	if(flag_error == false) {
+		while( getline(infile, line) ) {
+			++lineNumber; //add 1 after getline
+			istringstream ss(line);
+			tag = -1;
+			left = -1;
+			right = -1;
+			elabel = -1;
+			ss >> tag >> left >> right >> elabel;
+			//TODO: input edge label can be -1
+			if( ss.eof() == 0 || tag == -1 || left == -1 || right == -1 || elabel == -1) {
+				//line does not consist of exactly 4 values
+				cerr << "Error: file format error in line " << lineNumber << endl;
+				flag_error = true;
+				break;
+			}
+
+			//TODO: input vertex label should be less than 32bit
+			if( tag != 'e' || left >= numNode || right >= numNode ) {
+				cerr << "Error: file format error in line " << lineNumber << endl;
+				flag_error = true;
+				break;
+			}
+		}
+	}
+
+	infile.close();
+
+	if(flag_error) {
+		return -1;
+	}
+	else {
+		return 0;
+	}
 }
 
 //READ graph from file (igraph format)

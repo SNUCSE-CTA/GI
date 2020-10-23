@@ -43,6 +43,12 @@ public:
 	void clear();
 
 	//parameter: [file name]
+	//CHECK graph file format (igraph format)
+	//RETURN 0 if OK
+	//RETURN -1 if file does not follow the igraph format.
+	int32_t checkFormat(string);
+
+	//parameter: [file name]
 	//READ graph from the file (iGraph format)
 	void readGraph(string);
 
