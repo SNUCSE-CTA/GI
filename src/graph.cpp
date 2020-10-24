@@ -42,37 +42,39 @@ int32_t Graph::checkFormat(string aFileName)
 	}
 
 	char tag;
-	int32_t vid, vlabel, left, right, elabel, gid;
-	int32_t numNode = -1;
+	int64_t vid, vlabel, left, right, elabel, gid;
+	int64_t numNode = -1;
+	int64_t numEdge = 0;
+	const int64_t MAX32 = 2147483647; //our algorithm uses 32 bits to store an integer
 
 	bool flag_error = false; //turns true when file format is wrong
-	bool flag_t = false; //turns true when 't' appears in the file
-	bool flag_v = false; //turns true when 'v' appears in the file
-	bool flag_e = false; //turns true when 'e' appears in the file
 
 	string line;
-	int32_t lineNumber = 0;
+	int64_t lineNumber = 0;
 	//1. check the first line (t ID #nodes)
 	if( getline(infile, line) ) {
 		++lineNumber; //add 1 after getline
-		istringstream ss(line);
-		tag = -1;
-		gid = -1;
-		numNode = -1;
-	
-		ss >> tag >> gid >> numNode;
-		if( ss.eof() == 0 || tag == -1 || gid == -1 || numNode == -1) {
-			//line does not consist of exactly 3 values
-			cerr << "Error: file format error in line " << lineNumber << endl;
+		istringstream ss(line);	//read values from this stream
+		
+		//check the number of words
+		string oneWord;
+		int32_t count = 0;
+		while(ss >> oneWord)
+			++count;
+		if(count != 3) { //line does not consist of exactly 3 values
+			cerr << "File Format Error: in line " << lineNumber << endl;
 			flag_error = true;
 		}
 
+		//check the values
 		if(flag_error == false) {
-			if( tag != 't' || numNode < 1 ) {
-				cerr << "Error: file format error in line " << lineNumber << endl;
+			ss.clear();
+			ss.seekg(0);
+			ss >> tag >> gid >> numNode;
+			if( tag != 't' || numNode < 1 || numNode > MAX32 ) {
+				cerr << "File Format Error: in line " << lineNumber << endl;
 				flag_error = true;
 			}
-			//TODO: input #nodes should be less than 32bit
 		}
 	}
 	else { //empty file!
@@ -88,27 +90,29 @@ int32_t Graph::checkFormat(string aFileName)
 			if( getline(infile, line) ) {
 				++lineNumber; //add 1 after getline
 				istringstream ss(line);
-				tag = -1;
-				vid = -1;
-				vlabel = -1;
-				ss >> tag >> vid >> vlabel;
-				//TODO: input vertex label can be -1
-				if( ss.eof() == 0 || tag == -1 || vid == -1 || vlabel == -1) {
-					//line does not consist of exactly 3 values
-					cerr << "Error: file format error in line " << lineNumber << endl;
+
+				//check the number of words
+				string oneWord;
+				int32_t count = 0;
+				while(ss >> oneWord)
+					++count;
+				if(count != 3) { //line does not consist of exactly 3 values
+					cerr << "File Format Error: in line " << lineNumber << endl;
 					flag_error = true;
 					break;
 				}
 
-				//TODO: input vertex label should be less than 32bit
-				if( tag != 'v' || vid != i ) {
-					cerr << "Error: file format error in line " << lineNumber << endl;
+				ss.clear();
+				ss.seekg(0);
+				ss >> tag >> vid >> vlabel;
+				if( tag != 'v' || vid != i || vlabel > MAX32 ) {
+					cerr << "File Format Error: in line " << lineNumber << endl;
 					flag_error = true;
 					break;
 				}
 			}
 			else {
-				cerr << "Error: Not enough vertices" << endl;
+				cerr << "File Format Error: not enough vertices" << endl;
 				flag_error = true;
 				break;
 			}
@@ -120,29 +124,37 @@ int32_t Graph::checkFormat(string aFileName)
 		while( getline(infile, line) ) {
 			++lineNumber; //add 1 after getline
 			istringstream ss(line);
-			tag = -1;
-			left = -1;
-			right = -1;
-			elabel = -1;
-			ss >> tag >> left >> right >> elabel;
-			//TODO: input edge label can be -1
-			if( ss.eof() == 0 || tag == -1 || left == -1 || right == -1 || elabel == -1) {
-				//line does not consist of exactly 4 values
-				cerr << "Error: file format error in line " << lineNumber << endl;
+
+			//check the number of words
+			string oneWord;
+			int32_t count = 0;
+			while(ss >> oneWord)
+				++count;
+			if(count != 4) { //line does not consist of exactly 4 values
+				cerr << "File Format Error: in line " << lineNumber << endl;
 				flag_error = true;
 				break;
 			}
 
-			//TODO: input vertex label should be less than 32bit
-			if( tag != 'e' || left >= numNode || right >= numNode ) {
-				cerr << "Error: file format error in line " << lineNumber << endl;
+			ss.clear();
+			ss.seekg(0);
+			ss >> tag >> left >> right >> elabel;
+			if( tag != 'e' || left >= numNode || right >= numNode || elabel > MAX32) {
+				cerr << "File Format Error: in line " << lineNumber << endl;
 				flag_error = true;
 				break;
 			}
+
+			++numEdge;
 		}
 	}
 
 	infile.close();
+
+	if(numEdge > MAX32) {
+		cerr << "File Format Error: #edges == " << numEdge << " > " << MAX32 << endl;
+		flag_error = true;
+	}
 
 	if(flag_error) {
 		return -1;
