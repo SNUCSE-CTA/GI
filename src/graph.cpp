@@ -209,7 +209,7 @@ void Graph::readGraph(string aFileName) //recommend to use after checkFormat() p
 			if (left == right) {
 				cerr << "Error: loops are not allowed." << endl;
 				errfile = true;
-				//TODO: infile.close()
+				infile.close();
 				return;
 			}
 
@@ -279,6 +279,7 @@ void Graph::readGraph(string aFileName) //recommend to use after checkFormat() p
 
 	if (errfile) {
 		cerr << "Error: no parallel edges are allowed." << endl;
+		infile.close();
 		return;
 	}
 
@@ -325,6 +326,7 @@ void Graph::readGraph(string aFileName) //recommend to use after checkFormat() p
 
 	if (errfile) {
 		cerr << "Error: the graph is not connected." << endl;
+		infile.close();
 		return;
 	}
 
