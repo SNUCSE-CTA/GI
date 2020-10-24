@@ -20,4 +20,4 @@ jobs:
 #    - name: make
 #      run: make
     - name: make test
-      run: make test 2>log.txt
+      run: make test 2>/dev/null
