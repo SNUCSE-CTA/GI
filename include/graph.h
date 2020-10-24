@@ -50,7 +50,7 @@ public:
 
 	//parameter: [file name]
 	//READ graph from the file (iGraph format)
-	void readGraph(string);
+	void readGraph(string); //recommend to use after checkFormat() passed
 
 	//parameters: [start pointer of array], [end pointer of array]
 	//SORT the array be decsending order of degree (d)

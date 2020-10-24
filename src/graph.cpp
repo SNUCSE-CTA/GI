@@ -17,8 +17,8 @@
 //////////////////////////GRAPH
 Graph::Graph(string aFileName, Context& _cont): cont(_cont)
 {
-	checkFormat(aFileName);
-	readGraph(aFileName);
+	if( checkFormat(aFileName) == 0 )
+		readGraph(aFileName);
 }
 
 Graph::~Graph()
@@ -33,7 +33,7 @@ int32_t Graph::checkFormat(string aFileName)
 {
 	ifstream infile(aFileName);
 	if(infile.fail()) {
-		cerr << "Error: Input file does not exist." << endl;
+		cerr << "Error: input file does not exist." << endl;
 		nofile = true;
 		return -1;
 	}
@@ -157,6 +157,7 @@ int32_t Graph::checkFormat(string aFileName)
 	}
 
 	if(flag_error) {
+		errfile = true;
 		return -1;
 	}
 	else {
@@ -167,7 +168,7 @@ int32_t Graph::checkFormat(string aFileName)
 //READ graph from file (igraph format)
 //we assume that the input file contains simple undirected and connected graph.
 //Also, single label per vertex and label.
-void Graph::readGraph(string aFileName)
+void Graph::readGraph(string aFileName) //recommend to use after checkFormat() passed
 {
 	#ifdef DEBUG
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -176,14 +177,14 @@ void Graph::readGraph(string aFileName)
 	clear(); // avoid double allocation
 
 	ifstream infile(aFileName);
-	if(infile.fail()) {
-		cerr << "Error: Input file does not exist." << endl;
-		nofile = true;
-		return;
-	}
-	else {
-		nofile = false;
-	}
+//	if(infile.fail()) {
+//		cerr << "Error: Input file does not exist." << endl;
+//		nofile = true;
+//		return;
+//	}
+//	else {
+//		nofile = false;
+//	}
 
 	streampos edgePos = infile.tellg();
 	char tag;
@@ -192,72 +193,72 @@ void Graph::readGraph(string aFileName)
 	numNode = -1;
 	numEdge = 0;
 
-	string token;
-	auto read_integer = [&infile, &token](void) -> int32_t {
-		try {
-			infile >> token;
-			return stoi(token);
-		} catch (...) {
-			return -1;
-		}
-	};
+//	string token;
+//	auto read_integer = [&infile, &token](void) -> int32_t {
+//		try {
+//			infile >> token;
+//			return stoi(token);
+//		} catch (...) {
+//			return -1;
+//		}
+//	};
 
 	//first read: read vertices and count degree for each vertex
 	while( infile >> tag ) {
 		if( tag == 't' ) {
-			// infile >> gid >> numNode;
-			if ((gid = read_integer()) < 0) {
-				cerr << "Error: Graph id must be a nonnegative integer." << endl;
-				errfile = true;
-				return;
-			}
+			infile >> gid >> numNode;
+//			if ((gid = read_integer()) < 0) {
+//				cerr << "Error: Graph id must be a nonnegative integer." << endl;
+//				errfile = true;
+//				return;
+//			}
 
-			if ((numNode = read_integer()) < 0) {
-				cerr << "Error: The number of vertices must be a nonnegative integer." << endl;
-				errfile = true;
-				return;
-			}
+//			if ((numNode = read_integer()) < 0) {
+//				cerr << "Error: The number of vertices must be a nonnegative integer." << endl;
+//				errfile = true;
+//				return;
+//			}
 
 			//allocate memory for vertices
 			d = new int32_t[numNode];
 			l = new int32_t[numNode];
 			one = new char[numNode];
 
-			for (int i = 0; i < numNode; ++i) {
-				d[i] = -1;
-			}
+//			for (int i = 0; i < numNode; ++i) {
+//				d[i] = -1;
+//			}
 		}
 		else if( tag == 'v' ) {
-			if (numNode < 0) {
-				cerr << "Error: Graph description is not given." << endl;
-				errfile = true;
-				return;
-			}
+//			if (numNode < 0) {
+//				cerr << "Error: Graph description is not given." << endl;
+//				errfile = true;
+//				return;
+//			}
 
-			// infile >> vid >> vlabel;
-			if ((vid = read_integer()) < 0) {
-				cerr << "Error: Vertex id must be a nonnegative integer." << endl;
-				errfile = true;
-				return;
-			}
+			infile >> vid >> vlabel;
+//			if ((vid = read_integer()) < 0) {
+//				cerr << "Error: Vertex id must be a nonnegative integer." << endl;
+//				errfile = true;
+//				return;
+//			}
 
-			if ((vlabel = read_integer()) < 0) {
-				cerr << "Error: Vertex label must be a nonnegative integer." << endl;
-				errfile = true;
-				return;
-			}
+//			if ((vlabel = read_integer()) < 0) {
+//				cerr << "Error: Vertex label must be a nonnegative integer." << endl;
+//				errfile = true;
+//				return;
+//			}
 
-			if( numNode <= vid ) {
-				cerr << "Error: Vertex id must be less than the number of vertices" << endl;
-				errfile = true;
-				return;
-			}
+//			if( numNode <= vid ) {
+//				cerr << "Error: Vertex id must be less than the number of vertices" << endl;
+//				errfile = true;
+//				return;
+//			}
 
-			if (d[vid] != -1) {
-				cerr << "Error: A vertex is defined multiple times." << endl;
-				errfile = true;
-				return;
-			}
+//			if (d[vid] != -1) {
+//				cerr << "Error: A vertex is defined multiple times." << endl;
+//				errfile = true;
+//				return;
+//			}
 
 			d[vid] = 0;
 			l[vid] = vlabel;
@@ -266,36 +267,37 @@ void Graph::readGraph(string aFileName)
 			edgePos = infile.tellg(); //record the last line that tag 'v' appears.
 		}
 		else if( tag == 'e' ) {
-			// infile >> left >> right >> elabel;
-			if ((left = read_integer()) < 0) {
-				cerr << "Error: Vertex id must be a nonnegative integer." << endl;
-				errfile = true;
-				return;
-			}
+			infile >> left >> right >> elabel;
+//			if ((left = read_integer()) < 0) {
+//				cerr << "Error: Vertex id must be a nonnegative integer." << endl;
+//				errfile = true;
+//				return;
+//			}
 
-			if ((right = read_integer()) < 0) {
-				cerr << "Error: Vertex id must be a nonnegative integer." << endl;
-				errfile = true;
-				return;
-			}
+//			if ((right = read_integer()) < 0) {
+//				cerr << "Error: Vertex id must be a nonnegative integer." << endl;
+//				errfile = true;
+//				return;
+//			}
 
 			if (left == right) {
-				cerr << "Error: No loops are allowed." << endl;
+				cerr << "Error: loops are not allowed." << endl;
 				errfile = true;
+				//TODO: infile.close()
 				return;
 			}
 
-			if ((elabel = read_integer()) < 0) {
-				cerr << "Error: Edge label must be a nonnegative integer." << endl;
-				errfile = true;
-				return;
-			}
+//			if ((elabel = read_integer()) < 0) {
+//				cerr << "Error: Edge label must be a nonnegative integer." << endl;
+//				errfile = true;
+//				return;
+//			}
 
-			if( numNode <= left || numNode <= right) {
-				cerr << "Error: vertex id must be less than the number of vertices" << endl;
-				errfile = true;
-				return;
-			}
+//			if( numNode <= left || numNode <= right) {
+//				cerr << "Error: vertex id must be less than the number of vertices" << endl;
+//				errfile = true;
+//				return;
+//			}
 			++(d[left]);
 			++(d[right]);
 			++numEdge;
@@ -314,17 +316,17 @@ void Graph::readGraph(string aFileName)
 	infile.seekg(edgePos);
 
 	while( infile >> tag ) {
-		if( tag == 'e' ) {
+		if( tag == 'e' ) { //always true after checkFormat()
 			infile >> left >> right >> elabel;
 			e[left][ d[left] ] = right;
 			e[right][ d[right] ] = left;
 			++(d[left]);
 			++(d[right]);
 		}
-		else {
-			cout << "ERROR in " << __FUNCTION__ << "(): invalid file format" << endl;
-			break;
-		}
+//		ielse {
+//			cout << "ERROR in " << __FUNCTION__ << "(): invalid file format" << endl;
+//			break;
+//		}
 	}
 
 	// Make sure there are no parallel edges.
@@ -365,7 +367,7 @@ void Graph::readGraph(string aFileName)
 	cont.global_memory.returnLLArray(s, numNode);
 
 	if (errfile) {
-		cerr << "Error: No parallel edges are allowed." << endl;
+		cerr << "Error: no parallel edges are allowed." << endl;
 		return;
 	}
 
@@ -411,7 +413,7 @@ void Graph::readGraph(string aFileName)
 	cont.global_memory.returnLLArray(pushed, numNode);
 
 	if (errfile) {
-		cerr << "Error: The graph is not connected." << endl;
+		cerr << "Error: the graph is not connected." << endl;
 		return;
 	}
 
