@@ -45,7 +45,6 @@ int32_t Graph::checkFormat(string aFileName)
 	int64_t vid, vlabel, left, right, elabel, gid;
 	int64_t numNode = -1;
 	int64_t numEdge = 0;
-	const int64_t MAX32 = 2147483647; //our algorithm uses 32 bits to store an integer
 
 	bool flag_error = false; //turns true when file format is wrong
 
@@ -71,7 +70,7 @@ int32_t Graph::checkFormat(string aFileName)
 			ss.clear();
 			ss.seekg(0);
 			ss >> tag >> gid >> numNode;
-			if( tag != 't' || numNode < 1 || numNode > MAX32 ) {
+			if( tag != 't' || numNode < 1 || numNode > INT32_MAX ) {
 				cerr << "File Format Error: in line " << lineNumber << endl;
 				flag_error = true;
 			}
@@ -105,7 +104,7 @@ int32_t Graph::checkFormat(string aFileName)
 				ss.clear();
 				ss.seekg(0);
 				ss >> tag >> vid >> vlabel;
-				if( tag != 'v' || vid != i || vlabel > MAX32 ) {
+				if( tag != 'v' || vid != i || vlabel > INT32_MAX ) {
 					cerr << "File Format Error: in line " << lineNumber << endl;
 					flag_error = true;
 					break;
@@ -139,7 +138,7 @@ int32_t Graph::checkFormat(string aFileName)
 			ss.clear();
 			ss.seekg(0);
 			ss >> tag >> left >> right >> elabel;
-			if( tag != 'e' || left >= numNode || right >= numNode || elabel > MAX32) {
+			if( tag != 'e' || left >= numNode || right >= numNode || elabel > INT32_MAX) {
 				cerr << "File Format Error: in line " << lineNumber << endl;
 				flag_error = true;
 				break;
@@ -151,8 +150,8 @@ int32_t Graph::checkFormat(string aFileName)
 
 	infile.close();
 
-	if(numEdge > MAX32) {
-		cerr << "File Format Error: #edges == " << numEdge << " > " << MAX32 << endl;
+	if(numEdge > INT32_MAX) {
+		cerr << "File Format Error: #edges == " << numEdge << " > " << INT32_MAX << endl;
 		flag_error = true;
 	}
 
