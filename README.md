@@ -51,6 +51,8 @@ The main contributors to this project are:
 
 ## Licensing
 This project is an open source software provided under the Apache License 2.0.
+- We use googletest library, which is covered by BSD 3-Clause License.
+- We use a revised source code of Nauty and Traces, which is covered by Apache License 2.0.
 
 ## Contribute
 
