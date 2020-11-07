@@ -12,6 +12,7 @@ int compare(const char *fname1, const char *fname2, bool *isomorphic, double *pr
 {
 	// DEMO: Do not merge.
 	// DEMO: Do not merge.
+	// DEMO: Do not merge.
 
 	double totalTime = 0;
 
