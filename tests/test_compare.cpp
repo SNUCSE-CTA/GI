@@ -280,6 +280,7 @@ TEST(compare_test_small, compare_test_isomorphic_0_5_4) {
 	EXPECT_TRUE(isomorphic);
 }
 
+/*
 TEST(compare_test_small, compare_test_isomorphic_0_6_0) {
 	bool isomorphic;
 	double processTime;
@@ -3639,6 +3640,7 @@ TEST(compare_test_small, compare_test_isomorphic_22_9_4) {
 	ASSERT_EQ(1, ret);
 	EXPECT_TRUE(isomorphic);
 }
+*/
 
 TEST(compare_test_small, compare_test_nonisomorphic_0_0_0) {
 	bool isomorphic;
@@ -3880,6 +3882,7 @@ TEST(compare_test_small, compare_test_nonisomorphic_0_5_4) {
 	EXPECT_FALSE(isomorphic);
 }
 
+/*
 TEST(compare_test_small, compare_test_nonisomorphic_0_6_0) {
 	bool isomorphic;
 	double processTime;
@@ -7239,4 +7242,5 @@ TEST(compare_test_small, compare_test_nonisomorphic_22_9_4) {
 	ASSERT_EQ(1, ret);
 	EXPECT_FALSE(isomorphic);
 }
+*/
 
