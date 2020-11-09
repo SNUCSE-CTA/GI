@@ -50,3 +50,4 @@ int compare(const char *fname1, const char *fname2, bool *isomorphic, double *pr
 } //compare()
 
 } //extern
+//Demo: Do not merge this commit.
