@@ -8,7 +8,7 @@ using namespace std;
 
 extern "C" {
 
-int compare(const char *fname1, const char *fname2, bool *isomorphic, double *processedTime)
+int compare(const char *fname1, const char *fname2, bool *isomorphic, double *processedTime, const char *outfname)
 {
 	double totalTime = 0;
 
@@ -31,20 +31,26 @@ int compare(const char *fname1, const char *fname2, bool *isomorphic, double *pr
 	}
 
 	//2. GI algorithm
-	t.start();
 	if(g1->numNode != g2->numNode || g1->numEdge != g2->numEdge) {
 		//trivially false
 		*isomorphic = false;
 	}
 	else {
+	t.start();
 		Algorithm alg(cont);
 		*isomorphic = alg.run(g1, g2);
-	}
 	totalTime = t.end();
+
+		if(*isomorphic && outfname != nullptr) {
+			cout << "outfname: " << outfname << endl;
+			alg.printIso(outfname);
+		}
+	}
 
 	if (processedTime != nullptr) {
 		*processedTime = totalTime;
 	}
+
 
 	return 1;
 } //compare()

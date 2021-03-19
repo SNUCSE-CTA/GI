@@ -32,6 +32,8 @@ public:
     double getSearchTime();
     int getNumRecur();
 
+	void printIso(const char* fname);
+
 private:
 	Context& cont;
     double searchTime;

@@ -10,12 +10,12 @@ void printExample(); //PRINT the example of iGraph format
 
 int main(int argc, char* argv[])
 {
-	if( argc != 3 ) {
+	if( argc != 3 && argc != 4) {
 		bool handled = false;
 		if( argc == 2 ) {
 			if( strcmp(argv[1], "--help") == 0 ) {
 				//print help
-				cout << "Usage: " << argv[0] << " graph1 graph2" << endl;
+				cout << "Usage: " << argv[0] << " graph1 graph2 (isomorphism_output)" << endl;
 				cout << "Other options:" << endl;
 				cout << "  --help        Display help" << endl;
 				cout << "  --example     Display example file format" << endl;
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
 		if(handled == false) {
 			//print usages
-			cout << "Usage: " << argv[0] << " graph1 graph2" << endl;
+			cout << "Usage: " << argv[0] << " graph1 graph2 (isomorphism_output)" << endl;
 			cout << "Try '" << argv[0] << " --help' for more information" << endl;
 		}
 		return -1;
@@ -38,7 +38,8 @@ int main(int argc, char* argv[])
 
 	double totalTime;
 	bool isomorphic;
-	int ret = compare(argv[1], argv[2], &isomorphic, &totalTime);
+	char* outfname = (argc == 4 ? argv[3] : nullptr);
+	int ret = compare(argv[1], argv[2], &isomorphic, &totalTime, outfname);
 	if (ret == 0) {
 		//cout << "There is no file" << endl;
 		return -1;

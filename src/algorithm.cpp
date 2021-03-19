@@ -62,3 +62,8 @@ bool Algorithm::run(Graph* aG1, Graph* aG2)
 
 	return result;
 }
+
+void Algorithm::printIso(const char* fname)
+{
+	cout << "printing isomorphism" << endl;
+}
