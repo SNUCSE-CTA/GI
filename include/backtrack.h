@@ -43,7 +43,9 @@ class Backtrack
 	int32_t e2 = 0;
 	DAG* dag = NULL;
 	CS* cs = NULL;
+public:
 	int32_t* mapping = NULL;
+private:
 
 	//variables used in backtracking
 	// - for the partial failing set

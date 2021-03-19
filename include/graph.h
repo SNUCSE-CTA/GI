@@ -29,6 +29,7 @@ class Graph
 public:
 	int32_t numNode = 0;
 	int32_t numEdge = 0;
+	int32_t* od = NULL; //original degree
 	int32_t* d = NULL; //degree
 	int32_t* l = NULL; //label
 	char* one = NULL; //if coreness-1, then one == 1.

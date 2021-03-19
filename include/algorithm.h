@@ -32,12 +32,16 @@ public:
     double getSearchTime();
     int getNumRecur();
 
-	void printIso(const char* fname);
+	void computeIso(Graph* aG1, Graph* aG2, int32_t* aMapping);
+	void printIso(const char* ifname1, const char* ifname2, const char* ofname);
 
 private:
 	Context& cont;
     double searchTime;
     int numRecur;
+
+	int32_t* mapping = NULL;
+	int32_t numNode = 0;
 
     void setSearchTime(double);
     void setNumRecur(int);

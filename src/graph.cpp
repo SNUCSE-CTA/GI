@@ -190,6 +190,7 @@ void Graph::readGraph(string aFileName) //recommend to use after checkFormat() p
 			infile >> gid >> numNode;
 
 			//allocate memory for vertices
+			od = new int32_t[numNode];
 			d = new int32_t[numNode];
 			l = new int32_t[numNode];
 			one = new char[numNode];
@@ -239,6 +240,10 @@ void Graph::readGraph(string aFileName) //recommend to use after checkFormat() p
 			++(d[right]);
 		}
 	}
+
+	//store original degree (since prepCoreOne changes d)
+	for(vid = 0; vid < numNode; ++vid)
+		od[vid] = d[vid];
 
 	// Make sure there are no parallel edges.
 	int32_t* s = cont.global_memory.getLLArray(numNode);

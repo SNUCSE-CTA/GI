@@ -42,8 +42,8 @@ int compare(const char *fname1, const char *fname2, bool *isomorphic, double *pr
 	totalTime = t.end();
 
 		if(*isomorphic && outfname != nullptr) {
-			cout << "outfname: " << outfname << endl;
-			alg.printIso(outfname);
+			//cout << "Output isomorphism file: " << outfname << endl;
+			alg.printIso(fname1, fname2, outfname);
 		}
 	}
 

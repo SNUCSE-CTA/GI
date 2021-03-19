@@ -16,7 +16,11 @@
 Algorithm::Algorithm(Context& _cont) : cont(_cont), searchTime(0.0), numRecur(0) {
 }
 
-Algorithm::~Algorithm() {}
+Algorithm::~Algorithm() 
+{
+	if(mapping != NULL)
+		delete[] mapping;
+}
 
 void Algorithm::setSearchTime(double searchTime) {
     this->searchTime = searchTime;
@@ -60,10 +64,31 @@ bool Algorithm::run(Graph* aG1, Graph* aG2)
 
 	cont.clear();
 
+	if(result) //if isomorphic
+		computeIso(aG1, aG2, bt.mapping);
+
 	return result;
 }
 
-void Algorithm::printIso(const char* fname)
+void Algorithm::computeIso(Graph* aG1, Graph* aG2, int32_t* aMapping)
 {
-	cout << "printing isomorphism" << endl;
+	numNode = aG1->numNode;
+	mapping = new int32_t[numNode];
+	for(int32_t vid = 0; vid < numNode; ++vid) {
+		mapping[vid] = aMapping[vid];
+	}
+
+	//TODO: process corenessone nodes
+	
+}
+
+void Algorithm::printIso(const char* ifname1, const char* ifname2, const char* ofname)
+{
+	ofstream outfile(ofname);
+
+	outfile << "V(" << ifname1 << ") : V(" << ifname2 << ")" << endl;
+	for(int32_t vid = 0; vid < numNode; ++vid)
+		outfile << vid << ":" << mapping[vid] << endl;
+
+	outfile.close();
 }

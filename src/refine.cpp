@@ -48,7 +48,6 @@ bool Refinement::run(Graph* aG1, Graph* aG2)
 		delete stableColoring;
 	}
 	stableColoring = new Coloring(n2);
-
 	// Allocate workspace variables
 	initWorkspace();
 
