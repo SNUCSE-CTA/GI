@@ -32,7 +32,7 @@ public:
     double getSearchTime();
     int getNumRecur();
 
-	void computeIso(Graph* aG1, Graph* aG2, int32_t* aMapping);
+	void computeIso(Graph* aG1, Graph* aG2, int32_t* aMapping, Coloring* aColoring);
 	void printIso(const char* ifname1, const char* ifname2, const char* ofname);
 
 private:
