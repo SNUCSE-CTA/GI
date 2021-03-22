@@ -18,11 +18,18 @@ To run the proram:
 ``` console
 ./GI [file 1] [file 2]
 ```
-
+In case that the two graphs are isomorphic, 
+you can print an isomorphism between them into a file 
+by specifying the file name as the third argument.
+```console
+./GI [file 1] [file 2] [output file]
+```
 
 ## Running Example
 ``` console
 ./GI input/lcc_yeast.igraph input/sfl_lcc_yeast.igraph
+
+./GI input/lcc_yeast.igraph input/sfl_lcc_yeast.igraph isomorphism.txt
 ```
 
 ## Input File Format
